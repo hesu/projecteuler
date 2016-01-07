@@ -17,6 +17,8 @@ using namespace std;
 std::map<int,int> primes;
 bool isprime( int n)
 {
+	if( n == 2) return true;
+
   std::map<int,int>::iterator it = primes.find(n);
   if( it != primes.end()) { return true; }
 
@@ -80,12 +82,9 @@ bool isCircularPrime( int n)
 	}
 
 	if( allPrime) {
-		sort( circulars.begin(), circulars.end());
-		circulars.erase( unique( circulars.begin(), circulars.end()), circulars.end());
-
 		for(int i=0; i<circulars.size(); i++)
 		{
-			cout << "find! : " << circulars[i] << endl;
+	//		cout << "find! : " << circulars[i] << endl;
 			circularPrimes.insert( std::map<int,int>::value_type( circulars[i], circulars[i]));
 		}
 	}
@@ -101,13 +100,12 @@ int main(int argc, char** argv)
 	for(int i=2; i< 1000000; i++)
 	{
 		isCircularPrime( i); 
-		/*
-		if( i % 100000 == 0) {
-			cout << "i=" << i << endl;
-		}	
-		*/
 	}
 
+	for( std::map<int, int>::iterator it = circularPrimes.begin(); it != circularPrimes.end(); ++it)
+	{
+		cout << it->first << endl;
+	}
 	cout << "size = " << circularPrimes.size() << endl;;
 
   /* end of code */
