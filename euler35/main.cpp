@@ -8,7 +8,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <cmath>
-#include <queue>
+#include <deque>
+#include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -23,7 +25,23 @@ bool isprime( int n)
   {
     if (n%i ==0) { return false; }
   }
+
+	primes.insert( std::map<int,int>::value_type( n, n));
   return true;
+}
+
+int getCircularNum( std::deque<int> q)
+{
+	std::deque<int>::iterator it = q.begin();
+
+	int num = 0;
+	int expo = 1;
+	while( it != q.end())
+	{
+		num += expo * (*it++);
+		expo *=10;
+	}
+	return num;
 }
 
 std::map<int,int> circularPrimes;
@@ -37,20 +55,42 @@ bool isCircularPrime( int n)
 
   int len = strlen( buf);
 
-	std::queue<int> qn;
+	std::deque<int> qn;
   for(int i=0; i<len; i++)
   {
 		int digit = buf[i] - '0';
-		qn.push( digit); 
+		qn.push_back( digit); 
   }
 
-	bool allPrime = false;
+	std::vector<int> circulars;
+	bool allPrime = true;
 	for(int i=0; i<len; i++)
 	{
-		 // TODO
+		int pop = qn.front();
+		qn.pop_front();
+		qn.push_back(pop);
+
+		int c = getCircularNum( qn);
+		if ( !isprime( c)) {
+			allPrime = false;
+			break;	
+		} else {
+			circulars.push_back( c);
+		}
 	}
 
-	return true;
+	if( allPrime) {
+		sort( circulars.begin(), circulars.end());
+		circulars.erase( unique( circulars.begin(), circulars.end()), circulars.end());
+
+		for(int i=0; i<circulars.size(); i++)
+		{
+			cout << "find! : " << circulars[i] << endl;
+			circularPrimes.insert( std::map<int,int>::value_type( circulars[i], circulars[i]));
+		}
+	}
+
+	return allPrime; 
 }
 
 int main(int argc, char** argv)
@@ -58,6 +98,17 @@ int main(int argc, char** argv)
   clock_t begin = clock();
 
   /* starting code */
+	for(int i=2; i< 1000000; i++)
+	{
+		isCircularPrime( i); 
+		/*
+		if( i % 100000 == 0) {
+			cout << "i=" << i << endl;
+		}	
+		*/
+	}
+
+	cout << "size = " << circularPrimes.size() << endl;;
 
   /* end of code */
   clock_t end = clock();
