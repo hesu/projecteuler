@@ -7,50 +7,127 @@
 #include <map>
 #include <vector>
 #include <cmath>
+#include <string.h>
 
 using namespace std;
 
-std::map<int,int> bothSidePrimes;
-bool isBothSidePrime( int n)
+std::map<int,int> primes;
+
+bool isLeftSidedPrime( char buf[]) 
 {
-	if( n == 2) return true;
-  std::map<int,int>::iterator it = bothSidePrimes.find(n);
-  if( it != bothSidePrimes.end()) { return true; }
-  int s = sqrt( n) + 1;
-  for(int i=s; i>1; i--)
-  {
-    if (n%i ==0) { return false; }
-  }
-
-	if( n < 10) { 
-		bothSidePrimes.insert( std::map<int,int>::value_type( n, n));
-		return true;
-	}
-
-	char buf[1024] = {0,};
-	sprintf( buf, "%d", n);
-	int r = 0;
-	for(int i=0; i<strlen(buf); i++)
+	int buflen = strlen( buf);
+	for(int i=0; i<buflen; i++)
 	{
-		r += pow( 10, i) * ( buf[i] - '0'); 
-	}
+		int sided = 0;
+		for(int j=0; j<=i; j++)
+		{
+			sided += (buf[j] - '0') * pow(10, i-j);
+		}
+//		cout << "l sided=" << sided << endl;
+		if( sided == 0 || sided == 1) { return false; }
+		if( sided == 2) { continue; } 
 
-	s  = sqrt( r) + 1;
-	for(int i=s; i>1; i--)
-	{
-  	if (r%i ==0) { return false; }
+  	std::map<int,int>::iterator it = primes.find(sided);
+  	if( it != primes.end()) { continue; } 
+		else {
+			int s = sqrt( sided)+1;
+			for(int j=s; j>1; j--)
+			{
+				if( sided%j == 0) { return false;}
+			}
+		}
+		primes.insert( std::map<int,int>::value_type( sided, sided));
 	}
-
-	bothSidePrimes.insert( std::map<int,int>::value_type( n, n));
-	bothSidePrimes.insert( std::map<int,int>::value_type( r, r));
-  return true;
+	return true;
 }
 
-std::vector<int> sum;
+bool isRightSidedPrime( char buf[]) 
+{
+	int buflen = strlen( buf);
+	for(int i=0; i<buflen; i++)
+	{
+		int sided = 0;
+		for(int j=i; j<buflen; j++)
+		{
+			sided += (buf[j] - '0') * pow(10, buflen-j-1);
+		}
+//		cout << "r sided=" << sided << endl;
+		if( sided == 0 || sided == 1) { return false; }
+		if( sided == 2) { continue; } 
+
+  	std::map<int,int>::iterator it = primes.find(sided);
+  	if( it != primes.end()) { continue; } 
+		else {
+			int s = sqrt( sided)+1;
+			for(int j=s; j>1; j--)
+			{
+				if( sided%j == 0) { return false;}
+			}
+		}
+		primes.insert( std::map<int,int>::value_type( sided, sided));
+	}
+	return true;
+}
+
+std::map<int,int> bothSidedPrimes;
+
+bool isBothSidedPrime( int n)
+{
+	char buf[1024] = {0,};
+	sprintf( buf, "%d", n);
+	
+	if (!isLeftSidedPrime( buf)) { return false; }
+	if (!isRightSidedPrime( buf)) { return false; }
+//	cout << "buf=" << buf << ", reverse=" << reverse << endl;
+
+	bothSidedPrimes.insert( std::map<int,int>::value_type( n, n)); 
+	return true;
+}
+
+void checkTruncatablePrimes( int n)
+{
+	for(int i=0; i<9; i++)
+	{
+		int newn = n*10 + i;
+//		cout << "newn = " << newn << endl;
+		if( isBothSidedPrime( newn)) {
+			cout << "isBothSidedPrime = " << newn << " from " << n << endl;
+			checkTruncatablePrimes( newn);
+		}
+	}
+	
+	for(int i=0; i<99; i++)
+	{
+		int newn = n*100 + i;
+//		cout << "newn = " << newn << endl;
+		if( isBothSidedPrime( newn)) {
+//			cout << "isBothSidedPrime! = " << newn << endl;
+			checkTruncatablePrimes( newn);
+		}
+	}
+}
+
 int main(int argc, char** argv)
 {
   clock_t begin = clock();
   /* starting code */
+
+	for(int i=0; i<9; i++) { checkTruncatablePrimes( i); }
+	for(int i=10; i<99; i++) { checkTruncatablePrimes( i); }
+	for(int i=100; i<999; i++) { checkTruncatablePrimes( i); }
+	for(int i=1000; i<9999; i++) { checkTruncatablePrimes( i); }
+
+	int sum = 0;
+	cout << "size = " << bothSidedPrimes.size() << endl;;
+	for( std::map<int, int>::iterator it = bothSidedPrimes.begin(); it != bothSidedPrimes.end(); ++it)
+	{
+		cout << it->first << endl;
+		sum += it->first;
+	}
+
+	sum -= (2+3+5+7);
+
+	cout << "sum=" << sum << endl;
 
   /* end of code */
   clock_t end = clock();
