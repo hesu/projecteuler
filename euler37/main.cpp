@@ -8,6 +8,7 @@
 #include <vector>
 #include <cmath>
 #include <string.h>
+#include <stdio.h>
 
 using namespace std;
 
@@ -89,9 +90,7 @@ void checkTruncatablePrimes( int n)
 	for(int i=0; i<9; i++)
 	{
 		int newn = n*10 + i;
-//		cout << "newn = " << newn << endl;
 		if( isBothSidedPrime( newn)) {
-			cout << "isBothSidedPrime = " << newn << " from " << n << endl;
 			checkTruncatablePrimes( newn);
 		}
 	}
@@ -99,9 +98,7 @@ void checkTruncatablePrimes( int n)
 	for(int i=0; i<99; i++)
 	{
 		int newn = n*100 + i;
-//		cout << "newn = " << newn << endl;
 		if( isBothSidedPrime( newn)) {
-//			cout << "isBothSidedPrime! = " << newn << endl;
 			checkTruncatablePrimes( newn);
 		}
 	}
@@ -112,10 +109,12 @@ int main(int argc, char** argv)
   clock_t begin = clock();
   /* starting code */
 
-	for(int i=0; i<9; i++) { checkTruncatablePrimes( i); }
-	for(int i=10; i<99; i++) { checkTruncatablePrimes( i); }
-	for(int i=100; i<999; i++) { checkTruncatablePrimes( i); }
-	for(int i=1000; i<9999; i++) { checkTruncatablePrimes( i); }
+	for(int i=0;; i++)
+	{
+		checkTruncatablePrimes(i);
+		if (bothSidedPrimes.size() >= 15) { break; }
+	}
+
 
 	int sum = 0;
 	cout << "size = " << bothSidedPrimes.size() << endl;;
