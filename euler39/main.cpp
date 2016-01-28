@@ -44,10 +44,6 @@ int getRightAngleTriangles( int a[], int len)
 	return nRightAngle;
 }
 
-// 1) need to get combination
-// 2) make map for(a,b)
-// c : 1/3 ~ x-2
-
 int main(int argc, char** argv)
 {
   clock_t begin = clock();
