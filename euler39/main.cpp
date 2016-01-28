@@ -14,15 +14,6 @@ bool isRightAngle( int a, int b, int c)
 	return (a*a + b*b == c*c);
 }
 
-void printArr( int a[]) 
-{
-	for(int i=0; i<3;i++)
-	{
-		cout << "[" << a[i] << "] ";
-	}
-	cout <<endl;
-}
-
 int getRightAngleTriangles( int a[], int len)
 {
 	int nRightAngle = 0;
