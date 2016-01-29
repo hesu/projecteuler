@@ -46,9 +46,7 @@ int main(int argc, char** argv)
 			where = it->first;
 		}
 	}
-
 	cout << "max = " << max << " at " << where << endl;
-
   /* end of code */
 
   clock_t end = clock();
