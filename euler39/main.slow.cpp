@@ -4,6 +4,8 @@
 
 #include <iostream>
 #include <ctime>
+#include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -15,11 +17,17 @@ bool isRightAngle( int a, int b, int c)
 int getRightAngleTriangles( int a[], int len)
 {
 	int nRightAngle = 0;
-	for(int i=len-2; i>=len/3; i--)
+	for(int i=1; i<len; i++)
 	{
-		for(int j=1; j<=(len-i)/2; j++)
+		for(int j=1; j<len-i; j++)
 		{
-			if (isRightAngle( j, len-i-j, i)) {
+			std::vector<int> abc;
+			abc.push_back( i);
+			abc.push_back( j);
+			abc.push_back( len-i-j);
+			std::sort( abc.begin(), abc.end());
+
+			if (isRightAngle( abc[0], abc[1], abc[2])) {
 				nRightAngle++;	
 			}
 		}
