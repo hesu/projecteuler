@@ -4,49 +4,52 @@
 
 #include <iostream>
 #include <ctime>
+#include <cmath>
+#include <map>
 
 using namespace std;
 
-bool isRightAngle( int a, int b, int c)
-{
-	return (a*a + b*b == c*c);
-}
-
-int getRightAngleTriangles( int a[], int len)
-{
-	int nRightAngle = 0;
-	for(int i=len-2; i>=len/3; i--)
-	{
-		for(int j=1; j<=(len-i)/2; j++)
-		{
-			if (isRightAngle( j, len-i-j, i)) {
-				nRightAngle++;	
-			}
-		}
-	}
-	return nRightAngle;
-}
 
 int main(int argc, char** argv)
 {
   clock_t begin = clock();
  
 	/* starting code */
-	int arr[3] = {0,};
+	std::map<int,int> triangles;
+	std::map<int,int>::iterator it;
 
-	int maxtriangles = 0;
-	int maxlen = 0;
-	for(int i=3; i<=1000; i++)
+	for(int a=1; a<=500; a++)
 	{
-		cout << "i=" << i << endl;
-		int triangles = getRightAngleTriangles( arr, i); 
-		if (triangles > maxtriangles) {
-			maxtriangles = triangles;
-			maxlen = i;
+		for( int b=1; b<=500;b++)
+		{
+			double d = sqrt( a*a+ b*b);
+			int c = int(d);
+			if( (d == c)) {
+				int p = a+b+c;
+				if( p <= 1000) {
+					it = triangles.find( p);
+					if( it != triangles.end()) {
+						(it->second)++;
+					} else {
+						triangles.insert( std::map<int,int>::value_type( p, 1));	
+					}
+				}
+			}
 		}
 	}
 
-	cout << "maxtriangles = " << maxtriangles << " at " << maxlen << endl;
+	int max = 0;
+	int where = 0;
+	for( it = triangles.begin(); it != triangles.end(); ++it)
+	{
+		if (max < it->second) {
+			max = it->second;
+			where = it->first;
+		}
+	}
+
+	cout << "max = " << max << " at " << where << endl;
+
   /* end of code */
 
   clock_t end = clock();
