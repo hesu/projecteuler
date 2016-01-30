@@ -32,15 +32,10 @@ int main(int argc, char** argv)
 	for(int i=9; i>=1; i--) 
 	{
 		int nums[9] = {0,};
-
-		int sumcheck = 0;
 		for(int j=0; j<i; j++)
 		{
 			nums[j] = i-j;
-			sumcheck += nums[j];
 		}
-
-		if (sumcheck%3 == 0) continue;
 
 		std::sort( nums, nums+i);
 		do {
