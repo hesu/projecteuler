@@ -90,12 +90,19 @@ int main(int argc, char** argv)
 
 	while( true)
 	{
-		// todo play with number
+		// todo digit combination just once per new digits
 		int ntoi = toint( n, MAX);
 		int digits = int(log10(ntoi)+1);
-		cout << "\tdigits=" << digits << endl;
+		//cout << "\tdigits=" << digits << endl;
 		for(int i=1;i<=digits; i++)
 		{
+			int digitlist[MAX] = {0,};
+			for(int j=0;j<digits-1; j++)
+			{
+				digitlist[j] = j;
+			}
+			std::vector<int> c;
+			combination( digitlist, digits-1, i, 0, c); 
 		}
 		cout << "n=" << ntoi << endl;
 		
