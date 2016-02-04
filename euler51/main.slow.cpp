@@ -8,14 +8,12 @@
 #include <vector>
 #include <math.h>
 #include <string.h>
-#include <stdlib.h>
 
 using namespace std;
 
 std::map<int,int> primes;
 bool isprime( int n)
 {
-	if( n == 0 || n == 1) return false;
 	if( n == 2) return true;
 	std::map<int,int>::iterator it = primes.find(n);
 	if( it != primes.end()) { return true; }
@@ -57,44 +55,47 @@ void inc( int n[], int size)
 }
 
 #define MAX 8
+
 int n[MAX] = {0,};
 
-void generateReplacedNumbers( int arr[], int size, int nowi, vector<int> replaceAt, bool* done)
+void combination( int arr[], int arrsize, int choose, int nowi, std::vector<int> result, bool* done)
 {
-	cout << "replaceAt.size()=" <<replaceAt.size()<< endl;
-	if (nowi >= size-1) {
-		// done; replace it
+	if( choose <= 0) {
 		vector<int> replacedNumbers;
-		bool nopush =false;
-		for(int v=0; v<10; v++)
+		for(int i=0;i<10;i++)
 		{
-			for(int i=0; i<replaceAt.size(); i++)
+			int r[MAX];
+			memcpy( r, n,sizeof(int)*MAX);
+
+			bool nopush = false;
+			for( std::vector<int>::iterator it= result.begin(); it!=result.end();++it)
 			{
-				if( v == 0 && replaceAt[i] == size-1) {
+				if( i == 0 && *it == arrsize-1) {
 					nopush = true;
 					break;
 				}
-				arr[replaceAt[i]] = v;	
+				r[*it] = i;
 			}
-			if( !nopush) {
-				replacedNumbers.push_back( toint(arr, MAX));
-				cout << toint(arr, MAX) << " ";
+			if (!nopush){
+				replacedNumbers.push_back(toint(r, MAX));
 			}
 		}
+
 		int nPrimes = 0;
-		for(int i=0; i< replacedNumbers.size(); i++)
+		for(int i=0; i<replacedNumbers.size(); i++)
 		{
-			if( isprime( replacedNumbers[i])) {
+			if (isprime( replacedNumbers[i])) {
 				nPrimes++;
 			}
 		}
-		cout << " digit=" << size<< " replacedNumbers=" << replacedNumbers.size() << " nPrimes=" << nPrimes << endl;
 
 		if( nPrimes == 8) {
-			cout << "found!" << endl;
+			cout << "\tfound!" << endl;
 			for(int i=0; i<replacedNumbers.size(); i++)
 			{
-				if( isprime( replacedNumbers[i])) { cout << replacedNumbers[i] << " "; }
+				if( isprime( replacedNumbers[i])) {
+					cout << replacedNumbers[i] << " ";
+				}
 			}
 			cout << endl;
 
@@ -103,32 +104,11 @@ void generateReplacedNumbers( int arr[], int size, int nowi, vector<int> replace
 		return;
 	}
 
-	for(int v=0; v<10; v++) 
-	{
-		arr[nowi] = v;
-		return generateReplacedNumbers( arr, size, nowi+1, replaceAt, done);
-	}
-}
-
-
-void combination( int arr[], int digits, int choose, int nowi, std::vector<int> result, bool* done)
-{
-	if( choose <= 0) {
-	//	cout << "  digits= " << digits << " choose=" << result.size() << endl;
-		int *r = malloc( sizeof(int) * digits);
-		generateReplacedNumbers( r, digits, 0, result, done);
-		free(r);
-		return;
-	}
-
-	for(int i=nowi; i<digits; i++)
+	for(int i=nowi; i<arrsize;i++)
 	{
 		std::vector<int> r(result);
 		r.push_back(i);
-
-		if (*done == false) {
-			combination( arr, digits, choose-1, i+1,r, done);
-		}
+		combination( arr, arrsize, choose-1, i+1,r, done);
 	}
 }
 
@@ -138,18 +118,16 @@ int main(int argc, char** argv)
 
 	/* starting code */
 
-	int t[2]= {0,};
-	std::vector<int> r;
-	r.push_back(0);
-	bool b;
-	generateReplacedNumbers( t, 2, 0, r, &b); 
-
-/*
+	n[1] = 1; // starting at 10
 	int digits = 1;
+
 	bool done = false;
-	while( !done) 
+	while( !done)
 	{
-		cout << "digits:" << digits << endl;
+		int ntoi = toint( n, MAX);
+		int d = int(log10(ntoi)+1);
+		if( d> digits) digits = d;
+
 		for(int i=1;i<=digits; i++)
 		{
 			int digitlist[MAX] = {0,};
@@ -158,11 +136,12 @@ int main(int argc, char** argv)
 				digitlist[j] = j;
 			}
 			std::vector<int> c;
-			combination( digitlist, digits-1, i, 0, c, &done);
+			combination( digitlist, digits, i, 0, c, &done); 
 		}
-		digits++;
+		cout << "n=" << ntoi << endl;
+		inc( n, MAX);
+
 	}
-	*/
 
 	/* end of code */
 	clock_t end = clock();
