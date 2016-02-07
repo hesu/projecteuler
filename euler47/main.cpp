@@ -86,11 +86,6 @@ class PrimeFactors
 		}
 };
 
-bool hasFourPrimeFactors( int n)
-{
-	std::vector<PrimeFactors> p;
-}
-
 int main(int argc, char** argv)
 {
 	clock_t begin = clock();
