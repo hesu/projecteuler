@@ -5,6 +5,9 @@
 #include <ctime>
 #include <vector>
 #include <cmath>
+#include <algorithm>
+#include <stdlib.h>
+#include <string.h>
 
 using namespace std;
 
@@ -41,17 +44,47 @@ int main(int argc, char** argv)
 	
 	/* starting code */ 
 	int n[MAX] = {0,};
+	int buf[MAX] = {0,};
 
 	while(true)
 	{
-		// TODO
 		int ntoi = toint( n, MAX);
 		int d = int(log10(ntoi)+1);
-
 		int ratio = (ntoi/(pow(10, d-2)));
-		if( ratio < 18) {
-			cout << "ntoi=" << ntoi << " ratio=" << ratio << endl;
+		memcpy( buf, n, sizeof(int)*MAX);
+		if( ratio < 18 && ntoi > 99) {
+			cout << "n=" << ntoi << ", d=" << d << endl;
+			std::sort( n, n+d);
+
+			bool foundMultiples[6] = {0,};
+			do{
+				int converted = toint( n, MAX);
+				int left = converted%ntoi;
+				if( left == 0) {
+					int q = converted/ntoi;
+					if( q <=6 && q > 0) {
+						foundMultiples[q-1] = true;
+					}
+				}
+			} while( std::next_permutation(n, n+d));
+
+			bool found = true;
+			for(int i=0; i<6; i++)
+			{
+				if (foundMultiples[i] == false) {
+					found = false;
+					break;
+				}
+			}
+
+			if( found) {
+				cout << "ntoi =" << ntoi << endl;
+				break;
+			}
+
+			//cout << "ntoi=" << ntoi << " ratio=" << ratio << endl;
 		}
+		memcpy( n, buf, sizeof(int)*MAX);
 		inc( n, MAX);	
 	}
 
