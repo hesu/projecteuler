@@ -1,14 +1,69 @@
 /*
-	 Problem 53 - Combinatoric selections 
+	 Problem 56 - Powerful digit sum 
  */
 #include <iostream>
 #include <ctime>
-
+#include <string.h>
+#include <stdio.h>
 #include <vector>
 #include <map>
-#include <cmath>
 
 using namespace std;
+
+class BigInt
+{
+	private:
+		std::vector<int> dg; // digit
+	public:
+		BigInt( int n) 
+		{
+			char buf[100] = {0,};
+			sprintf( buf, "%d", n);
+			int len = strlen( buf);
+			for(int i=len-1; i>=0; i--)
+			{
+				dg.push_back( buf[i]-'0');
+			}
+		}
+
+		std::vector<int> getDigits() { return dg; }
+
+		void print()
+		{
+			for(int i=dg.size()-1; i>=0; i--)
+			{
+				cout << dg[i];
+			}
+			cout << endl;
+		}
+
+		void multiply(int m)
+		{
+			for(int i=0; i<dg.size(); i++) { dg[i] *= m; }
+
+			int nextCarry = 0;
+			for(int i=0; i<dg.size(); i++)
+			{
+				dg[i] += nextCarry;
+				nextCarry = 0;
+				while( dg[i] >= 10) {
+					dg[i] -= 10;
+					nextCarry++;
+				}
+			}
+
+			while( nextCarry > 0) {
+				if( nextCarry > 10) {
+					dg.push_back( nextCarry%10);
+					nextCarry /=10;	
+				} else {
+					dg.push_back( nextCarry);
+					nextCarry = 0;
+				}
+			}
+		}
+};
+
 
 struct _PrimeFactor
 {
@@ -157,72 +212,65 @@ class PrimeFactors
 			return *this;
 		}
 
-		unsigned long int tonumber()
+		BigInt tonumber()
 		{
-			unsigned long int val = 1;
+			BigInt r = BigInt(1);
 			for(std::map<int, PrimeFactor>::iterator it= pf.begin(); it != pf.end(); it++)
 			{
-				unsigned long int powed = pow(it->first, it->second.e);
-				val *= powed;
+				for(int i=1; i<=it->second.e; i++)
+				{
+					r.multiply( it->first);
+				}
 			}
-			return val;
+			return r;
 		}
 };
 
-unsigned long int get_nCr( int n, int r)
+int get10PowerRemovedDigitSum( PrimeFactors& src) 
 {
-	std::vector<int> up;
-	for(int i=1; i<=n; i++) up.push_back(i);
+	PrimeFactor *pf2 = src.getPrimeFactor( 2); 
+	PrimeFactor *pf5 = src.getPrimeFactor( 5); 
 
-	std::vector<int> down;
-	for(int i=1; i<= n-r; i++) down.push_back(i);
-	for(int i=1; i<= r; i++) down.push_back( i);
-
-	PrimeFactors u = PrimeFactors();
-	for(int i=0; i<up.size(); i++)
-	{
-		PrimeFactors p = PrimeFactors( up[i], 1);
-		u *= p;
+	if( pf2 && pf5) {
+		int max;
+		(pf2->e > pf5->e) ? (max = pf5->e) : (max = pf2->e);
+		pf2->e -= max;
+		pf5->e -= max;
 	}
 
-	PrimeFactors d = PrimeFactors();
-	for(int i=0; i<down.size(); i++)
+	BigInt r = src.tonumber();
+	int sum = 0;
+	std::vector<int> dg = r.getDigits();
+	for(int i=0; i<dg.size(); i++)
 	{
-		PrimeFactors p = PrimeFactors( down[i], 1);
-		d *= p;
+		sum += dg[i];
 	}
-
-	u /= d;
-	return u.tonumber();
+	return sum;
 }
 
 int main(int argc, char** argv)
 {
 	clock_t begin = clock();
-	/* starting code */ 
 
-	unsigned long int million = 1000000;
-	int cnt = 0;
-	for(int n=23; n<=100; n++) 
+	/* starting code */
+	int max = 0;
+	for(int a=1; a<100; a++)
 	{
-		for(int r=1; r<=n; r++)
+		for(int b=1; b<100; b++)
 		{
-			unsigned long int val = get_nCr( n, r);
-			if( val > million) {
-				cnt++;
+			PrimeFactors pf = PrimeFactors(a,b);
+			int sum = get10PowerRemovedDigitSum( pf);
+			if( max < sum) { 
+				cout << "a=" << a << " b=" << b << " digital sum=" << sum << endl;
+				pf.print();
+				max = sum; 
 			}
 		}
 	}
-	cout << "cnt=" << cnt << endl;
-
-/* TEST CODE
-		cout << "5c3 val= " << get_nCr( 5, 3) << endl;
-		cout << "23c10 val= " << get_nCr( 23, 10) << endl;
-		*/
+	cout << "max val=" << max << endl;
 
 	/* end of code */
 	clock_t end = clock();
 	std::cout << "elapsed time=" << double(end - begin) / CLOCKS_PER_SEC << std::endl;
 	return 0;
 }
-

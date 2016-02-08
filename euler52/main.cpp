@@ -53,7 +53,7 @@ int main(int argc, char** argv)
 		int ratio = (ntoi/(pow(10, d-2)));
 		memcpy( buf, n, sizeof(int)*MAX);
 		if( ratio < 18 && ntoi > 99) {
-			cout << "n=" << ntoi << ", d=" << d << endl;
+//			cout << "n=" << ntoi << ", d=" << d << endl;
 			std::sort( n, n+d);
 
 			bool foundMultiples[6] = {0,};
