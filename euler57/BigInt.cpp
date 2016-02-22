@@ -29,7 +29,7 @@ class BigInt
 			}
 		}
 		
-		void setBigInt( BigInt& n) 
+		void copy( BigInt& n) 
 		{
 			std::vector<int> ndg = n.getDigits();
 			for(int i=0; i<ndg.size(); i++)
@@ -37,6 +37,8 @@ class BigInt
 				dg.push_back( ndg[i]);
 			}
 		}
+
+		void setdg( std::vector<int> _dg) { dg = _dg; }
 		
 		std::vector<int> getDigits() { return dg; }
 		int getDigitsLen() { return dg.size(); }
@@ -50,48 +52,54 @@ class BigInt
 		BigInt operator * (BigInt &rhs)
 		{
 			BigInt r;
+			std::vector<int> retdg;
+			
 			std::vector<int> rdg = rhs.getDigits();	
-
 			for(int i=0; i<dg.size(); i++)
 			{
 				for(int j=0; j<rdg.size(); j++)
 				{
-					int val = dg[i] * dg[j];
-
-					while( r.getDigits().size() >= i+j) {
-						r.getDigits().push_back(0);
+					int val = dg[i] * rdg[j];
+					while( retdg.size() <= i+j) {
+						retdg.push_back(0);
 					}
-					r.getDigits()[i+j] += val;
+					retdg[i+j] += val;
 				}
 			}
 
 			int nextCarry = 0;
-			for(int i=0; i<r.getDigits().size(); i++)
+			for(int i=0; i<retdg.size(); i++)
 			{
-				r.getDigits()[i] += nextCarry;
+				retdg[i] += nextCarry;
 				nextCarry = 0;
-				while( r.getDigits()[i] >= 10) {
-					r.getDigits()[i] -= 10;
+				while( retdg[i] >= 10) {
+					retdg[i] -= 10;
 					nextCarry++;
 				}
 			}
 
 			while( nextCarry > 0) {
 				if( nextCarry > 10) {
-					r.getDigits().push_back( nextCarry%10);
+					retdg.push_back( nextCarry%10);
 					nextCarry /=10;	
 				} else {
-					r.getDigits().push_back( nextCarry);
+					retdg.push_back( nextCarry);
 					nextCarry = 0;
 				}
 			}
+
+			r.setdg( retdg);
 			return r;
 		}
 
 		BigInt operator + (BigInt &rhs)
 		{
-			BigInt ret = BigInt(0);
-			std::vector<int> retdg = ret.getDigits();
+			BigInt ret; 
+			std::vector<int> retdg;
+			for(int i=0; i<getDigitsLen(); i++)
+			{
+				retdg.push_back(0);
+			}
 
 			int rhslen = rhs.getDigitsLen();
 			std::vector<int> rhsdg = rhs.getDigits();
@@ -114,14 +122,14 @@ class BigInt
 			}
 
 			if (carry > 0) { retdg.push_back( carry); }
+			ret.setdg( retdg);
+			
 			return ret;
 		}
 
 		BigInt operator - (BigInt &rhs)
 		{
-			BigInt ret; 
-			std::vector<int> retdg = ret.getDigits();
-			for(int i=0; i<dg.size(); i++) { retdg.push_back( dg[i]); }
+			std::vector<int> retdg; for(int i=0; i<dg.size(); i++) { retdg.push_back( dg[i]); }
 
 			for(int i=rhs.getDigitsLen()-1; i>=0; i--)
 			{
@@ -133,7 +141,7 @@ class BigInt
 					retval = retdg[j+1];
 					j++;
 				}
-				retdg[i] = dg[i] - rhs.getDigits()[i];
+				retdg[i] = retdg[i] - rhs.getDigits()[i];
 			}
 
 			for(int i= retdg.size()-1; i>=0; i--)
@@ -141,14 +149,35 @@ class BigInt
 				if( retdg[i] != 0) break;
 				retdg.pop_back();
 			}
+
+			BigInt ret; ret.setdg( retdg);
 			return ret;
 		}
 
 		BigInt operator /( BigInt &rhs)
 		{
-			return (this->toint() / rhs.toint());
+			BigInt that; that.setdg( dg);
+			int q = 0;
+			BigInt zero = BigInt(0);
+			while( zero < that) {
+				that = that - rhs;
+				q++;
+			}
+			return that;
 		}
 		
+		BigInt operator %( BigInt &rhs)
+		{
+			cout << "%" << endl;
+			BigInt that; that.setdg( dg);
+				cout << "that=" << that.toint() << endl;
+			BigInt zero = BigInt(0);
+			while( zero < that) {
+				that = that - rhs;
+			}
+			return that;
+		}
+
 		bool operator <( BigInt &rhs)
 		{
 			int llen = getDigitsLen();
@@ -170,98 +199,22 @@ class BigInt
 		}
 };
 
-int lcm( int x, int y)
-{
-	int s, b; // smaller, bigger;
-	
-	if( x>y) { s = y; b = x; } else { s = x; b = y;}
-	if( b%s == 0) { return b;}
-
-	int lcm;
-	for(int i=1;; i++)
-	{
-		lcm = s*i;
-		if( lcm % b ==0) { break; }
-	}
-	return lcm;
-}
-
-
-BigInt new_lcm( BigInt x, BigInt y)
-{
-	BigInt s, b; // smaller, bigger;
-	if( x < y) { s = x; b = y; } else { s = y; b = x; }
-
-
-	BigInt l;
-	return l;
-}
-
-class Fraction
-{
-	private : 
-		BigInt numerator;
-		BigInt denominator;
-	public :
-		Fraction(){}
-
-		void setFraction( BigInt& n, BigInt& d)
-		{
-			numerator.setBigInt( n);
-			denominator.setBigInt( d);
-		}
-
-		void print() { cout << numerator.toint() << "/" << denominator.toint(); }
-
-		Fraction operator + (Fraction& rhs){
-			BigInt commonD = BigInt( lcm( denominator.toint(), rhs.get_denominator().toint()));
-			unsigned long long int myN = numerator.toint() * ( commonD.toint() / denominator.toint());
-			unsigned long long int rhsN = rhs.get_numerator().toint() * ( commonD.toint() / rhs.get_denominator().toint());
-			BigInt lastN = BigInt( myN + rhsN);
-			Fraction r;
-			r.setFraction( lastN, commonD); //r.reduce();
-			return r;
-		}
-
-		BigInt get_denominator() { return denominator; }
-		BigInt get_numerator() { return numerator; }
-};
-
-Fraction getNextFraction( Fraction& before)
-{
-	BigInt two = BigInt(2);
-	BigInt one = BigInt(1);
-	Fraction start; start.setFraction( two, one);
-	Fraction inverse = start + before;
-
-	BigInt d = BigInt( inverse.get_denominator());
-	BigInt n = BigInt( inverse.get_numerator());
-	Fraction next; next.setFraction( d, n); 
-	return next;
-}
-
 int main(int argc, char** argv)
 {
 	clock_t begin = clock();
 	
 	/* starting code */
-	
-	int count = 0;
+	BigInt n1= BigInt(2);
+	n1.print();
 
-	BigInt o = BigInt(1);
-	BigInt t = BigInt(2);
-	Fraction next; next.setFraction(o,t);
-	for(int i=1; i<=1000; i++)
-	{
-		cout << "at=" << i << " "; 
-		Fraction one; one.setFraction( o, o);
-		Fraction got = one + next;
-		BigInt d = got.get_denominator(); BigInt n = got.get_numerator();
-		got.print(); cout << endl;
-		if( n.getDigitsLen() > d.getDigitsLen()) { count++; }
-		next = getNextFraction(next);
-	}
-	return count;
+	BigInt n2 = BigInt(501);
+	n2.print();
+
+	BigInt quo = n2 / n1;
+	quo.print();
+
+	BigInt remain = n2 % n1;
+	remain.print();
 
 	/* end of code */
 	clock_t end = clock();
