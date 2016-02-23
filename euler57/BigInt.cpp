@@ -40,8 +40,8 @@ class BigInt
 
 		void setdg( std::vector<int> _dg) { dg = _dg; }
 		
-		std::vector<int> getDigits() { return dg; }
-		int getDigitsLen() { return dg.size(); }
+		std::vector<int> getDigits() const { return dg; }
+		int getDigitsLen() const { return dg.size(); }
 
 		void print()
 		{
@@ -127,7 +127,7 @@ class BigInt
 			return ret;
 		}
 
-		BigInt operator - (BigInt &rhs)
+		BigInt& operator - (BigInt &rhs)
 		{
 			std::vector<int> retdg; for(int i=0; i<dg.size(); i++) { retdg.push_back( dg[i]); }
 
@@ -150,38 +150,44 @@ class BigInt
 				retdg.pop_back();
 			}
 
-			BigInt ret; ret.setdg( retdg);
-			return ret;
+			BigInt* ret = new BigInt(); ret->setdg( retdg);
+			return *ret;
 		}
 
-		BigInt operator /( BigInt &rhs)
+		BigInt& operator /( BigInt &rhs)
 		{
 			BigInt that; that.setdg( dg);
+			cout << "operator /. and first that=" << that.toint() << endl;
 			int q = 0;
 			BigInt zero = BigInt(0);
-			while( zero < that) {
+
+			while( zero < that - rhs) { 
+				cout << "try to minus. now value=" << that.toint() << endl;
 				that = that - rhs;
 				q++;
 			}
-			return that;
+			cout << "return that." << endl;
+
+			BigInt* quo = new BigInt( q);
+			return *quo;
 		}
 		
-		BigInt operator %( BigInt &rhs)
+		BigInt& operator %( BigInt &rhs)
 		{
 			cout << "%" << endl;
-			BigInt that; that.setdg( dg);
-				cout << "that=" << that.toint() << endl;
+			BigInt* that = new BigInt(); that->setdg( dg);
+				cout << "that=" << that->toint() << endl;
 			BigInt zero = BigInt(0);
-			while( zero < that) {
-				that = that - rhs;
+			while( zero < *that) {
+				*that = *that - rhs;
 			}
-			return that;
+			return *that;
 		}
 
-		bool operator <( BigInt &rhs)
+		bool operator <( BigInt const &rhs)
 		{
-			int llen = getDigitsLen();
-			int rlen = rhs.getDigitsLen();
+			const int llen = getDigitsLen();
+			const int rlen = rhs.getDigitsLen();
 			if( llen != rlen) { return (llen < rlen); }
 			std::vector<int> rdg = rhs.getDigits();
 			for(int i=rlen-1; i>=0; i--)
@@ -189,6 +195,7 @@ class BigInt
 				if( dg[i] == rdg[i]	) { continue; }
 				return (dg[i] < rdg[i]);
 			}
+			return false;
 		}
 
 		unsigned long long int toint()
@@ -210,11 +217,13 @@ int main(int argc, char** argv)
 	BigInt n2 = BigInt(501);
 	n2.print();
 
+	cout << "get quota" << endl;
 	BigInt quo = n2 / n1;
 	quo.print();
-
+/*
 	BigInt remain = n2 % n1;
 	remain.print();
+	*/
 
 	/* end of code */
 	clock_t end = clock();

@@ -160,6 +160,7 @@ class BigInt
 				if( dg[i] == rdg[i]	) { continue; }
 				return (dg[i] < rdg[i]);
 			}
+			return false;
 		}
 
 		unsigned long long int toint()
@@ -186,12 +187,10 @@ int lcm( int x, int y)
 	return lcm;
 }
 
-
 BigInt new_lcm( BigInt x, BigInt y)
 {
 	BigInt s, b; // smaller, bigger;
 	if( x < y) { s = x; b = y; } else { s = y; b = x; }
-
 
 	BigInt l;
 	return l;
