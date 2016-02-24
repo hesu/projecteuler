@@ -101,7 +101,7 @@ BigInt BigInt::operator + (BigInt &rhs)
 	return ret;
 }
 
-BigInt& BigInt::operator - (BigInt &rhs)
+BigInt BigInt::operator - (BigInt &rhs)
 {
 	std::vector<int> retdg; for(int i=0; i<dg.size(); i++) { retdg.push_back( dg[i]); }
 
@@ -124,38 +124,38 @@ BigInt& BigInt::operator - (BigInt &rhs)
 		retdg.pop_back();
 	}
 
-	BigInt* ret = new BigInt(); ret->setdg( retdg);
-	return *ret;
+	BigInt ret; ret.setdg( retdg);
+	return ret;
 }
 
-BigInt& BigInt::operator /( BigInt &rhs)
+BigInt BigInt::operator /( BigInt rhs)
 {
 	BigInt that; that.setdg( dg);
-	cout << "operator /. and first that=" << that.toint() << endl;
+//	cout << "operator /. and first that=" << that.toint() << endl;
 	int q = 0;
 	BigInt zero = BigInt(0);
 
-	while( zero + rhs < that) {
-		cout << "try to minus. now value=" << that.toint() << endl;
+	while( zero + rhs <= that) {
+//		cout << "try to minus. now value=" << that.toint() << endl;
 		that = that - rhs;
 		q++;
 	}
-	cout << "return that." << endl;
+//	cout << "return that." << endl;
 
-	BigInt* quo = new BigInt( q);
-	return *quo;
+	BigInt quo = BigInt( q);
+	return quo;
 }
 		
-BigInt& BigInt::operator %( BigInt &rhs)
+BigInt BigInt::operator %( BigInt &rhs)
 {
 	//cout << "%" << endl;
-	BigInt* that = new BigInt(); that->setdg( dg);
+	BigInt that; that.setdg( dg);
 	//cout << "that=" << that->toint() << endl;
 	BigInt zero = BigInt(0);
-	while( zero + rhs <= *that) {
-		*that = *that - rhs;
+	while( zero + rhs <= that) {
+		that = that - rhs;
 	}
-	return *that;
+	return that;
 }
 
 bool BigInt::operator <( BigInt const &rhs)

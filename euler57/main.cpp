@@ -12,12 +12,13 @@
 #include "BigInt.h"
 
 using namespace std;
-
+//BigInt lcm( BigInt x, BigInt y) { return x*y; }
 BigInt lcm( BigInt x, BigInt y)
 {
+	cout << "lcm" << endl;	
 	BigInt s, b; // smaller, bigger;
 	if( x < y) { s = x; b = y; } else { s = y; b = x; }
-	if( (b % s).toint() == 0){ return b; }
+	if( (b % s).toint() == 0){ cout << "lcm return(1)" << endl; return b; }
 
 	BigInt l;
 	for(int i=1;; i++)
@@ -26,10 +27,9 @@ BigInt lcm( BigInt x, BigInt y)
 		l = s * bi;
 		if( (l % b).toint() == 0) { break; }
 		else { 
-//			(l % b).print();
-//			cout << "try l=" << l.toint() << " b=" << b.toint() << " l % b=" << (l%b).toint() << endl;
 		}
 	}
+	cout << "lcm return(2)" << endl;
 	return l;
 }
 
@@ -50,9 +50,13 @@ class Fraction
 		void print() { cout << numerator.toint() << "/" << denominator.toint(); }
 
 		Fraction operator + (Fraction& rhs){
-			BigInt commonD = BigInt( lcm( denominator.toint(), rhs.get_denominator().toint()));
-			unsigned long long int myN = numerator.toint() * ( commonD.toint() / denominator.toint());
-			unsigned long long int rhsN = rhs.get_numerator().toint() * ( commonD.toint() / rhs.get_denominator().toint());
+			BigInt commonD = BigInt( lcm( denominator, rhs.get_denominator()));
+
+			BigInt quo = commonD / denominator;
+			BigInt myN = numerator * quo;
+
+			BigInt quo2 = commonD / rhs.get_denominator();
+			BigInt rhsN = rhs.get_numerator() * quo2; 
 			BigInt lastN = BigInt( myN + rhsN);
 			Fraction r;
 			r.setFraction( lastN, commonD); //r.reduce();
@@ -67,12 +71,13 @@ Fraction getNextFraction( Fraction& before)
 {
 	BigInt two = BigInt(2);
 	BigInt one = BigInt(1);
-	Fraction start; start.setFraction( two, one);
+	Fraction start; start.setFraction( one, one);
 	Fraction inverse = start + before;
+//	cout << "inverse ="; inverse.print(); cout << endl;
 
-	BigInt d = BigInt( inverse.get_denominator());
-	BigInt n = BigInt( inverse.get_numerator());
-	Fraction next; next.setFraction( d, n); 
+	BigInt d = BigInt( inverse.get_numerator());
+	BigInt n = BigInt( inverse.get_denominator());
+	Fraction next; next.setFraction( n, d); 
 	return next;
 }
 
@@ -81,6 +86,19 @@ int main(int argc, char** argv)
 	clock_t begin = clock();
 	
 	/* starting code */
+/*	
+	BigInt one = BigInt(1);
+	BigInt o = BigInt(12);
+	BigInt t = BigInt(5);
+
+	Fraction n1; n1.setFraction( t, o);
+	Fraction n2; n2.setFraction( one, one);
+
+	Fraction n3 = n1 + n2;
+	n3.print(); 
+	cout << endl;
+	*/
+
 	int count = 0;
 	BigInt o = BigInt(1);
 	BigInt t = BigInt(2);
@@ -89,13 +107,15 @@ int main(int argc, char** argv)
 	{
 		cout << "at=" << i << " "; 
 		Fraction one; one.setFraction( o, o);
-		Fraction got = one + next;
+
+		Fraction got = next + one;
 		BigInt d = got.get_denominator(); BigInt n = got.get_numerator();
-		got.print(); cout << endl;
 		if( n.getDigitsLen() > d.getDigitsLen()) { count++; }
-		next = getNextFraction(next);
+		got.print(); cout << endl;
+		
+		next = getNextFraction(got);
 	}
-	return count;
+	cout << "count=" << count << endl;
 
 	/* end of code */
 	clock_t end = clock();

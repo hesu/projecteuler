@@ -6,7 +6,7 @@
 
 using namespace std;
 
-#define BIGINTMAX 100
+#define BIGINTMAX 10000
 class BigInt
 {
 	private:
@@ -30,10 +30,9 @@ class BigInt
 		void print();
 		BigInt operator * (BigInt &rhs);
 		BigInt operator + (BigInt &rhs);
-		BigInt& operator - (BigInt &rhs);
-		BigInt& operator /( BigInt &rhs);
-		
-		BigInt& operator %( BigInt &rhs);
+		BigInt operator - (BigInt &rhs);
+		BigInt operator /( BigInt rhs);
+		BigInt operator %( BigInt &rhs);
 		bool operator <( BigInt const &rhs);
 		bool operator <=( BigInt const &rhs);
 		unsigned long long int toint();
