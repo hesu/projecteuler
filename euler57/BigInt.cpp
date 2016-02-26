@@ -67,58 +67,40 @@ BigInt BigInt::operator * (BigInt &rhs)
 
 BigInt BigInt::operator + (BigInt rhs)
 {
-	cout << "operator +(). this="; print(); cout << " rhs="; rhs.print(); cout << endl;
-
 	BigInt ret; 
 	std::vector<int> retdg;
 
 	int bigger;
-	rhs.getDigitsLen() > getDigitsLen() ? bigger = rhs.getDigitsLen() : bigger = getDigitsLen();
+	int rhslen = rhs.getDigitsLen();
+	int len = getDigitsLen();
+	rhslen > len ? bigger = rhslen : bigger = len;
 
 	for(int i=0; i<bigger; i++)
 	{
 		retdg.push_back(0);
 	}
 
-	int rhslen = rhs.getDigitsLen();
 	std::vector<int> rhsdg = rhs.getDigits();
+	for(int i=0; i<bigger; i++)
+	{
+		if( rhslen > i) {
+			retdg[i] += rhsdg[i];
+		}
 
-	int len = getDigitsLen();
-	for(int i=0; i<len; i++) {
-		if( rhslen >= i) {
-			retdg[i] += dg[i] + rhsdg[i]; 
-		} else {
+		if( len > i) {
 			retdg[i] += dg[i];
 		}
 	}
 
-	if( rhslen > len) {
-		for(int i=len; i<rhslen; i++) { 
-			retdg.push_back( rhsdg[ i]); 
-		}
-	}
-
-	cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
-	for(int i=0; i< retdg.size(); i++)
-	{
-		cout << retdg[i] << " ";
-	}
-	cout << endl;
-	cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
-
 	int carry = 0;
 	for(int i=0; i<retdg.size(); i++)
 	{
-		cout << "at i=" << i << " carry=" << carry << endl;
 		retdg[i] += carry; carry = 0;
-		cout << "retdg[i]=" << retdg[i] << endl;
 		if( retdg[i] >= 10) { 
 			carry += retdg[i]/10; 
 			retdg[i] -= 10;
 		}
 	}
-
-	cout << "LAST retdg val=" << retdg[ retdg.size()-1] << endl;
 
 	if (carry > 0) { retdg.push_back( carry); }
 
@@ -128,15 +110,6 @@ BigInt BigInt::operator + (BigInt rhs)
 		retdg.pop_back();
 	}
 	ret.setdg( retdg);
-
-	for(int i=0; i< retdg.size(); i++)
-	{
-		cout << retdg[i] << " ";
-	}
-	cout << endl;
-
-	cout << "operator + return ret=";
-	ret.print();
 	cout << endl;
 	return ret;
 }
@@ -171,16 +144,13 @@ BigInt BigInt::operator - (BigInt &rhs)
 BigInt BigInt::operator /( BigInt rhs)
 {
 	BigInt that; that.setdg( dg);
-//	cout << "operator /. and first that=" << that.toint() << endl;
 	int q = 0;
 	BigInt zero = BigInt(0);
 
 	while( zero + rhs <= that) {
-//		cout << "try to minus. now value=" << that.toint() << endl;
 		that = that - rhs;
 		q++;
 	}
-//	cout << "return that." << endl;
 
 	BigInt quo = BigInt( q);
 	return quo;
@@ -188,9 +158,7 @@ BigInt BigInt::operator /( BigInt rhs)
 		
 BigInt BigInt::operator %( BigInt &rhs)
 {
-	//cout << "%" << endl;
 	BigInt that; that.setdg( dg);
-	//cout << "that=" << that->toint() << endl;
 	BigInt zero = BigInt(0);
 	while( zero + rhs <= that) {
 		that = that - rhs;
@@ -225,7 +193,6 @@ bool BigInt::operator <=( BigInt const &rhs)
 	}
 	return true;
 }
-
 
 unsigned long long int BigInt::toint()
 {
