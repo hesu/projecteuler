@@ -29,7 +29,7 @@ class BigInt
 		int getDigitsLen() const { return dg.size(); }
 		void print();
 		BigInt operator * (BigInt &rhs);
-		BigInt operator + (BigInt &rhs);
+		BigInt operator + (BigInt rhs);
 		BigInt operator - (BigInt &rhs);
 		BigInt operator /( BigInt rhs);
 		BigInt operator %( BigInt &rhs);

@@ -20,7 +20,6 @@ void BigInt::copy( BigInt &n)
 void BigInt::print()
 {
 	for(int i=dg.size()-1; i>=0; i--) { cout << dg[i]; }
-	cout << endl;
 }
 
 BigInt BigInt::operator * (BigInt &rhs)
@@ -66,11 +65,17 @@ BigInt BigInt::operator * (BigInt &rhs)
 	return r;
 }
 
-BigInt BigInt::operator + (BigInt &rhs)
+BigInt BigInt::operator + (BigInt rhs)
 {
+	cout << "operator +(). this="; print(); cout << " rhs="; rhs.print(); cout << endl;
+
 	BigInt ret; 
 	std::vector<int> retdg;
-	for(int i=0; i<getDigitsLen(); i++)
+
+	int bigger;
+	rhs.getDigitsLen() > getDigitsLen() ? bigger = rhs.getDigitsLen() : bigger = getDigitsLen();
+
+	for(int i=0; i<bigger; i++)
 	{
 		retdg.push_back(0);
 	}
@@ -80,24 +85,59 @@ BigInt BigInt::operator + (BigInt &rhs)
 
 	int len = getDigitsLen();
 	for(int i=0; i<len; i++) {
-		if( rhslen-1 >= i) { retdg[i] += dg[i] + rhsdg[i]; }
+		if( rhslen >= i) {
+			retdg[i] += dg[i] + rhsdg[i]; 
+		} else {
+			retdg[i] += dg[i];
+		}
 	}
 
 	if( rhslen > len) {
-		for(int i=len; i<rhslen; i++) { retdg.push_back( rhsdg[ i]); }
+		for(int i=len; i<rhslen; i++) { 
+			retdg.push_back( rhsdg[ i]); 
+		}
 	}
+
+	cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
+	for(int i=0; i< retdg.size(); i++)
+	{
+		cout << retdg[i] << " ";
+	}
+	cout << endl;
+	cout << "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
 
 	int carry = 0;
-	for(int i=0; i<getDigitsLen(); i++)
+	for(int i=0; i<retdg.size(); i++)
 	{
+		cout << "at i=" << i << " carry=" << carry << endl;
 		retdg[i] += carry; carry = 0;
-		if( retdg[i] >= 10) { carry += retdg[i]/10; }
-		retdg[i] = retdg[i]%10;
+		cout << "retdg[i]=" << retdg[i] << endl;
+		if( retdg[i] >= 10) { 
+			carry += retdg[i]/10; 
+			retdg[i] -= 10;
+		}
 	}
 
+	cout << "LAST retdg val=" << retdg[ retdg.size()-1] << endl;
+
 	if (carry > 0) { retdg.push_back( carry); }
+
+	for(int i= retdg.size()-1; i>=0; i--)
+	{
+		if( retdg[i] != 0) break;
+		retdg.pop_back();
+	}
 	ret.setdg( retdg);
 
+	for(int i=0; i< retdg.size(); i++)
+	{
+		cout << retdg[i] << " ";
+	}
+	cout << endl;
+
+	cout << "operator + return ret=";
+	ret.print();
+	cout << endl;
 	return ret;
 }
 
