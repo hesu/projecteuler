@@ -9,11 +9,12 @@
 #include <fstream>
 #include <string>
 #include <cstdlib> // atoi()
-#include <algorithm>
+
+#include <bitset> // http://stackoverflow.com/questions/7349689/c-how-to-print-using-cout-the-way-a-number-is-stored-in-memory/7349767
 
 using namespace std;
 
-char getCipherCode_e( std::vector<int> c)
+unsigned char getCipherCode_e( std::vector<int> c)
 {
 	// get 'e' cipher code (most frequent)
 	std::map<int,int> frequency;
@@ -32,7 +33,35 @@ char getCipherCode_e( std::vector<int> c)
 	}
 
 	cout << "max key('e') = " << e << ", maxv=" << maxv << endl;
-	return e;
+	return static_cast<unsigned char>(e);
+}
+
+unsigned char getEncryptionKey( unsigned char encrypted_e)
+{
+	cout << "encrypted_e=" << encrypted_e << endl;
+	// encrypted_e XOR key = 'e'
+	// 'e' XOR key = encrypted_e
+	// key = ?
+	unsigned char e = 'e';
+	for(unsigned char k='a'; k<='z'; k++)
+	{
+		unsigned char v1 = e^k;
+		unsigned char v2 = encrypted_e^k;
+		if( v1 == v2) {
+
+			cout << "e^k" << endl;
+			unsigned char v = e^k;
+			std::bitset<8> x(v);
+			std::cout << x << endl;
+			
+			cout << "encrypted_e^k" << endl;
+			unsigned char v2 = encrypted_e^k;
+			std::bitset<8> x2(v2);
+			std::cout << x2 << endl;
+			
+			return k;
+		}
+	}
 }
 
 int main(int argc, char** argv)
@@ -66,7 +95,6 @@ int main(int argc, char** argv)
 	std::vector<int> c1;
 	std::vector<int> c2;
 	std::vector<int> c3;
-
 	for(int i=0; i<cipher.size(); i++)
 	{
 		if( i%3 == 1) { c1.push_back( cipher[i]);
@@ -74,6 +102,12 @@ int main(int argc, char** argv)
 		} else { c3.push_back( cipher[i]); }
 	}
 
+	unsigned char k1 = getEncryptionKey( getCipherCode_e( c1));
+	cout << "key1=" << k1 << endl;
+	unsigned char k2 = getEncryptionKey( getCipherCode_e( c2));
+	cout << "key2=" << k2 << endl;
+	unsigned char k3 = getEncryptionKey( getCipherCode_e( c3));
+	cout << "key3=" << k3 << endl;
 
 	/* end of code */
 	clock_t end = clock();
