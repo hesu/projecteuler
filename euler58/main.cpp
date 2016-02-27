@@ -57,17 +57,9 @@ int howmanyPrimes( std::vector<int> v)
 	return n;
 }
 
-double getDiagonalPrimeRatio( int size, std::map<int, int> diagonalPrime)
+double getDiagonalPrimeRatio( int size, double thisSizePrimes)
 {
-	double nPrimes = 0;
-	for(int i=3; i<=size; i = i+2)
-	{
-		std::map<int,int>::iterator it = diagonalPrime.find( i);
-		nPrimes += it->second;
-	}
-
-	cout << "size=" << size << ", ndiagonals = " << getnDiagonals( size) << ", nPrimes=" << nPrimes << endl;
-	return ( nPrimes / getnDiagonals( size));
+	return thisSizePrimes / getnDiagonals( size);
 }
 
 int main(int argc, char** argv)
@@ -75,13 +67,20 @@ int main(int argc, char** argv)
 	clock_t begin = clock();
 	/* starting code */
 	std::map<int, int> diagonalPrimes; // rectangleSize, nPrimes
+	diagonalPrimes.insert( std::map<int,int>::value_type(1, 0));
+	std::map<int, int>::iterator it;
 
 	int size = 3;
 	while(true)
 	{
 		std::vector<int> dn = getDiagonalNumbers( size);
-		diagonalPrimes.insert( std::map<int,int>::value_type(size, howmanyPrimes(dn)));
-		double ratio = getDiagonalPrimeRatio( size, diagonalPrimes);
+		int p = howmanyPrimes( dn);
+		
+		it = diagonalPrimes.find( size-2);
+		if (it != diagonalPrimes.end()) {
+			diagonalPrimes.insert( std::map<int,int>::value_type(size, p + it->second)); 
+		}
+		double ratio = getDiagonalPrimeRatio( size, p+it->second); 
 		if( ratio <= 0.1) break;
 		size = size+2;
 	}
