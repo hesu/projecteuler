@@ -81,14 +81,8 @@ int main(int argc, char** argv)
 	{
 		std::vector<int> dn = getDiagonalNumbers( size);
 		diagonalPrimes.insert( std::map<int,int>::value_type(size, howmanyPrimes(dn)));
-		
 		double ratio = getDiagonalPrimeRatio( size, diagonalPrimes);
-		if( ratio <= 0.1) {
-			cout << "here! ratio=" << ratio << endl;
-			break;
-		} else {
-			cout << "ratio =" << ratio << endl;
-		}
+		if( ratio <= 0.1) break;
 		size = size+2;
 	}
 	cout << "size=" << size << endl;
