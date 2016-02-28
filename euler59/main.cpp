@@ -12,9 +12,9 @@
 
 using namespace std;
 
-int getCipherCode_e( std::vector<int> c)
+int getCipherCode_space( std::vector<int> c)
 {
-	// get 'e' cipher code (most frequent)
+	// get ' ' cipher code (most frequent)
 	std::map<int,int> frequency;
 	for(int i=0; i<c.size(); i++)
 	{
@@ -29,33 +29,20 @@ int getCipherCode_e( std::vector<int> c)
 	{
 		if ((it->second) > maxv) { e = it->first; maxv = it->second; }
 	}
-
-	cout << "max key('e') = " << e << ", maxv=" << maxv << endl;
-//	return static_cast<int>(e);
 	return e;
 }
 
-int getEncryptionKey( int encrypted_e)
+int getEncryptionKey( int encrypted_space)
 {
-	cout << "encrypted_e=" << encrypted_e << endl;
-	// encrypted_e XOR key = 'e'
-	// 'e' XOR key = encrypted_e
-	// key = ?
-	int e = 'e';
 	for(int k='a'; k<='z'; k++)
 	{
-		int v1 = e^k;
-		int v2 = encrypted_e^k;
-		if( (v2 == e) && ( v1 == encrypted_e)) {
-			cout << "e^k=" << v1 << endl;
-			cout << "encrypted_e^k=" << v2 << endl;
-			cout << "k=" << k << endl;
+		int v1 = ' '^k;
+		int v2 = encrypted_space^k;
+		if( (v2 == ' ') && ( v1 == encrypted_space)) {
 			return k;
-		} else {
-			cout << "not same with k '" << k << "'(" << char(k) << ")" << " 'e'^k=" << v1 << " encrypted 'e'^k=" << v2 << endl;
 		}
 	}
-	cout << "return '?'" << endl;
+	cout << "error; return '?'" << endl;
 	return '?';
 }
 
@@ -63,22 +50,8 @@ int main(int argc, char** argv)
 {
 	clock_t begin = clock();
 	/* starting code */
-
-	/*
-	int A = 'A';
-	int star = '*';
-	int k= 'k';
-	int ixor;
-
-	cout << "A=" << A << " star=" << star << " k=" << k << endl;
-	ixor = A ^ star;
-	cout << "A XOR star = " << ixor << endl;
-	ixor = k ^ star;
-	cout << "k XOR star = " << ixor << endl;
-	*/
-
-	std::vector<int> cipher;
 	
+	std::vector<int> cipher;
 	string line;
 	ifstream f("p059_cipher.txt");
 	if( f.is_open())
@@ -86,8 +59,7 @@ int main(int argc, char** argv)
 		getline( f, line);
 		f.close();
 	}
-
-	cout << "line=" << line << endl;
+	cout << "encrypted text =" << line << endl;
 
 	string wordsDelim = ",";
 	size_t lenDelim = wordsDelim.length();
@@ -100,8 +72,6 @@ int main(int argc, char** argv)
 	}
 	cipher.push_back(atoi( line.c_str())); // last
 
-	cout << "chars cipher = " << cipher.size() << endl;
-
 	std::vector<int> c1;
 	std::vector<int> c2;
 	std::vector<int> c3;
@@ -111,17 +81,24 @@ int main(int argc, char** argv)
 		} else if( i%3 == 2) { c2.push_back( cipher[i]);
 		} else { c3.push_back( cipher[i]); }
 	}
-	cout << "chars c1 = " << c1.size() << endl;
-	cout << "chars c2 = " << c2.size() << endl;
-	cout << "chars c3 = " << c3.size() << endl;
 
-	int k1 = getEncryptionKey( getCipherCode_e( c1));
-	cout << "key1=" << k1 << endl;
-	int k2 = getEncryptionKey( getCipherCode_e( c2));
-	cout << "key2=" << k2 << endl;
-	int k3 = getEncryptionKey( getCipherCode_e( c3));
-	cout << "key3=" << k3 << endl;
+	int k1 = getEncryptionKey( getCipherCode_space( c1));
+	int k2 = getEncryptionKey( getCipherCode_space( c2));
+	int k3 = getEncryptionKey( getCipherCode_space( c3));
 
+	int sum = 0;
+	for(int i=0; i<cipher.size(); i++)
+	{
+		char c;
+		if( i%3 == 1) { c = cipher[i]^k1;}
+		else if( i%3 == 2) { c = cipher[i]^k2;}
+		else { c = cipher[i]^k3;}
+		cout << c;
+		sum += c;
+	}
+	cout << endl;
+
+	cout << "sum of decrypted letters ascii value=" << sum << endl;
 	/* end of code */
 	clock_t end = clock();
 	std::cout << "elapsed time=" << double(end - begin) / CLOCKS_PER_SEC << std::endl;
