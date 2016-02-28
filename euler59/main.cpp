@@ -10,11 +10,9 @@
 #include <string>
 #include <cstdlib> // atoi()
 
-#include <bitset> // http://stackoverflow.com/questions/7349689/c-how-to-print-using-cout-the-way-a-number-is-stored-in-memory/7349767
-
 using namespace std;
 
-unsigned char getCipherCode_e( std::vector<int> c)
+int getCipherCode_e( std::vector<int> c)
 {
 	// get 'e' cipher code (most frequent)
 	std::map<int,int> frequency;
@@ -33,42 +31,52 @@ unsigned char getCipherCode_e( std::vector<int> c)
 	}
 
 	cout << "max key('e') = " << e << ", maxv=" << maxv << endl;
-	return static_cast<unsigned char>(e);
+//	return static_cast<int>(e);
+	return e;
 }
 
-unsigned char getEncryptionKey( unsigned char encrypted_e)
+int getEncryptionKey( int encrypted_e)
 {
 	cout << "encrypted_e=" << encrypted_e << endl;
 	// encrypted_e XOR key = 'e'
 	// 'e' XOR key = encrypted_e
 	// key = ?
-	unsigned char e = 'e';
-	for(unsigned char k='a'; k<='z'; k++)
+	int e = 'e';
+	for(int k='a'; k<='z'; k++)
 	{
-		unsigned char v1 = e^k;
-		unsigned char v2 = encrypted_e^k;
-		if( v1 == v2) {
-
-			cout << "e^k" << endl;
-			unsigned char v = e^k;
-			std::bitset<8> x(v);
-			std::cout << x << endl;
-			
-			cout << "encrypted_e^k" << endl;
-			unsigned char v2 = encrypted_e^k;
-			std::bitset<8> x2(v2);
-			std::cout << x2 << endl;
-			
+		int v1 = e^k;
+		int v2 = encrypted_e^k;
+		if( (v2 == e) && ( v1 == encrypted_e)) {
+			cout << "e^k=" << v1 << endl;
+			cout << "encrypted_e^k=" << v2 << endl;
+			cout << "k=" << k << endl;
 			return k;
+		} else {
+			cout << "not same with k '" << k << "'(" << char(k) << ")" << " 'e'^k=" << v1 << " encrypted 'e'^k=" << v2 << endl;
 		}
 	}
+	cout << "return '?'" << endl;
+	return '?';
 }
 
 int main(int argc, char** argv)
 {
 	clock_t begin = clock();
 	/* starting code */
-	
+
+	/*
+	int A = 'A';
+	int star = '*';
+	int k= 'k';
+	int ixor;
+
+	cout << "A=" << A << " star=" << star << " k=" << k << endl;
+	ixor = A ^ star;
+	cout << "A XOR star = " << ixor << endl;
+	ixor = k ^ star;
+	cout << "k XOR star = " << ixor << endl;
+	*/
+
 	std::vector<int> cipher;
 	
 	string line;
@@ -92,6 +100,8 @@ int main(int argc, char** argv)
 	}
 	cipher.push_back(atoi( line.c_str())); // last
 
+	cout << "chars cipher = " << cipher.size() << endl;
+
 	std::vector<int> c1;
 	std::vector<int> c2;
 	std::vector<int> c3;
@@ -101,12 +111,15 @@ int main(int argc, char** argv)
 		} else if( i%3 == 2) { c2.push_back( cipher[i]);
 		} else { c3.push_back( cipher[i]); }
 	}
+	cout << "chars c1 = " << c1.size() << endl;
+	cout << "chars c2 = " << c2.size() << endl;
+	cout << "chars c3 = " << c3.size() << endl;
 
-	unsigned char k1 = getEncryptionKey( getCipherCode_e( c1));
+	int k1 = getEncryptionKey( getCipherCode_e( c1));
 	cout << "key1=" << k1 << endl;
-	unsigned char k2 = getEncryptionKey( getCipherCode_e( c2));
+	int k2 = getEncryptionKey( getCipherCode_e( c2));
 	cout << "key2=" << k2 << endl;
-	unsigned char k3 = getEncryptionKey( getCipherCode_e( c3));
+	int k3 = getEncryptionKey( getCipherCode_e( c3));
 	cout << "key3=" << k3 << endl;
 
 	/* end of code */
