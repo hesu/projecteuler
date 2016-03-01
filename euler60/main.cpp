@@ -71,7 +71,7 @@ int main(int argc, char** argv)
 	clock_t begin = clock();
 	/* starting code */
 
-	std::vector<int> splittable;
+	std::vector<PrimePair> splittable;
 	for(int i=2; i<100000; i++)
 	{
 		if( isprime( i)) {
@@ -79,6 +79,7 @@ int main(int argc, char** argv)
 			int pairsSize = pp.getPairsSize();
 			if (pp.getPairsSize() > 0){
 				cout << "i=" << i << " pairs size=" << pairsSize << endl;
+				splittable.push_back( pp);
 			}
 		}
 	}
