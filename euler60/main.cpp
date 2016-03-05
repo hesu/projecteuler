@@ -1,5 +1,5 @@
 /*
- 	Problem 59 - Prime pair sets 
+ 	Problem 60 - Prime pair sets 
 */
 	
 #include <iostream>
@@ -62,9 +62,27 @@ class PrimePair
 			}
 		}
 
+		bool isPrimePair() { return (pairs.size() > 0); }
 		std::map<int,int> getPairs() { return pairs; }
 		int getPairsSize() { return pairs.size(); }
 };
+
+int reverseComb(int a, int b)
+{
+	char buf[1024] = {0,};
+	sprintf( buf, "%d%d", b, a);
+	return atoi( buf);
+}
+
+bool canReversePrimePair( PrimePair& p) 
+{
+	std::map<int,int> pairs = p.getPairs();
+	for(std::map<int,int>::iterator it = pairs.begin(); it != pairs.end(); it++)
+	{
+		if( isprime( reverseComb( it->first, it->second))) { return true; }
+	}
+	return false;
+}
 
 int main(int argc, char** argv)
 {
@@ -77,15 +95,23 @@ int main(int argc, char** argv)
 		if( isprime( i)) {
 			PrimePair pp(i);
 			int pairsSize = pp.getPairsSize();
-			if (pp.getPairsSize() > 0){
-				cout << "i=" << i << " pairs size=" << pairsSize << endl;
+			if (pp.isPrimePair()) {
+//				cout << "i=" << i << " pairs size=" << pairsSize << endl;
 				splittable.push_back( pp);
 			}
 		}
 	}
 
-	cout << "primes.size()=" << primes.size() << endl;
+//	cout << "primes.size()=" << primes.size() << endl;
+	std::vector<PrimePair> splittable_reversed;
+	for(int i=0; i<splittable.size(); i++)
+	{
+		if( canReversePrimePair( splittable[i])) { 
+			splittable_reversed.push_back( splittable[i]);
+		}
+	}
 
+	cout << "splittable_reversed.size()=" << splittable_reversed.size() << endl;
 	/* end of code */
 	clock_t end = clock();
 	std::cout << "elapsed time=" << double(end - begin) / CLOCKS_PER_SEC << std::endl;
