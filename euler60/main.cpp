@@ -56,7 +56,12 @@ class PrimePair
 
 				int n1 = atoi(b1); int n2 = atoi(b2);
 				if( isprime(n1) && isprime(n2)) {
-					pairs.insert( std::map<int,int>::value_type( n1, n2)); 
+					
+					char buf2[1024] = {0,};
+					sprintf( buf2, "%d%d", n2, n1);
+					if( isprime( atoi( buf2))) {
+						pairs.insert( std::map<int,int>::value_type( n1, n2)); 
+					}
 				}
 
 			}
@@ -65,6 +70,11 @@ class PrimePair
 		bool isPrimePair() { return (pairs.size() > 0); }
 		std::map<int,int> getPairs() { return pairs; }
 		int getPairsSize() { return pairs.size(); }
+
+		void print() {
+			std::map<int,int>::iterator it = pairs.begin();
+			cout << me << "_" << std::to_string(it->first) << ":" << std::to_string(it->second);
+		}
 };
 
 int reverseComb(int a, int b)
@@ -84,34 +94,82 @@ bool canReversePrimePair( PrimePair& p)
 	return false;
 }
 
+bool canProducePrime( PrimePair& a, PrimePair&b)
+{
+	std::map<int,int> aPairs = a.getPairs();
+	std::map<int,int> bPairs = b.getPairs();
+	
+	std::map<int,int>::iterator ait = aPairs.begin();
+	std::map<int,int>::iterator bit = bPairs.begin();
+
+	int w = ait->first;
+	int x = ait->second;
+
+	int y = bit->first;
+	int z = bit->second;
+
+	char buf[1024] = {0,};
+	// check wy, wz, yw, zw
+	sprintf( buf, "%d%d", w,y);
+	if( !isprime(atoi(buf))) return false;
+	sprintf( buf, "%d%d", w,z);
+	if( !isprime(atoi(buf))) return false;
+	sprintf( buf, "%d%d", y,w);
+	if( !isprime(atoi(buf))) return false;
+	sprintf( buf, "%d%d", z,w);
+	if( !isprime(atoi(buf))) return false;
+
+	// check xy, xz, yx, zx
+	sprintf( buf, "%d%d", x,y);
+	if( !isprime(atoi(buf))) return false;
+	sprintf( buf, "%d%d", x,z);
+	if( !isprime(atoi(buf))) return false;
+	sprintf( buf, "%d%d", y,x);
+	if( !isprime(atoi(buf))) return false;
+	sprintf( buf, "%d%d", z,x);
+	if( !isprime(atoi(buf))) return false;
+
+	return true;
+}
+
+#define MAX 100000
 int main(int argc, char** argv)
 {
 	clock_t begin = clock();
 	/* starting code */
 
-	std::vector<PrimePair> splittable;
-	for(int i=2; i<100000; i++)
+	std::vector<PrimePair> pps;
+	for(int i=2; i<MAX; i++)
 	{
 		if( isprime( i)) {
 			PrimePair pp(i);
 			int pairsSize = pp.getPairsSize();
 			if (pp.isPrimePair()) {
 //				cout << "i=" << i << " pairs size=" << pairsSize << endl;
-				splittable.push_back( pp);
+				pps.push_back( pp);
 			}
 		}
 	}
 
-//	cout << "primes.size()=" << primes.size() << endl;
-	std::vector<PrimePair> splittable_reversed;
-	for(int i=0; i<splittable.size(); i++)
+	int cnt = 0;
+	for(int i=0; i< pps.size()-1; i++)
 	{
-		if( canReversePrimePair( splittable[i])) { 
-			splittable_reversed.push_back( splittable[i]);
+		for(int j=i+1; j<pps.size(); j++)
+		{
+			if( canProducePrime( pps[i], pps[j])) {
+				cout << "4 Prime!!!" << endl;
+				pps[i].print();
+				cout << ", ";
+				pps[j].print();
+				cout << endl;
+				cnt++;
+			}
 		}
 	}
 
-	cout << "splittable_reversed.size()=" << splittable_reversed.size() << endl;
+	cout << "cnt=" << cnt << endl;
+
+	cout << "pps.size()=" << pps.size() << endl;
 	/* end of code */
 	clock_t end = clock();
 	std::cout << "elapsed time=" << double(end - begin) / CLOCKS_PER_SEC << std::endl;
