@@ -159,7 +159,18 @@ bool canProduce4Primes( PrimePair& a, PrimePair&b)
 	std::map<int,int> bPairs = b.getPairs();
 	std::map<int,int>::iterator ait = aPairs.begin();
 	std::map<int,int>::iterator bit = bPairs.begin();
-	return !( a.excludes( bit->first) || a.excludes( bit->second) || b.excludes( ait->first) || b.excludes( ait->second));
+	//return !( a.excludes( bit->first) || a.excludes( bit->second) || b.excludes( ait->first) || b.excludes( ait->second));
+
+	for( std::map<int,int>::iterator ait = aPairs.begin(); ait != aPairs.end(); ait++)
+	{
+		for( std::map<int,int>::iterator bit = bPairs.begin(); bit != bPairs.end(); bit++)
+		{
+			if( !(a.excludes( bit->first)) && !(a.excludes( bit->second)) && !(b.excludes( ait->first)) && !(b.excludes( ait->second))) {
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 int find5thPrime( PrimePair &a, PrimePair &b, int sumLimit)
