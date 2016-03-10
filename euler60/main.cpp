@@ -180,7 +180,9 @@ int find5thPrime( PrimePair &a, PrimePair &b, int sumLimit)
 	for( std::map<int,int>::iterator it = primes.begin(); it != primes.end(); it++)
 	{
 		//if( ait->first + ait->second + bit->first+ bit->second + it->first < sumLimit) { return -1; } 
-		if( it->first > MAX) { return -1; }
+
+//		if( it->first > MAX) { return -1; }
+
 		if( a.getPairSum() + b.getPairSum() + it->first >= sumLimit) { return -1; } 
 		if( !(a.excludes(it->first)) && !(b.excludes( it->first))) return (it->first);
 	}
