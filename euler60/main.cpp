@@ -210,17 +210,20 @@ void combination( int arr[], int arrsize, int choose, int nowi, std::vector<int>
 	}
 
 	bool d = false;
-	if( !(d)) {
-		for(int i=nowi; i<arrsize;i++)
-		{
-			std::vector<int> r(result);
-			PrimePair pi( arr[nowi]);
-			if( notExclusive( pi, r)) {
-				r.push_back( arr[nowi]);
-				combination( arr, arrsize, choose-1, i+1,r, &d);
-			}
+	for(int i=nowi; i<arrsize;i++)
+	{
+		std::vector<int> r(result);
+		PrimePair pi( arr[nowi]);
+		if( notExclusive( pi, r)) {
+			r.push_back( arr[nowi]);
+			combination( arr, arrsize, choose-1, i+1,r, &d);
+		} else {
+			cout << "exclusive pi=" << pi.getMe() << " with r : ";
+			for(int i=0; i<result.size(); i++) { cout << result[i] << "-"; } cout << endl;
+			continue;
 		}
 	}
+
 	*done = true;
 	return;
 }
