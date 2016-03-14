@@ -195,14 +195,17 @@ void combination( int arr[], int arrsize, int choose, int nowi, std::vector<int>
 		return;
 	}
 
-	if( !(*done)) {
+	bool d = false;
+	if( !(d)) {
 		for(int i=nowi; i<arrsize;i++)
 		{
 			std::vector<int> r(result);
 			r.push_back(i);
-			combination( arr, arrsize, choose-1, i+1,r, done);
+			combination( arr, arrsize, choose-1, i+1,r, &d);
 		}
 	}
+	*done = true;
+	return;
 }
 
 
@@ -211,11 +214,12 @@ int main(int argc, char** argv)
 	clock_t begin = clock();
 	/* starting code */
 
-	int primesArr[50007] = {0,};
+	int primesArr[60000] = {0,};
 
 	int nprime = 0;
-	for(int i=2; i<=612037; i++)
+	for(int i=2;; i++)
 	{
+		if( nprime >= 60000) break;
 		if( isprime( i)) {
 			primesArr[nprime] = i;
 			nprime++;
@@ -229,7 +233,7 @@ int main(int argc, char** argv)
 		std::vector<int> c;
 		bool done = false;
 		while( !done) {
-			combination( primesArr, 50007, 5, i, c, &done);
+			combination( primesArr, 60000-6, 5, i, c, &done);
 		}
 	}
 
