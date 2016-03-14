@@ -209,8 +209,10 @@ void combination( int arr[], int arrsize, int choose, int nowi, std::vector<int>
 		{
 			std::vector<int> r(result);
 			PrimePair pi( arr[nowi]);
-			if( notExclusive( pi, r)) {r.push_back( arr[nowi]); } // TODO check pi
-			combination( arr, arrsize, choose-1, i+1,r, &d);
+			if( notExclusive( pi, r)) {
+				r.push_back( arr[nowi]);
+				combination( arr, arrsize, choose-1, i+1,r, &d);
+			}
 		}
 	}
 	*done = true;
