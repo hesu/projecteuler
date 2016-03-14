@@ -183,10 +183,16 @@ bool notExclusive( PrimePair p, std::vector<int> others)
 
 void combination( int arr[], int arrsize, int choose, int nowi, std::vector<int> result, bool* done)
 {
-//	cout << "combination. choose=" << choose << " nowi=" << nowi << endl;
-	if( choose <= 0 ) {
+	cout << "combination. c=" << choose << "\tnp=" << arr[nowi] << "\tni=" << nowi << "\t";
+	for(int i=0; i<result.size(); i++)
+	{
+		cout << result[i] << "-";
+	}
+	cout << endl;
+
+	if( choose <= 0 || nowi >= arrsize-1) {
 		/* do something here */
-		cout << "done! result.size()=" << result.size() << " result[0]=" << result[0] << "  nowi=" << nowi << endl;
+		cout << "done! result.size()=" << result.size() << " result[0]=" << result[0] << "  nowip=" << arr[nowi] << endl;
 		if( result.size() == 5 && isPrimePair(result)) {
 			cout << "found PrimePair!!!" << endl;
 			int sum = 0;
@@ -228,7 +234,7 @@ int main(int argc, char** argv)
 	int primesArr[60000] = {0,};
 
 	int nprime = 0;
-	for(int i=2;; i++)
+	for(int i=3;; i++)
 	{
 		if( nprime >= 60000) break;
 		if( isprime( i)) {
