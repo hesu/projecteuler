@@ -153,88 +153,47 @@ class PrimePair
 		}
 };
 
-bool canProduce4Primes( PrimePair& a, PrimePair&b)
+void combination( int arr[], int arrsize, int choose, int nowi, std::vector<int> result, bool* done)
 {
-	std::map<int,int> aPairs = a.getPairs();
-	std::map<int,int> bPairs = b.getPairs();
-	std::map<int,int>::iterator ait = aPairs.begin();
-	std::map<int,int>::iterator bit = bPairs.begin();
-	//return !( a.excludes( bit->first) || a.excludes( bit->second) || b.excludes( ait->first) || b.excludes( ait->second));
-
-	for( std::map<int,int>::iterator ait = aPairs.begin(); ait != aPairs.end(); ait++)
-	{
-		for( std::map<int,int>::iterator bit = bPairs.begin(); bit != bPairs.end(); bit++)
-		{
-			if( !(a.excludes( bit->first)) && !(a.excludes( bit->second)) && !(b.excludes( ait->first)) && !(b.excludes( ait->second))) {
-				return true;
-			}
-		}
+	if( choose <= 0) {
+		// do something here
+		*done = true;
+		return;
 	}
-	return false;
+
+	for(int i=nowi; i<arrsize;i++)
+	{
+		std::vector<int> r(result);
+		r.push_back(i);
+		combination( arr, arrsize, choose-1, i+1,r, done);
+	}
 }
 
-int find5thPrime( PrimePair &a, PrimePair &b, int sumLimit)
-{
-//	std::map<int,int>::iterator ait = a.getPairs.begin();
-//	std::map<int,int>::iterator bit = b.getPairs.begin();
-	for( std::map<int,int>::iterator it = primes.begin(); it != primes.end(); it++)
-	{
-		//if( ait->first + ait->second + bit->first+ bit->second + it->first < sumLimit) { return -1; } 
-
-//		if( it->first > MAX) { return -1; }
-
-		if( a.getPairSum() + b.getPairSum() + it->first >= sumLimit) { return -1; } 
-		if( !(a.excludes(it->first)) && !(b.excludes( it->first))) return (it->first);
-	}
-	return -1;
-}
 
 int main(int argc, char** argv)
 {
 	clock_t begin = clock();
 	/* starting code */
-	std::vector<PrimePair> pps;
-	for(int i=2; i<MAX; i++)
+
+	int primesArr[50007] = {0,};
+
+	int nprime = 0;
+	for(int i=2; i<=612037; i++)
 	{
 		if( isprime( i)) {
-			PrimePair pp(i);
-			int pairsSize = pp.getPairsSize();
-			if (pp.isPrimePair()) {
-				pps.push_back( pp);
-//				pp.print();
-//				cout << endl;
-			}
+			primesArr[nprime] = i;
+			nprime++;
 		}
 	}
-	cout << "pps.size()=" << pps.size() << endl;
+	cout << "primes.size()=" << primes.size() << endl;
 
-	// 616667
-	cout << "get canProduce4Primes 2pair prime" << endl;
-	int sum = MAX * 5;
-	cout << "SUM MAX=" << sum << endl;
-	for(int i=0; i< pps.size()-1; i++)
+	for(int i=0; i<=primes.size()-5; i++)
 	{
-		for(int j=i+1; j<pps.size(); j++)
-		{
-			if( canProduce4Primes( pps[i], pps[j])) {
-				cout << "findLastPrime with << " << pps[i].getMe() << " " << pps[j].getMe() << " exclude.size()=" << exclude.size() << endl;
-				int last = find5thPrime( pps[i], pps[j], sum);
-				if( last > 0) {
-					sum = last + pps[i].getPairSum() + pps[j].getPairSum();
-					cout << "found 5 Prime!!! " << endl;
-					pps[i].print();
-					cout << ", ";
-					pps[j].print();
-					cout << ", last prime=" << last << " sum=" << sum << endl;
-					cout << endl;
-				}
-			}
-		}
+		cout << "comb at=" << i << endl;
+		std::vector<int> c;
+		bool done = false;
+		combination( primesArr, 50007, 5, i, c, &done);
 	}
-	cout << "sum=" << sum << endl;
-	cout << "exclude.size()=" << exclude.size() << endl;
-	
-//	for( std::map<string, bool>::iterator it = exclude.begin(); it != exclude.end(); it++) { cout << "exclude it->first=" << it->first << endl; }
 
 	/*
 	cout << "TEST" << endl;
