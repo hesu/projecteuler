@@ -153,19 +153,55 @@ class PrimePair
 		}
 };
 
+bool isPrimePair( std::vector<int> p)
+{
+	for(int i=0; i<p.size(); i++)
+	{
+		for(int j=0; j<p.size(); j++)
+		{
+			if( i != j) {
+				// make number and check whether is prime
+				char buf[1024] = {0,};
+				sprintf( buf, "%d%d", p[i], p[j]);
+				if( !isprime( atoi(buf))) return false;
+				sprintf( buf, "%d%d", p[j], p[i]);
+				if( !isprime( atoi(buf))) return false;
+			}
+		}
+	}
+	return true;
+}
+
 void combination( int arr[], int arrsize, int choose, int nowi, std::vector<int> result, bool* done)
 {
-	if( choose <= 0) {
-		// do something here
+//	cout << "combination. choose=" << choose << " nowi=" << nowi << endl;
+	if( choose <= 0 ) {
+		/* do something here */
+//		cout << "done! result.size()=" << result.size() << " choose=" << choose << endl;
+
+		if( isPrimePair(result)) {
+			cout << "found PrimePair!!!" << endl;
+			int sum = 0;
+			for(int i=0; i<result.size(); i++)
+			{
+				cout << result[i] << " ";
+				sum += result[i];
+			}
+			cout << " sum=" << sum << endl;
+		}
+
+		/**/
 		*done = true;
 		return;
 	}
 
-	for(int i=nowi; i<arrsize;i++)
-	{
-		std::vector<int> r(result);
-		r.push_back(i);
-		combination( arr, arrsize, choose-1, i+1,r, done);
+	if( !(*done)) {
+		for(int i=nowi; i<arrsize;i++)
+		{
+			std::vector<int> r(result);
+			r.push_back(i);
+			combination( arr, arrsize, choose-1, i+1,r, done);
+		}
 	}
 }
 
@@ -192,7 +228,9 @@ int main(int argc, char** argv)
 		cout << "comb at=" << i << endl;
 		std::vector<int> c;
 		bool done = false;
-		combination( primesArr, 50007, 5, i, c, &done);
+		while( !done) {
+			combination( primesArr, 50007, 5, i, c, &done);
+		}
 	}
 
 	/*
