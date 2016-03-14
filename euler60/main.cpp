@@ -177,8 +177,7 @@ void combination( int arr[], int arrsize, int choose, int nowi, std::vector<int>
 //	cout << "combination. choose=" << choose << " nowi=" << nowi << endl;
 	if( choose <= 0 ) {
 		/* do something here */
-//		cout << "done! result.size()=" << result.size() << " choose=" << choose << endl;
-
+		cout << "done! result.size()=" << result.size() << " nowi=" << nowi << endl;
 		if( isPrimePair(result)) {
 			cout << "found PrimePair!!!" << endl;
 			int sum = 0;
