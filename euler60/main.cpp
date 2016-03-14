@@ -172,13 +172,22 @@ bool isPrimePair( std::vector<int> p)
 	return true;
 }
 
+bool notExclusive( PrimePair p, std::vector<int> others)
+{
+	for(int i=0; i<others.size(); i++)
+	{
+		if( p.excludes(others[i])) return false;
+	}
+	return true;
+}
+
 void combination( int arr[], int arrsize, int choose, int nowi, std::vector<int> result, bool* done)
 {
 //	cout << "combination. choose=" << choose << " nowi=" << nowi << endl;
 	if( choose <= 0 ) {
 		/* do something here */
-		cout << "done! result.size()=" << result.size() << " nowi=" << nowi << endl;
-		if( isPrimePair(result)) {
+		cout << "done! result.size()=" << result.size() << " result[0]=" << result[0] << "  nowi=" << nowi << endl;
+		if( result.size() == 5 && isPrimePair(result)) {
 			cout << "found PrimePair!!!" << endl;
 			int sum = 0;
 			for(int i=0; i<result.size(); i++)
@@ -199,7 +208,8 @@ void combination( int arr[], int arrsize, int choose, int nowi, std::vector<int>
 		for(int i=nowi; i<arrsize;i++)
 		{
 			std::vector<int> r(result);
-			r.push_back(i);
+			PrimePair pi( arr[nowi]);
+			if( notExclusive( pi, r)) {r.push_back( arr[nowi]); } // TODO check pi
 			combination( arr, arrsize, choose-1, i+1,r, &d);
 		}
 	}
@@ -225,6 +235,8 @@ int main(int argc, char** argv)
 		}
 	}
 	cout << "primes.size()=" << primes.size() << endl;
+
+//	for(int i=0; i<nprime; i++) { cout << "primesArr[" << i << "] = " << primesArr[i] << endl;}
 
 	for(int i=0; i<=primes.size()-5; i++)
 	{
