@@ -58,9 +58,9 @@ class PrimePair
 				strncpy( b1, buf, i+1);
 				strncpy( b2, buf+i+1, len-i);
 
-				if( b2[0] == '0') continue;
-
 				int n1 = atoi(b1); int n2 = atoi(b2);
+				if( b2[0] == '0' || n1 == 0 || n2 == 0) continue;
+				cout << "n1=" << n1 << " n2=" << n2 << endl;
 
 				if( n1 ==0 || n2 ==0) continue;
 				if( isprime(n1) && isprime(n2)) {
@@ -238,7 +238,7 @@ int main(int argc, char** argv)
 	PrimePair pi(3);
 	std::vector<int> r;
 	r.push_back(7);
-	cout << "not exclusive?=" << notExclusive( pi, r) << endl;
+	cout << "exclusive?=" << !notExclusive( pi, r) << endl;
 
 	/* end of code */
 	clock_t end = clock();
