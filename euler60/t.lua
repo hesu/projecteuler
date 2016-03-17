@@ -99,7 +99,7 @@ combination = function( t, size, choose, nowi, r)
 	if (choose <= 0) or (nowi > #t) then
 		-- DONE -- PRINT!
 		io.write( "r: ")
-		for k, v in pairs( r) do io.write( v, " ") end
+		for k, v in ipairs( r) do io.write( v, " ") end
 		print("")
 		----------------
 		return
@@ -119,7 +119,9 @@ combination = function( t, size, choose, nowi, r)
 			table.insert( r, t[nowi])
 			combination( t, size, choose-1, i+1, newr)
 		else
-			print( "can't go. r[1]=", r[1])
+			io.write( "can't go. r: ")
+			for k, v in ipairs( r) do io.write( v, " ") end
+			print("")
 		end
 	end
 end
