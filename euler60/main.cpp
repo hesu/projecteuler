@@ -10,8 +10,6 @@
 #include <string.h>
 #include <sstream>
 
-#define MAX 1000000
-
 using namespace std;
 
 std::map<int,int> primes;
@@ -182,24 +180,48 @@ class PrimePair
 		}
 };
 
+bool isPrimePair( int n1, int n2) 
+{
+	if (n1 == n2) { return false; }
+
+	std::map<int, std::map<int,bool>>::iterator eit;
+	eit = exclude.find( n1);
+
+	if( eit != exclude.end()) {
+		std::map<int,bool>::iterator it;
+		it = eit->second.find( n2);
+		if( it != eit->second.end()) {
+			return true;
+		}
+	}
+
+	char buf[1024] = {0,};
+	sprintf( buf, "%d%d", n1, n2);
+	if( !isprime( atoi(buf))) return false;
+	sprintf( buf, "%d%d", n2, n1);
+	if( !isprime( atoi(buf))) return false;
+
+	std::map<int,bool> data;
+	data.emplace( n1, true);
+	exclude.emplace( n2, data);
+	std::map<int,bool> data2;
+	data2.emplace( n2, true);
+	exclude.emplace( n1, data2);
+	return true;
+}
+
 bool isPrimePair( std::vector<int> p)
 {
 	for(int i=0; i<p.size(); i++)
 	{
 		for(int j=0; j<p.size(); j++)
 		{
-			if( i != j) {
-				// make number and check whether is prime
-				char buf[1024] = {0,};
-				sprintf( buf, "%d%d", p[i], p[j]);
-				if( !isprime( atoi(buf))) return false;
-				sprintf( buf, "%d%d", p[j], p[i]);
-				if( !isprime( atoi(buf))) return false;
-			}
+			if( isPrimePair( p[i], p[j])) { return true;}
 		}
 	}
-	return true;
+	return false;
 }
+
 
 bool notExclusive( PrimePair p, std::vector<int> others)
 {
@@ -223,8 +245,9 @@ void combination( int arr[], int arrsize, int choose, int nowi, std::vector<int>
 
 	if( choose <= 0 || nowi >= arrsize-1) {
 		/* do something here */
-		cout << "done! result.size()=" << result.size() << " result[0]=" << result[0] << "  nowip=" << arr[nowi] << endl;
-		if( result.size() == 5 && isPrimePair(result)) {
+		cout << "done! choose=" << choose << " result.size()=" << result.size() << " result[0]=" << result[0] << "  nowip=" << arr[nowi] << endl;
+//		if( result.size() == 5 && isPrimePair(result)) {
+			if( isPrimePair( result)) {
 			cout << "found PrimePair!!!" << endl;
 			int sum = 0;
 			for(int i=0; i<result.size(); i++)
@@ -259,17 +282,19 @@ void combination( int arr[], int arrsize, int choose, int nowi, std::vector<int>
 	return;
 }
 
+#define MAX 100
+//#define MAX 5 
 
 int main(int argc, char** argv)
 {
 	clock_t begin = clock();
 	/* starting code */
 
-	int primesArr[60000] = {0,};
+	int primesArr[MAX] = {0,};
 	int nprime = 0;
 	for(int i=3;; i++)
 	{
-		if( nprime >= 60000) break;
+		if( nprime >= MAX) break;
 		if( isprime( i)) {
 			primesArr[nprime] = i;
 			nprime++;
@@ -278,15 +303,41 @@ int main(int argc, char** argv)
 	cout << "primes.size()=" << primes.size() << endl;
 
 //	for(int i=0; i<nprime; i++) { cout << "primesArr[" << i << "] = " << primesArr[i] << endl;}
-	for(int i=0; i<=primes.size()-5; i++)
+
+	// make pairs of two
+	std::vector<std::vector<int>> cc;
+	for(int i=0; i<nprime; i++)
 	{
-		cout << "comb at=" << i << endl;
-		std::vector<int> c;
-		bool done = false;
-		while( !done) {
-			combination( primesArr, 60000-6, 5, i, c, &done);
+//		cout << "i=" << i << " cc.size=" << cc.size() << endl;
+		for(int j=i+1; j<nprime-1; j++)
+		{
+//			cout << "\tj=" << j << " cc.size=" << cc.size() << endl;
+			if( isPrimePair( primesArr[i], primesArr[j])) { 
+				std::vector<int> gotcha;
+				gotcha.push_back( i); gotcha.push_back(j);
+				cc.push_back( gotcha);
+			}
 		}
 	}
+	cout << "cc.size()=" << cc.size() << endl;
+
+	// make pairs of four
+	std::vector<std::vector<int>> cccc;
+	for(int i=0; i<cc.size()-1; i++)
+	{
+		cout << "i=" << i << " cccc.size=" << cccc.size() << endl;
+		for(int j=0; j<cc.size(); j++)
+		{
+				std::vector<int> gotcha;
+				gotcha.insert( gotcha.end(), cc[i].begin(), cc[i].end());
+				gotcha.insert( gotcha.end(), cc[j].begin(), cc[j].end());
+				
+				if( isPrimePair( gotcha)) { cccc.push_back( gotcha); }
+		}
+	}
+	cout << "cccc.size()=" << cccc.size() << endl;
+
+	// TODO find pairs of five - using pairs of four
 
 /*
 	cout << "TEST" << endl;
