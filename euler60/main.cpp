@@ -37,7 +37,7 @@ bool isprime( int n)
 	return true;
 }
 
-std::map<string, bool> exclude;
+std::map<int, std::map<int,bool>> exclude;
 
 class PrimePair
 {
@@ -69,8 +69,33 @@ class PrimePair
 					sprintf( buf2, "%d%d", n2, n1);
 					if( isprime( atoi( buf2))) {
 						pairs.insert( std::map<int,int>::value_type( n1, n2)); 
-						exclude.insert( std::map<string,bool>::value_type( to_string(n1) + "_" + to_string(n1), true)); 
-						exclude.insert( std::map<string,bool>::value_type( to_string(n2) + "_" + to_string(n2), true)); 
+						std::map<int, std::map<int,bool>>::iterator it;
+						std::map<int,bool>::iterator subit;
+						
+						it = exclude.find( n1);
+						if (it == exclude.end()) {
+							std::map<int,bool> data;
+							data.emplace( n2, true);
+							exclude.emplace( n1, data);
+						} else {
+							subit = it->second.find( n2);
+							if (subit == it->second.end()) {
+								it->second.insert( std::map<int, bool>::value_type(n2, true));
+							}
+						}
+
+						it = exclude.find( n2);
+						if (it == exclude.end()) {
+							std::map<int,bool> data;
+							data.emplace( n1, true);
+							exclude.emplace( n2, data);
+						} else {
+							subit = it->second.find( n1);
+							if (subit == it->second.end()) {
+								it->second.insert( std::map<int, bool>::value_type(n1, true));
+							}
+						}
+
 					}
 				}
 			}
@@ -80,58 +105,41 @@ class PrimePair
 		{
 			std::map<int,int>::iterator it = pairs.begin();
 			if( n < 0) { cout << "WRONG CASE n=" << n << endl; return true; }
-			std::stringstream s;
-			s << to_string( it->first) << "_" << to_string(n);
-			
-			std::map<string,bool>::iterator eit;
-			eit = exclude.find( s.str()); 
-			if( eit != exclude.end()) {
-				return true;
-			}
+			// TODO tweak to nested hash map
+
+			//std::map<string,bool>::iterator eit;
+			//eit = exclude.find( s.str()); 
+			//if( eit != exclude.end()) {
+		//		return true;
+		//	}
 
 			// check manually and update exclude map.
 			//for(;it != pairs.end(); it++) {
 			char buf[1024] = {0,};
 			sprintf( buf, "%d%d", it->first, n);
 			if( !isprime( atoi(buf))) { 
-				std::stringstream ss;
-				ss << to_string( it->first) << "_" << to_string(n);
-				exclude.insert( std::map<string,bool>::value_type( ss.str(), true));
-				ss.str("");
-				ss << to_string( it->second) << "_" << to_string(n);
-				exclude.insert( std::map<string,bool>::value_type( ss.str(), true));
+				//exclude.insert( std::map<string,bool>::value_type( ss.str(), true));
+				//exclude.insert( std::map<string,bool>::value_type( ss.str(), true));
 				return true;
 			}
 
 			sprintf( buf, "%d%d", it->second, n);
 			if( !isprime( atoi(buf))) { 
-				std::stringstream ss;
-				ss << to_string( it->first) << "_" << to_string(n);
-				exclude.insert( std::map<string,bool>::value_type( ss.str(), true));
-				ss.str("");
-				ss << to_string( it->second) << "_" << to_string(n);
-				exclude.insert( std::map<string,bool>::value_type( ss.str(), true));
+				//exclude.insert( std::map<string,bool>::value_type( ss.str(), true));
+				//exclude.insert( std::map<string,bool>::value_type( ss.str(), true));
 				return true;
 			}
 
 			sprintf( buf, "%d%d", n, it->first);
 			if( !isprime( atoi(buf))) { 
-				std::stringstream ss;
-				ss << to_string( it->first) << "_" << to_string(n);
-				exclude.insert( std::map<string,bool>::value_type( ss.str(), true));
-				ss.str("");
-				ss << to_string( it->second) << "_" << to_string(n);
-				exclude.insert( std::map<string,bool>::value_type( ss.str(), true));
+				//exclude.insert( std::map<string,bool>::value_type( ss.str(), true));
+				//exclude.insert( std::map<string,bool>::value_type( ss.str(), true));
 				return true;
 			}
 			sprintf( buf, "%d%d", n, it->second);
 			if( !isprime( atoi(buf))) { 
-				std::stringstream ss;
-				ss << to_string( it->first) << "_" << to_string(n);
-				exclude.insert( std::map<string,bool>::value_type( ss.str(), true));
-				ss.str("");
-				ss << to_string( it->second) << "_" << to_string(n);
-				exclude.insert( std::map<string,bool>::value_type( ss.str(), true));
+				//exclude.insert( std::map<string,bool>::value_type( ss.str(), true));
+				//exclude.insert( std::map<string,bool>::value_type( ss.str(), true));
 				return true;
 			}
 			return false;
@@ -235,8 +243,8 @@ int main(int argc, char** argv)
 	clock_t begin = clock();
 	/* starting code */
 
+/*
 	int primesArr[60000] = {0,};
-
 	int nprime = 0;
 	for(int i=3;; i++)
 	{
@@ -249,7 +257,6 @@ int main(int argc, char** argv)
 	cout << "primes.size()=" << primes.size() << endl;
 
 //	for(int i=0; i<nprime; i++) { cout << "primesArr[" << i << "] = " << primesArr[i] << endl;}
-
 	for(int i=0; i<=primes.size()-5; i++)
 	{
 		cout << "comb at=" << i << endl;
@@ -259,14 +266,13 @@ int main(int argc, char** argv)
 			combination( primesArr, 60000-6, 5, i, c, &done);
 		}
 	}
+	*/
 
-	/*
 	cout << "TEST" << endl;
 	PrimePair p1( 37);
 	PrimePair p2( 109673);
-	cout << "37, 109673 canProduce? = " << canProduce4Primes( p1, p2) << endl;
-	*/
-
+//	cout << "37, 109673 canProduce? = " << canProduce4Primes( p1, p2) << endl;
+	
 	/* end of code */
 	clock_t end = clock();
 	std::cout << "elapsed time=" << double(end - begin) / CLOCKS_PER_SEC << std::endl;
