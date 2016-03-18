@@ -235,10 +235,20 @@ int main(int argc, char** argv)
 	clock_t begin = clock();
 	/* starting code */
 
+/*
 	PrimePair pi(3);
 	std::vector<int> r;
 	r.push_back(7);
 	cout << "exclusive?=" << !notExclusive( pi, r) << endl;
+	*/
+
+	std::vector<int> r;
+	r.push_back( 7);
+	r.push_back( 127);
+	r.push_back( 6949);
+	r.push_back( 7723);
+
+	cout << "isPrimePair? =" << isPrimePair( r) << endl;
 
 	/* end of code */
 	clock_t end = clock();

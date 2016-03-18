@@ -183,12 +183,13 @@ bool notExclusive( PrimePair p, std::vector<int> others)
 
 void combination( int arr[], int arrsize, int choose, int nowi, std::vector<int> result, bool* done)
 {
-	cout << "combination. c=" << choose << "\tnp=" << arr[nowi] << "\tni=" << nowi << "\t";
+/*	cout << "combination. c=" << choose << "\tnp=" << arr[nowi] << "\tni=" << nowi << "\t";
 	for(int i=0; i<result.size(); i++)
 	{
 		cout << result[i] << "-";
 	}
 	cout << endl;
+	*/
 
 	if( choose <= 0 || nowi >= arrsize-1) {
 		/* do something here */
@@ -218,8 +219,8 @@ void combination( int arr[], int arrsize, int choose, int nowi, std::vector<int>
 			r.push_back( arr[nowi]);
 			combination( arr, arrsize, choose-1, i+1,r, &d);
 		} else {
-			cout << "exclusive pi=" << pi.getMe() << " with r : ";
-			for(int i=0; i<result.size(); i++) { cout << result[i] << "-"; } cout << endl;
+//			cout << "exclusive pi=" << pi.getMe() << " with r : ";
+//			for(int i=0; i<result.size(); i++) { cout << result[i] << "-"; } cout << endl;
 			continue;
 		}
 	}

@@ -6,7 +6,8 @@ function isprime( n)
 	if (n == 2) then return true end
 	if( primes[n]) then return true end
 
-	local s = math.sqrt(n) + 1
+	-- http://lua-users.org/wiki/SimpleRound
+	local s = math.floor( math.sqrt(n) + 1 + 0.5 )
 
 	while( s>1) do
 		if( n%s == 0) then
@@ -26,9 +27,11 @@ function excludes( p1, p2)
 	if emap[p1][p2] then
 		if emap[p1][p2] == true then
 			if not emap[p2][p1] then emap[p2][p1] = true end
+--				print( "1) return")
 			return true
 		else
 			if not emap[p2][p1] then emap[p2][p1] = false end
+--				print( "2) return")
 			return
 		end
 	end
@@ -36,9 +39,11 @@ function excludes( p1, p2)
 	if emap[p2][p1] then
 		if emap[p2][p1] == true then
 			if not emap[p1][p2] then emap[p1][p2] = true end
+--				print( "3) return")
 			return true
 		else
 			if not emap[p1][p2] then emap[p1][p2] = false end
+--				print( "4) return")
 			return
 		end
 	end
@@ -47,6 +52,7 @@ function excludes( p1, p2)
 	if not isprime( p1p2) then
 		emap[p1][p2] = false
 		emap[p2][p1] = false
+--				print( "5) return")
 		return
 	end
 	
@@ -54,10 +60,12 @@ function excludes( p1, p2)
 	if not isprime( p2p1) then
 		emap[p1][p2] = false
 		emap[p2][p1] = false
+--				print( "6) return")
 		return
 	end
 		emap[p1][p2] = false
 		emap[p2][p1] = false
+--				print( "7) return")
 	return true
 end
 
@@ -91,16 +99,16 @@ tcopy = function( o, seen)
     return no
 end
 
--- TODO
 local combination
 combination = function( t, size, choose, nowi, r)
+--	io.write( "comb() r: "); for k, v in ipairs( r) do io.write( v, " ") end; print("")
 	if not r then r = {} end
-
 	if (choose <= 0) or (nowi > #t) then
 		-- DONE -- PRINT!
-		io.write( "r: ")
-		for k, v in ipairs( r) do io.write( v, " ") end
-		print("")
+		if choose == 0 then
+			io.write( "!!! Result r: "); for k, v in ipairs( r) do io.write( v, " ") end; print("")
+		end
+		table.remove( r, #r)
 		----------------
 		return
 	end
@@ -108,25 +116,38 @@ combination = function( t, size, choose, nowi, r)
 	for i=nowi, #t do
 		local keepgo = true
 		for _, prime in pairs( r) do
-			if excludes( t[nowi], prime) then
+			if not excludes( t[nowi], prime) then
+				--print( "\t excludes true. keepgo = false. t[nowi]=", t[nowi], "prime=",prime, "i=", i)
 				keepgo = false
 				break
 			end
 		end
 
 		if keepgo then
-			local newr = tcopy( r) 
+--			local newr = tcopy( r) 
 			table.insert( r, t[nowi])
-			combination( t, size, choose-1, i+1, newr)
+			combination( t, size, choose-1, i+1, r)
 		else
-			io.write( "can't go. r: ")
-			for k, v in ipairs( r) do io.write( v, " ") end
-			print("")
+			--io.write( "can't go. r: "); for k, v in ipairs( r) do io.write( v, " ") end; print("")
 		end
 	end
+
 end
 
-local t ={ 2,3,5,7,11,13,17,19 }
-local r = {}
-combination( t, #t, 2, 1, r)
+-- main --
+local stime = os.time()
 
+local t ={}
+for i=2, 10000 do 
+	if isprime(i) then table.insert( t, i) end
+end
+
+print( "primes=",#t)
+
+for i, num in ipairs( t) do
+	print( "combination at i=", i, "elapsed time=", os.time()-stime)
+	local r = {}
+	combination( t, #t, 5, i, r)
+end
+
+print( "done.elapsed time=",os.time()-stime)
