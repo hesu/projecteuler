@@ -9,6 +9,7 @@
 #include <cmath>
 #include <string.h>
 #include <sstream>
+#include <algorithm>
 
 using namespace std;
 
@@ -210,6 +211,7 @@ bool isPrimePair( int n1, int n2)
 	return true;
 }
 
+/*
 bool isPrimePair( std::vector<int> p)
 {
 	for(int i=0; i<p.size(); i++)
@@ -220,6 +222,19 @@ bool isPrimePair( std::vector<int> p)
 		}
 	}
 	return false;
+}
+*/
+
+bool isPrimePair( std::vector<int> v1, std::vector<int>v2)
+{
+	for(int i=0; i<v1.size(); i++)
+	{
+		for(int j=0; j<v2.size(); j++)
+		{
+			if( !isPrimePair( v1[i], v2[j])) { return false;}
+		}
+	}
+	return true;
 }
 
 
@@ -232,19 +247,12 @@ bool notExclusive( PrimePair p, std::vector<int> others)
 	return true;
 }
 
+/*
 void combination( int arr[], int arrsize, int choose, int nowi, std::vector<int> result, bool* done)
 {
 	cout << "combination. c=" << choose << "\tnp=" << arr[nowi] << "\tni=" << nowi << "\t" << endl;
-/*	cout << "combination. c=" << choose << "\tnp=" << arr[nowi] << "\tni=" << nowi << "\t";
-	for(int i=0; i<result.size(); i++)
-	{
-		cout << result[i] << "-";
-	}
-	cout << endl;
-	*/
-
 	if( choose <= 0 || nowi >= arrsize-1) {
-		/* do something here */
+		// do something here
 		cout << "done! choose=" << choose << " result.size()=" << result.size() << " result[0]=" << result[0] << "  nowip=" << arr[nowi] << endl;
 //		if( result.size() == 5 && isPrimePair(result)) {
 			if( isPrimePair( result)) {
@@ -257,8 +265,6 @@ void combination( int arr[], int arrsize, int choose, int nowi, std::vector<int>
 			}
 			cout << " sum=" << sum << endl;
 		}
-
-		/**/
 		*done = true;
 		return;
 	}
@@ -281,8 +287,9 @@ void combination( int arr[], int arrsize, int choose, int nowi, std::vector<int>
 	*done = true;
 	return;
 }
+*/
 
-#define MAX 100
+#define MAX 1000
 //#define MAX 5 
 
 int main(int argc, char** argv)
@@ -301,7 +308,6 @@ int main(int argc, char** argv)
 		}
 	}
 	cout << "primes.size()=" << primes.size() << endl;
-
 //	for(int i=0; i<nprime; i++) { cout << "primesArr[" << i << "] = " << primesArr[i] << endl;}
 
 	// make pairs of two
@@ -314,27 +320,48 @@ int main(int argc, char** argv)
 //			cout << "\tj=" << j << " cc.size=" << cc.size() << endl;
 			if( isPrimePair( primesArr[i], primesArr[j])) { 
 				std::vector<int> gotcha;
-				gotcha.push_back( i); gotcha.push_back(j);
+				gotcha.push_back( primesArr[i]); gotcha.push_back( primesArr[j]);
+		//		cout << "gotcha i=" << primesArr[i] << " j=" << primesArr[j] << endl;
 				cc.push_back( gotcha);
 			}
 		}
 	}
 	cout << "cc.size()=" << cc.size() << endl;
 
+	/*
+	// debug print
+	for(int i=0; i<cc.size(); i++){
+		for(int j=0; j < cc[i].size(); j++) {
+			cout << cc[i][j] << " ";
+		}
+		cout << endl;
+	}
+	*/
+
 	// make pairs of four
 	std::vector<std::vector<int>> cccc;
 	for(int i=0; i<cc.size()-1; i++)
 	{
-		cout << "i=" << i << " cccc.size=" << cccc.size() << endl;
-		for(int j=0; j<cc.size(); j++)
+	//	cout << "i=" << i << " cccc.size=" << cccc.size() << endl;
+		for(int j=i+1; j<cc.size(); j++)
 		{
+			if ((cc[i][0] != cc[j][0] && cc[i][0] != cc[j][1] && cc[i][1] != cc[j][0] && cc[i][1] != cc[j][1]) &&  
+			(cc[j][0] != cc[i][0] && cc[j][0] != cc[i][1] && cc[j][1] != cc[i][0] && cc[j][1] != cc[i][1])) {
 				std::vector<int> gotcha;
 				gotcha.insert( gotcha.end(), cc[i].begin(), cc[i].end());
 				gotcha.insert( gotcha.end(), cc[j].begin(), cc[j].end());
-				
-				if( isPrimePair( gotcha)) { cccc.push_back( gotcha); }
+
+
+				if( isPrimePair( cc[i], cc[j])) {
+					cout << "gotcha " << gotcha[0] << " " << gotcha[1] << " " << gotcha[2] << " " << gotcha[3] << endl;
+					cccc.push_back( gotcha); 
+				}
+			}
 		}
 	}
+
+	sort( cccc.begin(), cccc.end());
+	cccc.erase( unique( cccc.begin(), cccc.end()), cccc.end());
 	cout << "cccc.size()=" << cccc.size() << endl;
 
 	// TODO find pairs of five - using pairs of four
