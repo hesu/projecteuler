@@ -64,7 +64,7 @@ class PrimePair
 					it->second.push_back( b);
 				}
 			} else {
-				std::vector<int> v(b);
+				std::vector<int> v; v.push_back(b);
 				pairmap.emplace( a, v);
 			}
 
@@ -75,7 +75,7 @@ class PrimePair
 					it->second.push_back( a);
 				}
 			} else {
-				std::vector<int> v(a);
+				std::vector<int> v; v.push_back(a);
 				pairmap.emplace( b, v);
 			}
 
@@ -87,110 +87,6 @@ class PrimePair
 
 		void print() { cout << me << ":" << a << "," << b; }
 };
-
-/*
-std::vector<std::vector<int>> canProducePrime( PrimePair& a, PrimePair&b)
-//std::vector<int> canProducePrime( PrimePair& a, PrimePair&b)
-{
-	std::vector<std::vector<int>> pair4s;
-	// TODO iterate all a.pairs && b.pair
-	std::vector<int> pair4;
-
-	std::map<int,int> aPairs = a.getPairs();
-	std::map<int,int> bPairs = b.getPairs();
-	
-	std::map<int,int>::iterator ait = aPairs.begin();
-	std::map<int,int>::iterator bit = bPairs.begin();
-
-	for( std::map<int,int>::iterator ait = aPairs.begin(); ait != aPairs.end(); ait++) {
-		int w = ait->first;
-		int x = ait->second;
-
-		for( std::map<int,int>::iterator bit = bPairs.begin(); bit != bPairs.end(); bit++) {
-			int y = bit->first;
-			int z = bit->second;
-
-			char buf[1024] = {0,};
-			// check wy, wz, yw, zw
-			sprintf( buf, "%d%d", w,y);
-			if( !isprime(atol(buf))) continue;
-			sprintf( buf, "%d%d", w,z);
-			if( !isprime(atol(buf))) continue;
-			sprintf( buf, "%d%d", y,w);
-			if( !isprime(atol(buf))) continue;
-			sprintf( buf, "%d%d", z,w);
-			if( !isprime(atol(buf))) continue;
-
-			// check xy, xz, yx, zx
-			sprintf( buf, "%d%d", x,y);
-			if( !isprime(atol(buf))) continue;
-			sprintf( buf, "%d%d", x,z);
-			if( !isprime(atol(buf))) continue;
-			sprintf( buf, "%d%d", y,x);
-			if( !isprime(atol(buf))) continue;
-			sprintf( buf, "%d%d", z,x);
-			if( !isprime(atol(buf))) continue;
-
-			pair4.push_back( w);
-			pair4.push_back( x);
-			pair4.push_back( y);
-			pair4.push_back( z);
-
-			pair4s.push_back( pair4);
-		}
-	}
-
-	return pair4s;
-}
-
-bool canProducePrimes( std::vector<int> p)
-{
-	for(int i=0; i<p.size()-1; i++)
-	{
-		for(int j=i+1; j<p.size(); j++)
-		{
-			if( p[i] == p[j]) return false;
-			char buf[1024] = {0,};
-			sprintf( buf, "%d%d", p[i],p[j]);
-			if( !isprime(atol(buf))) return false;
-			sprintf( buf, "%d%d", p[j],p[i]);
-			if( !isprime(atol(buf))) return false;
-		}
-	}
-	return true;
-}
-
-//int numberOfContains( std::vector<int> src, std::vector<int> compare)
-std::vector<int> numberOfContains( std::vector<int> src, std::vector<int> compare)
-{
-	std::vector<int> r(src);
-	for(int i=0; i<compare.size(); i++)
-	{
-		if( std::find( compare.begin(), compare.end(), src[i]) == compare.end()) {
-			r.push_back( compare[i]);
-		}
-	}
-	return r;
-}
-
-bool isPrimePairs( std::vector<int> p)
-{
-	for(int i=0; i<p.size()-1; i++)
-	{
-		for(int j=i+1; j<p.size(); j++)
-		{
-			if( p[i] == p[j]) { return false; }
-			// make number and check whether is prime
-			char buf[1024] = {0,};
-			sprintf( buf, "%d%d", p[i], p[j]);
-			if( !isprime( atol(buf))) return false;
-			sprintf( buf, "%d%d", p[j], p[i]);
-			if( !isprime( atol(buf))) return false;
-		}
-	}
-	return true;
-}
-*/
 
 std::vector<PrimePair> getPrimePairs( int p)
 {
@@ -221,7 +117,46 @@ std::vector<PrimePair> getPrimePairs( int p)
 	return r;
 }
 
-#define MAX 1000000
+int minsum = -1;
+
+void combination( std::vector<int> src, int choose, int nowi, std::vector<int> result)
+{
+	//if( choose <= 0 || nowi >= src.size()-1) {
+	if( choose <= 0) {
+		// DONE
+		int sum = 0;
+		cout << "comb : "; for(int i=0; i<result.size(); i++) { sum += result[i]; cout << result[i] << " "; } cout << endl;
+		if( minsum == -1 || sum < minsum) { minsum = sum; }
+		return;
+	}
+
+	for(int i=nowi; i<src.size(); i++)
+	{
+		std::vector<int> r(result);
+
+		bool keepgo = true;
+		for(int j=0; j<r.size(); j++)
+		{
+			std::map<int, vector<int>>::iterator it;
+			it = pairmap.find(r[j]);
+			if( it == pairmap.end()) { keepgo = false; break; }
+			if( std::find(it->second.begin(), it->second.end(), src[i]) == it->second.end()) {
+				keepgo = false;
+				break;
+			}
+		}
+
+		if( keepgo) {
+			// insert a map
+			r.push_back( src[i]);
+			if( src[i] == 0) { cout << "i=" << i << " src[i]=" << src[i] << endl; }
+			combination( src, choose-1, i+1, r);
+		}
+	}
+	return;
+}
+
+#define MAX 100000000
 int main(int argc, char** argv)
 {
 	clock_t begin = clock();
@@ -232,27 +167,30 @@ int main(int argc, char** argv)
 	{
 		if( isprime( i)) {
 			std::vector<PrimePair> pp = getPrimePairs(i);
+
+//			for(int j=0; j<pp.size(); j++) { pps.push_back( pp[j]); }
 			pps.insert( pps.end(), pp.begin(), pp.end());
 		}
 	}
 	cout << "pps.size())=" << pps.size() << endl;
 
-	for(int i=0; i<pps.size(); i++)
-	{
-		pps[i].print();
-		cout << endl;
-	}
+//	for(int i=0; i<pps.size(); i++) { pps[i].print(); cout << endl; }
 
 	cout << "pairmap.size()=" << pairmap.size() << endl;
 
 	// TODO recursive?
 	for( auto it = pairmap.begin(); it != pairmap.end(); it++) {
-		cout << it->first << " has " << it->second.size() << " members" << endl;
-		for(int i=0; i<it->second.size(); i++)
-		{
-			
+		if( it->second.size() < 5) { continue; }
+		else {
+//			cout << it->first << " has " << it->second.size() << " members" << endl;
+			std::vector<int> r;
+			r.push_back( it->first);
+			combination( it->second, 4, 0, r);
+			//for(int i=0; i<it->second.size(); i++) { cout << it->second[i] << " "; }; cout << endl;
 		}
 	}
+
+	cout << "answer minsum = " << minsum << endl;
 
 	/* end of code */
 	clock_t end = clock();
