@@ -8,131 +8,220 @@
 #include <map>
 #include <cmath>
 #include <string.h>
+#include <algorithm>
 using namespace std;
 
-std::map<int,int> primes;
-std::map<int,int> notprimes;
-bool isprime( int n)
+std::map<long int,long int> primes;
+std::map<long int,long int> notprimes;
+bool isprime( long int n)
 {
 	if( n == 1) return false;
 	if( n == 2) return true;
-	std::map<int,int>::iterator it;
+	std::map<long int,long int>::iterator it;
 	it = notprimes.find(n); if( it != notprimes.end()) { return false; }
 	it = primes.find(n); if( it != primes.end()) { return true; }
 
-	int s = sqrt( n) + 1;
-	for(int i=s; i>1; i--)
+	long int s = sqrt( n) + 1;
+	for(long int i=s; i>1; i--)
 	{
 		if (n%i ==0) { 
-			notprimes.insert( std::map<int,int>::value_type( n, n));
+			notprimes.insert( std::map<long int, long int>::value_type( n, n));
 			return false;
 		}
 	}
 
-	primes.insert( std::map<int,int>::value_type( n, n));
+	primes.insert( std::map<long int,long int>::value_type( n, n));
 	return true;
 }
+
+std::map<int, vector<int>> pairmap;
 
 class PrimePair
 {
 	private :
 	int me;
+	int a;
+	int b;
 	std::map<int,int> pairs;
 
 	public:
-		PrimePair(int n) { 
-			me = n; 
-			char buf[1000] = {0,};
-			sprintf( buf, "%d", me);
-			int len = strlen( buf);
+		PrimePair(int _me, int _a, int _b) {
+			me = _me;
 
-			for(int i=0; i<len; i++)
-			{
-				char b1[1000] = {0,}; char b2[1000] = {0,};
-				strncpy( b1, buf, i+1);
-				strncpy( b2, buf+i+1, len-i);
-
-				if( b2[0] == 0) continue;
-
-				int n1 = atoi(b1); int n2 = atoi(b2);
-				if( isprime(n1) && isprime(n2)) {
-					
-					char buf2[1024] = {0,};
-					sprintf( buf2, "%d%d", n2, n1);
-					if( isprime( atoi( buf2))) {
-						pairs.insert( std::map<int,int>::value_type( n1, n2)); 
-					}
-				}
-
+			if (_a < _b) {
+				a = _a;
+				b = _b;
+			} else {
+				a = _b;
+				b = _a;
 			}
+
+			std::map<int, vector<int>>::iterator it;
+			// insert a map
+			it = pairmap.find(a);
+			if ( it != pairmap.end()) {
+				if( std::find(it->second.begin(), it->second.end(), b) == it->second.end()) {
+					it->second.push_back( b);
+				}
+			} else {
+				std::vector<int> v(b);
+				pairmap.emplace( a, v);
+			}
+
+			// insert b map
+			it = pairmap.find(b);
+			if ( it != pairmap.end()) {
+				if( std::find(it->second.begin(), it->second.end(), a) == it->second.end()) {
+					it->second.push_back( a);
+				}
+			} else {
+				std::vector<int> v(a);
+				pairmap.emplace( b, v);
+			}
+
 		}
 
-		bool isPrimePair() { return (pairs.size() > 0); }
-		std::map<int,int> getPairs() { return pairs; }
-		int getPairsSize() { return pairs.size(); }
+		int getme() { return me; }
+		int geta() { return a; }
+		int getb() { return b; }
 
-		void print() {
-			std::map<int,int>::iterator it = pairs.begin();
-			cout << me << "_" << std::to_string(it->first) << ":" << std::to_string(it->second);
-		}
+		void print() { cout << me << ":" << a << "," << b; }
 };
 
-int reverseComb(int a, int b)
+/*
+std::vector<std::vector<int>> canProducePrime( PrimePair& a, PrimePair&b)
+//std::vector<int> canProducePrime( PrimePair& a, PrimePair&b)
 {
-	char buf[1024] = {0,};
-	sprintf( buf, "%d%d", b, a);
-	return atoi( buf);
-}
+	std::vector<std::vector<int>> pair4s;
+	// TODO iterate all a.pairs && b.pair
+	std::vector<int> pair4;
 
-bool canReversePrimePair( PrimePair& p) 
-{
-	std::map<int,int> pairs = p.getPairs();
-	for(std::map<int,int>::iterator it = pairs.begin(); it != pairs.end(); it++)
-	{
-		if( isprime( reverseComb( it->first, it->second))) { return true; }
-	}
-	return false;
-}
-
-bool canProducePrime( PrimePair& a, PrimePair&b)
-{
 	std::map<int,int> aPairs = a.getPairs();
 	std::map<int,int> bPairs = b.getPairs();
 	
 	std::map<int,int>::iterator ait = aPairs.begin();
 	std::map<int,int>::iterator bit = bPairs.begin();
 
-	int w = ait->first;
-	int x = ait->second;
+	for( std::map<int,int>::iterator ait = aPairs.begin(); ait != aPairs.end(); ait++) {
+		int w = ait->first;
+		int x = ait->second;
 
-	int y = bit->first;
-	int z = bit->second;
+		for( std::map<int,int>::iterator bit = bPairs.begin(); bit != bPairs.end(); bit++) {
+			int y = bit->first;
+			int z = bit->second;
 
-	char buf[1024] = {0,};
-	// check wy, wz, yw, zw
-	sprintf( buf, "%d%d", w,y);
-	if( !isprime(atoi(buf))) return false;
-	sprintf( buf, "%d%d", w,z);
-	if( !isprime(atoi(buf))) return false;
-	sprintf( buf, "%d%d", y,w);
-	if( !isprime(atoi(buf))) return false;
-	sprintf( buf, "%d%d", z,w);
-	if( !isprime(atoi(buf))) return false;
+			char buf[1024] = {0,};
+			// check wy, wz, yw, zw
+			sprintf( buf, "%d%d", w,y);
+			if( !isprime(atol(buf))) continue;
+			sprintf( buf, "%d%d", w,z);
+			if( !isprime(atol(buf))) continue;
+			sprintf( buf, "%d%d", y,w);
+			if( !isprime(atol(buf))) continue;
+			sprintf( buf, "%d%d", z,w);
+			if( !isprime(atol(buf))) continue;
 
-	// check xy, xz, yx, zx
-	sprintf( buf, "%d%d", x,y);
-	if( !isprime(atoi(buf))) return false;
-	sprintf( buf, "%d%d", x,z);
-	if( !isprime(atoi(buf))) return false;
-	sprintf( buf, "%d%d", y,x);
-	if( !isprime(atoi(buf))) return false;
-	sprintf( buf, "%d%d", z,x);
-	if( !isprime(atoi(buf))) return false;
+			// check xy, xz, yx, zx
+			sprintf( buf, "%d%d", x,y);
+			if( !isprime(atol(buf))) continue;
+			sprintf( buf, "%d%d", x,z);
+			if( !isprime(atol(buf))) continue;
+			sprintf( buf, "%d%d", y,x);
+			if( !isprime(atol(buf))) continue;
+			sprintf( buf, "%d%d", z,x);
+			if( !isprime(atol(buf))) continue;
 
+			pair4.push_back( w);
+			pair4.push_back( x);
+			pair4.push_back( y);
+			pair4.push_back( z);
+
+			pair4s.push_back( pair4);
+		}
+	}
+
+	return pair4s;
+}
+
+bool canProducePrimes( std::vector<int> p)
+{
+	for(int i=0; i<p.size()-1; i++)
+	{
+		for(int j=i+1; j<p.size(); j++)
+		{
+			if( p[i] == p[j]) return false;
+			char buf[1024] = {0,};
+			sprintf( buf, "%d%d", p[i],p[j]);
+			if( !isprime(atol(buf))) return false;
+			sprintf( buf, "%d%d", p[j],p[i]);
+			if( !isprime(atol(buf))) return false;
+		}
+	}
 	return true;
 }
 
-#define MAX 700000 
+//int numberOfContains( std::vector<int> src, std::vector<int> compare)
+std::vector<int> numberOfContains( std::vector<int> src, std::vector<int> compare)
+{
+	std::vector<int> r(src);
+	for(int i=0; i<compare.size(); i++)
+	{
+		if( std::find( compare.begin(), compare.end(), src[i]) == compare.end()) {
+			r.push_back( compare[i]);
+		}
+	}
+	return r;
+}
+
+bool isPrimePairs( std::vector<int> p)
+{
+	for(int i=0; i<p.size()-1; i++)
+	{
+		for(int j=i+1; j<p.size(); j++)
+		{
+			if( p[i] == p[j]) { return false; }
+			// make number and check whether is prime
+			char buf[1024] = {0,};
+			sprintf( buf, "%d%d", p[i], p[j]);
+			if( !isprime( atol(buf))) return false;
+			sprintf( buf, "%d%d", p[j], p[i]);
+			if( !isprime( atol(buf))) return false;
+		}
+	}
+	return true;
+}
+*/
+
+std::vector<PrimePair> getPrimePairs( int p)
+{
+	std::vector<PrimePair> r;
+	char buf[1024] = {0,};
+	sprintf( buf, "%d", p);
+	int len = strlen( buf);
+
+	for(int i=0; i<len; i++)
+	{
+		char b1[1024] = {0,}; char b2[1024] = {0,};
+		strncpy( b1, buf, i+1);
+		strncpy( b2, buf+i+1, len-i);
+
+		if( b1[0] == '0' || b2[0] == '0' | b2[0] == 0) continue;
+
+		long int n1 = atol(b1); long int n2 = atol(b2);
+		if( isprime(n1) && isprime(n2)) {
+
+			char buf2[1024] = {0,};
+			sprintf( buf2, "%ld%ld", n2, n1);
+			if( isprime( atol( buf2))) {
+				PrimePair newp(p, n1, n2);
+				r.push_back( newp); 
+			}
+		}
+	}
+	return r;
+}
+
+#define MAX 1000000
 int main(int argc, char** argv)
 {
 	clock_t begin = clock();
@@ -142,34 +231,29 @@ int main(int argc, char** argv)
 	for(int i=2; i<MAX; i++)
 	{
 		if( isprime( i)) {
-			PrimePair pp(i);
-			int pairsSize = pp.getPairsSize();
-			if (pp.isPrimePair()) {
-//				cout << "i=" << i << " pairs size=" << pairsSize << endl;
-				pps.push_back( pp);
-			}
+			std::vector<PrimePair> pp = getPrimePairs(i);
+			pps.insert( pps.end(), pp.begin(), pp.end());
 		}
 	}
+	cout << "pps.size())=" << pps.size() << endl;
 
-	int cnt = 0;
-	for(int i=0; i< pps.size()-1; i++)
+	for(int i=0; i<pps.size(); i++)
 	{
-		for(int j=i+1; j<pps.size(); j++)
+		pps[i].print();
+		cout << endl;
+	}
+
+	cout << "pairmap.size()=" << pairmap.size() << endl;
+
+	// TODO recursive?
+	for( auto it = pairmap.begin(); it != pairmap.end(); it++) {
+		cout << it->first << " has " << it->second.size() << " members" << endl;
+		for(int i=0; i<it->second.size(); i++)
 		{
-			if( canProducePrime( pps[i], pps[j])) {
-				cout << "4 Prime!!!" << endl;
-				pps[i].print();
-				cout << ", ";
-				pps[j].print();
-				cout << endl;
-				cnt++;
-			}
+			
 		}
 	}
 
-	cout << "cnt=" << cnt << endl;
-
-	cout << "pps.size()=" << pps.size() << endl;
 	/* end of code */
 	clock_t end = clock();
 	std::cout << "elapsed time=" << double(end - begin) / CLOCKS_PER_SEC << std::endl;
