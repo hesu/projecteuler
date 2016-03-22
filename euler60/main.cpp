@@ -156,7 +156,7 @@ void combination( std::vector<int> src, int choose, int nowi, std::vector<int> r
 	return;
 }
 
-#define MAX 100000000
+#define MAX 4000000
 int main(int argc, char** argv)
 {
 	clock_t begin = clock();
@@ -180,7 +180,7 @@ int main(int argc, char** argv)
 
 	// TODO recursive?
 	for( auto it = pairmap.begin(); it != pairmap.end(); it++) {
-		if( it->second.size() < 5) { continue; }
+		if( it->second.size() < 4) { continue; }
 		else {
 //			cout << it->first << " has " << it->second.size() << " members" << endl;
 			std::vector<int> r;
