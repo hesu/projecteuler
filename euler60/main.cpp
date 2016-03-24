@@ -11,26 +11,26 @@
 #include <algorithm>
 using namespace std;
 
-std::map<long int,long int> primes;
-std::map<long int,long int> notprimes;
-bool isprime( long int n)
+std::map<unsigned long int,unsigned long int> primes;
+std::map<unsigned long int,unsigned long int> notprimes;
+bool isprime( unsigned long int n)
 {
 	if( n == 1) return false;
 	if( n == 2) return true;
-	std::map<long int,long int>::iterator it;
+	std::map<unsigned long int,unsigned long int>::iterator it;
 	it = notprimes.find(n); if( it != notprimes.end()) { return false; }
 	it = primes.find(n); if( it != primes.end()) { return true; }
 
-	long int s = sqrt( n) + 1;
-	for(long int i=s; i>1; i--)
+	unsigned long int s = sqrt( n) + 1;
+	for(unsigned long int i=s; i>1; i--)
 	{
 		if (n%i ==0) { 
-			notprimes.insert( std::map<long int, long int>::value_type( n, n));
+			notprimes.insert( std::map<unsigned long int, unsigned long int>::value_type( n, n));
 			return false;
 		}
 	}
 
-	primes.insert( std::map<long int,long int>::value_type( n, n));
+	primes.insert( std::map<unsigned long int,unsigned long int>::value_type( n, n));
 	return true;
 }
 
@@ -103,7 +103,7 @@ std::vector<PrimePair> getPrimePairs( int p)
 
 		if( b1[0] == '0' || b2[0] == '0' | b2[0] == 0) continue;
 
-		long int n1 = atol(b1); long int n2 = atol(b2);
+		unsigned long int n1 = atol(b1); unsigned long int n2 = atol(b2);
 		if( isprime(n1) && isprime(n2)) {
 
 			char buf2[1024] = {0,};
@@ -156,7 +156,8 @@ void combination( std::vector<int> src, int choose, int nowi, std::vector<int> r
 	return;
 }
 
-#define MAX 4000000
+#define PICK 5
+#define MAX 8000000
 int main(int argc, char** argv)
 {
 	clock_t begin = clock();
@@ -180,12 +181,12 @@ int main(int argc, char** argv)
 
 	// TODO recursive?
 	for( auto it = pairmap.begin(); it != pairmap.end(); it++) {
-		if( it->second.size() < 4) { continue; }
+		if( it->second.size() < PICK) { continue; }
 		else {
 //			cout << it->first << " has " << it->second.size() << " members" << endl;
 			std::vector<int> r;
 			r.push_back( it->first);
-			combination( it->second, 4, 0, r);
+			combination( it->second, PICK-1, 0, r);
 			//for(int i=0; i<it->second.size(); i++) { cout << it->second[i] << " "; }; cout << endl;
 		}
 	}
