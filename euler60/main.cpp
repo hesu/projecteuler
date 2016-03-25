@@ -34,18 +34,18 @@ bool isprime( unsigned long int n)
 	return true;
 }
 
-std::map<int, vector<int>> pairmap;
+std::map<unsigned long int, vector<unsigned long int>> pairmap;
 
 class PrimePair
 {
 	private :
-	int me;
-	int a;
-	int b;
-	std::map<int,int> pairs;
+	unsigned long int me;
+	unsigned long int a;
+	unsigned long int b;
+	std::map<unsigned long int,unsigned long int> pairs;
 
 	public:
-		PrimePair(int _me, int _a, int _b) {
+		PrimePair(unsigned long int _me, unsigned long int _a, unsigned long int _b) {
 			me = _me;
 
 			if (_a < _b) {
@@ -56,7 +56,7 @@ class PrimePair
 				b = _a;
 			}
 
-			std::map<int, vector<int>>::iterator it;
+			std::map<unsigned long int, vector<unsigned long int>>::iterator it;
 			// insert a map
 			it = pairmap.find(a);
 			if ( it != pairmap.end()) {
@@ -64,7 +64,7 @@ class PrimePair
 					it->second.push_back( b);
 				}
 			} else {
-				std::vector<int> v; v.push_back(b);
+				std::vector<unsigned long int> v; v.push_back(b);
 				pairmap.emplace( a, v);
 			}
 
@@ -75,15 +75,15 @@ class PrimePair
 					it->second.push_back( a);
 				}
 			} else {
-				std::vector<int> v; v.push_back(a);
+				std::vector<unsigned long int> v; v.push_back(a);
 				pairmap.emplace( b, v);
 			}
 
 		}
 
-		int getme() { return me; }
-		int geta() { return a; }
-		int getb() { return b; }
+		unsigned long int getme() { return me; }
+		unsigned long int geta() { return a; }
+		unsigned long int getb() { return b; }
 
 		void print() { cout << me << ":" << a << "," << b; }
 };
@@ -117,14 +117,14 @@ std::vector<PrimePair> getPrimePairs( int p)
 	return r;
 }
 
-int minsum = -1;
+unsigned long int minsum = -1;
 
-void combination( std::vector<int> src, int choose, int nowi, std::vector<int> result)
+void combination( std::vector<unsigned long int> src, int choose, int nowi, std::vector<unsigned long int> result)
 {
 	//if( choose <= 0 || nowi >= src.size()-1) {
 	if( choose <= 0) {
 		// DONE
-		int sum = 0;
+		unsigned long int sum = 0;
 		cout << "comb : "; for(int i=0; i<result.size(); i++) { sum += result[i]; cout << result[i] << " "; } cout << endl;
 		if( minsum == -1 || sum < minsum) { minsum = sum; }
 		return;
@@ -132,12 +132,12 @@ void combination( std::vector<int> src, int choose, int nowi, std::vector<int> r
 
 	for(int i=nowi; i<src.size(); i++)
 	{
-		std::vector<int> r(result);
+		std::vector<unsigned long int> r(result);
 
 		bool keepgo = true;
-		for(int j=0; j<r.size(); j++)
+		for(unsigned long int j=0; j<r.size(); j++)
 		{
-			std::map<int, vector<int>>::iterator it;
+			std::map<unsigned long int, vector<unsigned long int>>::iterator it;
 			it = pairmap.find(r[j]);
 			if( it == pairmap.end()) { keepgo = false; break; }
 			if( std::find(it->second.begin(), it->second.end(), src[i]) == it->second.end()) {
@@ -157,14 +157,14 @@ void combination( std::vector<int> src, int choose, int nowi, std::vector<int> r
 }
 
 #define PICK 5
-#define MAX 8000000
+#define MAX 160000000
 int main(int argc, char** argv)
 {
 	clock_t begin = clock();
 	/* starting code */
 
 	std::vector<PrimePair> pps;
-	for(int i=2; i<MAX; i++)
+	for(unsigned long int i=2; i<MAX; i++)
 	{
 		if( isprime( i)) {
 			std::vector<PrimePair> pp = getPrimePairs(i);
@@ -181,10 +181,10 @@ int main(int argc, char** argv)
 
 	// TODO recursive?
 	for( auto it = pairmap.begin(); it != pairmap.end(); it++) {
-		if( it->second.size() < PICK) { continue; }
+		if( it->second.size() < PICK-1) { continue; }
 		else {
 //			cout << it->first << " has " << it->second.size() << " members" << endl;
-			std::vector<int> r;
+			std::vector<unsigned long int> r;
 			r.push_back( it->first);
 			combination( it->second, PICK-1, 0, r);
 			//for(int i=0; i<it->second.size(); i++) { cout << it->second[i] << " "; }; cout << endl;
