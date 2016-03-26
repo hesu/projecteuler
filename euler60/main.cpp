@@ -123,16 +123,9 @@ long int minsum = -1;
 
 void combination( std::vector<unsigned long int> src, int choose, int nowi, std::vector<unsigned long int> result)
 {
-	//if( choose <= 0 || nowi >= src.size()-1) {
 	if( choose <= 0) {
 		// DONE
 		unsigned long int sum = 0;
-		/*
-		cout << "comb : "; for(int i=0; i<result.size(); i++) { sum += result[i]; cout << result[i] << " "; } 
-		if( minsum == -1 || sum < minsum) { minsum = sum; }
-		cout << "\t\tminsum=" << minsum;
-		cout << endl;
-		*/
 		for(int i=0; i< result.size(); i++)
 		{
 			sum += result[i];
@@ -161,14 +154,12 @@ void combination( std::vector<unsigned long int> src, int choose, int nowi, std:
 			if( it == pairmap.end()) { keepgo = false; break; }
 
 			if( std::find(it->second.begin(), it->second.end(), src[i]) == it->second.end()) {
-			//	cout << "at vector, none with " << src[i] << " and " << r[j] << endl;
 					char str[1024] = {0,};
 					sprintf( str, "%ld%ld", src[i], r[j]); 
 					if( isprime( atol(str))) {
 						char str2[1024] = {0,};
 						sprintf( str2, "%ld%ld", r[j], src[i]);
 						if( isprime( atol(str2))) {
-//							cout << "found new with " << src[i] << " and " << r[j] << " str=" << str << " str2=" << str2 << endl;
 							keepgo = true;
 						} else {
 							keepgo = false; break;
@@ -203,26 +194,17 @@ int main(int argc, char** argv)
 	{
 		if( isprime( i)) {
 			std::vector<PrimePair> pp = getPrimePairs(i);
-
-//			for(int j=0; j<pp.size(); j++) { pps.push_back( pp[j]); }
 			pps.insert( pps.end(), pp.begin(), pp.end());
 		}
 	}
 	cout << "primes.size())=" << primes.size() << endl;
 	cout << "pps.size())=" << pps.size() << endl;
-
-//	for(int i=0; i<pps.size(); i++) { pps[i].print(); cout << endl; }
-
 	cout << "pairmap.size()=" << pairmap.size() << endl;
 
-	// TODO recursive?
 	for( auto it = pairmap.begin(); it != pairmap.end(); it++) {
-		//if( it->second.size() < PICK-1) { continue; }
-		//else {
 			std::vector<unsigned long int> r;
 			r.push_back( it->first);
 			combination( it->second, PICK-1, 0, r);
-	//	}
 	}
 
 	cout << "answer minsum = " << minsum << endl;
