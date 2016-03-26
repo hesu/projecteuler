@@ -42,11 +42,12 @@ class PrimePair
 	unsigned long int me;
 	unsigned long int a;
 	unsigned long int b;
-	std::map<unsigned long int,unsigned long int> pairs;
+	bool is;
 
 	public:
 		PrimePair(unsigned long int _me, unsigned long int _a, unsigned long int _b) {
 			me = _me;
+			is = true;
 
 			if (_a < _b) {
 				a = _a;
@@ -84,15 +85,16 @@ class PrimePair
 		unsigned long int getme() { return me; }
 		unsigned long int geta() { return a; }
 		unsigned long int getb() { return b; }
+		bool getis() { return is; }
 
 		void print() { cout << me << ":" << a << "," << b; }
 };
 
-std::vector<PrimePair> getPrimePairs( int p)
+std::vector<PrimePair> getPrimePairs( unsigned long int p)
 {
 	std::vector<PrimePair> r;
 	char buf[1024] = {0,};
-	sprintf( buf, "%d", p);
+	sprintf( buf, "%ld", p);
 	int len = strlen( buf);
 
 	for(int i=0; i<len; i++)
@@ -117,7 +119,7 @@ std::vector<PrimePair> getPrimePairs( int p)
 	return r;
 }
 
-unsigned long int minsum = -1;
+long int minsum = -1;
 
 void combination( std::vector<unsigned long int> src, int choose, int nowi, std::vector<unsigned long int> result)
 {
@@ -125,8 +127,25 @@ void combination( std::vector<unsigned long int> src, int choose, int nowi, std:
 	if( choose <= 0) {
 		// DONE
 		unsigned long int sum = 0;
-		cout << "comb : "; for(int i=0; i<result.size(); i++) { sum += result[i]; cout << result[i] << " "; } cout << endl;
+		/*
+		cout << "comb : "; for(int i=0; i<result.size(); i++) { sum += result[i]; cout << result[i] << " "; } 
 		if( minsum == -1 || sum < minsum) { minsum = sum; }
+		cout << "\t\tminsum=" << minsum;
+		cout << endl;
+		*/
+		for(int i=0; i< result.size(); i++)
+		{
+			sum += result[i];
+		}
+
+		if( minsum == -1 || sum < minsum) { 
+			minsum = sum;
+			for(int i=0; i<result.size(); i++)
+			{
+				cout << result[i] << " ";
+			}
+			cout << " minsum : " << minsum << endl;
+		}
 		return;
 	}
 
@@ -140,10 +159,25 @@ void combination( std::vector<unsigned long int> src, int choose, int nowi, std:
 			std::map<unsigned long int, vector<unsigned long int>>::iterator it;
 			it = pairmap.find(r[j]);
 			if( it == pairmap.end()) { keepgo = false; break; }
+
 			if( std::find(it->second.begin(), it->second.end(), src[i]) == it->second.end()) {
-				keepgo = false;
-				break;
+			//	cout << "at vector, none with " << src[i] << " and " << r[j] << endl;
+					char str[1024] = {0,};
+					sprintf( str, "%ld%ld", src[i], r[j]); 
+					if( isprime( atol(str))) {
+						char str2[1024] = {0,};
+						sprintf( str2, "%ld%ld", r[j], src[i]);
+						if( isprime( atol(str2))) {
+//							cout << "found new with " << src[i] << " and " << r[j] << " str=" << str << " str2=" << str2 << endl;
+							keepgo = true;
+						} else {
+							keepgo = false; break;
+						}
+					} else {
+						keepgo = false; break;
+					}
 			}
+
 		}
 
 		if( keepgo) {
@@ -157,14 +191,15 @@ void combination( std::vector<unsigned long int> src, int choose, int nowi, std:
 }
 
 #define PICK 5
-#define MAX 160000000
+#define MAX 400000
 int main(int argc, char** argv)
 {
 	clock_t begin = clock();
 	/* starting code */
 
+	cout << "MAX=" << MAX << endl;
 	std::vector<PrimePair> pps;
-	for(unsigned long int i=2; i<MAX; i++)
+	for(unsigned long int i=3; i<MAX; i++)
 	{
 		if( isprime( i)) {
 			std::vector<PrimePair> pp = getPrimePairs(i);
@@ -173,6 +208,7 @@ int main(int argc, char** argv)
 			pps.insert( pps.end(), pp.begin(), pp.end());
 		}
 	}
+	cout << "primes.size())=" << primes.size() << endl;
 	cout << "pps.size())=" << pps.size() << endl;
 
 //	for(int i=0; i<pps.size(); i++) { pps[i].print(); cout << endl; }
@@ -181,14 +217,12 @@ int main(int argc, char** argv)
 
 	// TODO recursive?
 	for( auto it = pairmap.begin(); it != pairmap.end(); it++) {
-		if( it->second.size() < PICK-1) { continue; }
-		else {
-//			cout << it->first << " has " << it->second.size() << " members" << endl;
+		//if( it->second.size() < PICK-1) { continue; }
+		//else {
 			std::vector<unsigned long int> r;
 			r.push_back( it->first);
 			combination( it->second, PICK-1, 0, r);
-			//for(int i=0; i<it->second.size(); i++) { cout << it->second[i] << " "; }; cout << endl;
-		}
+	//	}
 	}
 
 	cout << "answer minsum = " << minsum << endl;
