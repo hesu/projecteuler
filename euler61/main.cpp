@@ -78,13 +78,37 @@ void getOctagonal( int min, int max)
 	}
 }
 
-bool findCyclical( int number, int figurate, int cycle)
+bool findCyclical( int n, int figurate, int cycle)
 {
-	char buf[8]= {0,};
-	sprintf( buf, "%d", number);
+	std::map<int,int>::iterator it;
+	if (figurate == 3) {
+		it = triangle.find(n);
+		if (it == triangle.end()) return false;
+	} else if (figurate == 4) {
+		it = square.find(n);
+		if (it == square.end()) return false;
+	} else if (figurate == 5) {
+		it = pentagonal.find(n);
+		if (it == pentagonal.end()) return false;
+	} else if (figurate == 6) {
+		it = hexagonal.find(n);
+		if (it == hexagonal.end()) return false;
+	} else if (figurate == 7) {
+		it = heptagonal.find(n);
+		if (it == heptagonal.end()) return false;
+	} else if (figurate == 8) {
+		it = octagonal.find(n);
+		if (it == octagonal.end()) return false;
+	} else {
+		return true;
+	}
 
-	int newNumber;
-	return false;
+	// cycle
+	char buf[8]= {0,};
+	sprintf( buf, "%d", n);
+
+	int newn;
+	return findCyclical( newn, figurate+1, cycle);
 }
 
 int main(int argc, char** argv)
@@ -104,6 +128,7 @@ int main(int argc, char** argv)
 	for(std::map<int,int>::iterator it = triangle.begin(); it != triangle.end(); it++)
 	{
 		cout << "triangle : " << it->first << endl;
+		findCyclical( it->first, 3, 1);
 	}
 
 	/* end of code */
