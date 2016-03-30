@@ -8,17 +8,19 @@
 #include <map>
 #include <cmath>
 
-#include <string.h>
-#include <algorithm>
+//#include <string.h>
+//#include <algorithm>
 using namespace std;
 
-std::map<int,int> triangle;
+std::map<string,std::vector<int>> triangle;
 void getTriangle( int min, int max)
 {
 	for(int i=1; i<max; i++)
 	{
 		int t = i*(i+1)/2;
-		if( t >= min && t <= max) { triangle.insert( std::map<int,int>::value_type(t,t)); }
+		string n = to_string( t);
+		string key;
+//		if( t >= min && t <= max) { triangle.insert( std::map<int,int>::value_type(t,t)); }
 		if( t > max) { break;}
 	}
 }
@@ -29,7 +31,7 @@ void getSquare( int min, int max)
 	for(int i=1; i<max; i++)
 	{
 		int s = i*i;
-		if( s >= min && s <= max) { square.insert( std::map<int,int>::value_type(s,s)); }
+//		if( s >= min && s <= max) { square.insert( std::map<int,int>::value_type(s,s)); }
 		if( s > max) { break;}
 	}
 }
@@ -40,7 +42,7 @@ void getPentagonal( int min, int max)
 	for(int i=1; i<max; i++)
 	{
 		int p = i*(3*i-1)/2;
-		if( p >= min && p <= max) { pentagonal.insert( std::map<int,int>::value_type(p,p)); }
+//		if( p >= min && p <= max) { pentagonal.insert( std::map<int,int>::value_type(p,p)); }
 		if( p > max) { break;}
 	}
 }
@@ -51,7 +53,7 @@ void getHexagonal( int min, int max)
 	for(int i=1; i<max; i++)
 	{
 		int h = i*(2*h-1);
-		if( h >= min && h <= max) { hexagonal.insert( std::map<int,int>::value_type(h,h)); }
+//		if( h >= min && h <= max) { hexagonal.insert( std::map<int,int>::value_type(h,h)); }
 		if( h > max) { break;}
 	}
 }
@@ -62,7 +64,7 @@ void getHeptagonal( int min, int max)
 	for(int i=1; i<max; i++)
 	{
 		int h = i*(5*i-3)/2;
-		if( h >= min && h <= max) { heptagonal.insert( std::map<int,int>::value_type(h,h)); }
+//		if( h >= min && h <= max) { heptagonal.insert( std::map<int,int>::value_type(h,h)); }
 		if( h > max) { break;}
 	}
 }
@@ -73,42 +75,20 @@ void getOctagonal( int min, int max)
 	for(int i=1; i<max; i++)
 	{
 		int o = i*(3*i-2);
-		if( o >= min && o <= max) { octagonal.insert( std::map<int,int>::value_type(o,o)); }
+//		if( o >= min && o <= max) { octagonal.insert( std::map<int,int>::value_type(o,o)); }
 		if( o > max) { break;}
 	}
 }
 
-bool findCyclical( int n, int figurate, int cycle)
+// call ex ) findCyclical( TriangleN(0), now, sum, [ 4,5,6,7,8]);
+
+bool findCyclical( int begin, int now, int sum, std::vector<int> todo)
 {
-	std::map<int,int>::iterator it;
-	if (figurate == 3) {
-		it = triangle.find(n);
-		if (it == triangle.end()) return false;
-	} else if (figurate == 4) {
-		it = square.find(n);
-		if (it == square.end()) return false;
-	} else if (figurate == 5) {
-		it = pentagonal.find(n);
-		if (it == pentagonal.end()) return false;
-	} else if (figurate == 6) {
-		it = hexagonal.find(n);
-		if (it == hexagonal.end()) return false;
-	} else if (figurate == 7) {
-		it = heptagonal.find(n);
-		if (it == heptagonal.end()) return false;
-	} else if (figurate == 8) {
-		it = octagonal.find(n);
-		if (it == octagonal.end()) return false;
-	} else {
+	if( todo.size() <= 0) { 
+		// end of recursion
 		return true;
 	}
-
-	// cycle
-	char buf[8]= {0,};
-	sprintf( buf, "%d", n);
-
-	int newn;
-	return findCyclical( newn, figurate+1, cycle);
+	return false;
 }
 
 int main(int argc, char** argv)
@@ -125,14 +105,8 @@ int main(int argc, char** argv)
 
 	cout << "triangle=" << triangle.size() << " square=" << square.size() << " pentagonal=" << pentagonal.size() << " hexagonal=" << hexagonal.size() << " heptagonal=" << heptagonal.size() << " octagonal=" << octagonal.size() << endl;
 
-	for(std::map<int,int>::iterator it = triangle.begin(); it != triangle.end(); it++)
-	{
-		cout << "triangle : " << it->first << endl;
-		findCyclical( it->first, 3, 1);
-	}
-
 	/* end of code */
 	clock_t end = clock();
-	std::cout << "elapsed time=" << double(end - begin) / CLOCKS_PER_SEC << std::endl;
+	cout << "elapsed time=" << double(end - begin) / CLOCKS_PER_SEC << endl;
 	return 0;
 }
