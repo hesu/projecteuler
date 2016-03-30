@@ -18,64 +18,123 @@ void getTriangle( int min, int max)
 	for(int i=1; i<max; i++)
 	{
 		int t = i*(i+1)/2;
-		string n = to_string( t);
-		string key;
-//		if( t >= min && t <= max) { triangle.insert( std::map<int,int>::value_type(t,t)); }
+		string key = to_string(t).substr( 0, 2);
+		
+		map<string,vector<int>>::iterator it = triangle.find( key);
+		if( it != triangle.end()) {
+			it->second.push_back( t);
+		} else {
+			// new insert
+			std::vector<int> v;
+			v.push_back(t);
+			triangle.emplace( key, v);
+		}
+
 		if( t > max) { break;}
 	}
 }
 
-std::map<int,int> square;
+std::map<string,std::vector<int>> square;
 void getSquare( int min, int max)
 {
 	for(int i=1; i<max; i++)
 	{
 		int s = i*i;
-//		if( s >= min && s <= max) { square.insert( std::map<int,int>::value_type(s,s)); }
+		string key = to_string(s).substr( 0, 2);
+		map<string,vector<int>>::iterator it = square.find( key);
+		if( it != square.end()) {
+			it->second.push_back( s);
+		} else {
+			// new insert
+			std::vector<int> v;
+			v.push_back(s);
+			square.emplace( key, v);
+		}
+
 		if( s > max) { break;}
 	}
 }
 
-std::map<int,int> pentagonal;
+std::map<string,std::vector<int>> pentagonal;
 void getPentagonal( int min, int max)
 {
 	for(int i=1; i<max; i++)
 	{
 		int p = i*(3*i-1)/2;
-//		if( p >= min && p <= max) { pentagonal.insert( std::map<int,int>::value_type(p,p)); }
+		string key = to_string(p).substr( 0, 2);
+		map<string,vector<int>>::iterator it = pentagonal.find( key);
+		if( it != pentagonal.end()) {
+			it->second.push_back( p);
+		} else {
+			// new insert
+			std::vector<int> v;
+			v.push_back(p);
+			pentagonal.emplace( key, v);
+		}
+
 		if( p > max) { break;}
 	}
 }
 
-std::map<int,int> hexagonal;
+std::map<string,std::vector<int>> hexagonal;
 void getHexagonal( int min, int max)
 {
 	for(int i=1; i<max; i++)
 	{
 		int h = i*(2*h-1);
-//		if( h >= min && h <= max) { hexagonal.insert( std::map<int,int>::value_type(h,h)); }
+		string key = to_string(h).substr( 0, 2);
+		map<string,vector<int>>::iterator it = hexagonal.find( key);
+		if( it != hexagonal.end()) {
+			it->second.push_back( h);
+		} else {
+			// new insert
+			std::vector<int> v;
+			v.push_back(h);
+			hexagonal.emplace( key, v);
+		}
+
 		if( h > max) { break;}
 	}
 }
 
-std::map<int,int> heptagonal;
+std::map<string,std::vector<int>> heptagonal;
 void getHeptagonal( int min, int max)
 {
 	for(int i=1; i<max; i++)
 	{
 		int h = i*(5*i-3)/2;
-//		if( h >= min && h <= max) { heptagonal.insert( std::map<int,int>::value_type(h,h)); }
+		string key = to_string(h).substr( 0, 2);
+		map<string,vector<int>>::iterator it = heptagonal.find( key);
+		if( it != heptagonal.end()) {
+			it->second.push_back( h);
+		} else {
+			// new insert
+			std::vector<int> v;
+			v.push_back(h);
+			heptagonal.emplace( key, v);
+		}
+
 		if( h > max) { break;}
 	}
 }
 
-std::map<int,int> octagonal;
+std::map<string,std::vector<int>> octagonal;
 void getOctagonal( int min, int max)
 {
 	for(int i=1; i<max; i++)
 	{
 		int o = i*(3*i-2);
-//		if( o >= min && o <= max) { octagonal.insert( std::map<int,int>::value_type(o,o)); }
+		string key = to_string(o).substr( 0, 2);
+		map<string,vector<int>>::iterator it = octagonal.find( key);
+		if( it != octagonal.end()) {
+			it->second.push_back( o);
+		} else {
+			// new insert
+			std::vector<int> v;
+			v.push_back(o);
+			octagonal.emplace( key, v);
+		}
+
 		if( o > max) { break;}
 	}
 }
