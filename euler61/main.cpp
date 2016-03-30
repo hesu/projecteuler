@@ -12,13 +12,17 @@
 //#include <algorithm>
 using namespace std;
 
+int MAX = 100000;
+
 std::map<string,std::vector<int>> triangle;
 void getTriangle( int min, int max)
 {
-	for(int i=1; i<max; i++)
+	for(int i=1; i<MAX; i++)
 	{
 		int t = i*(i+1)/2;
 		string key = to_string(t).substr( 0, 2);
+		
+		if( t < min) continue; if( t > max) { break;}
 		
 		map<string,vector<int>>::iterator it = triangle.find( key);
 		if( it != triangle.end()) {
@@ -30,17 +34,19 @@ void getTriangle( int min, int max)
 			triangle.emplace( key, v);
 		}
 
-		if( t > max) { break;}
 	}
 }
 
 std::map<string,std::vector<int>> square;
 void getSquare( int min, int max)
 {
-	for(int i=1; i<max; i++)
+	for(int i=1; i<MAX; i++)
 	{
 		int s = i*i;
 		string key = to_string(s).substr( 0, 2);
+		
+		if( s < min) continue; if( s > max) { break;}
+
 		map<string,vector<int>>::iterator it = square.find( key);
 		if( it != square.end()) {
 			it->second.push_back( s);
@@ -50,18 +56,19 @@ void getSquare( int min, int max)
 			v.push_back(s);
 			square.emplace( key, v);
 		}
-
-		if( s > max) { break;}
 	}
 }
 
 std::map<string,std::vector<int>> pentagonal;
 void getPentagonal( int min, int max)
 {
-	for(int i=1; i<max; i++)
+	for(int i=1; i<MAX; i++)
 	{
 		int p = i*(3*i-1)/2;
 		string key = to_string(p).substr( 0, 2);
+		
+		if( p < min) continue; if( p > max) { break;}
+		
 		map<string,vector<int>>::iterator it = pentagonal.find( key);
 		if( it != pentagonal.end()) {
 			it->second.push_back( p);
@@ -79,10 +86,13 @@ void getPentagonal( int min, int max)
 std::map<string,std::vector<int>> hexagonal;
 void getHexagonal( int min, int max)
 {
-	for(int i=1; i<max; i++)
+	for(int i=1; i<MAX; i++)
 	{
 		int h = i*(2*h-1);
 		string key = to_string(h).substr( 0, 2);
+		
+		if( h < min) continue; if( h > max) { break;}
+
 		map<string,vector<int>>::iterator it = hexagonal.find( key);
 		if( it != hexagonal.end()) {
 			it->second.push_back( h);
@@ -100,10 +110,13 @@ void getHexagonal( int min, int max)
 std::map<string,std::vector<int>> heptagonal;
 void getHeptagonal( int min, int max)
 {
-	for(int i=1; i<max; i++)
+	for(int i=1; i<MAX; i++)
 	{
 		int h = i*(5*i-3)/2;
 		string key = to_string(h).substr( 0, 2);
+		
+		if( h < min) continue; if( h > max) { break;}
+
 		map<string,vector<int>>::iterator it = heptagonal.find( key);
 		if( it != heptagonal.end()) {
 			it->second.push_back( h);
@@ -121,10 +134,13 @@ void getHeptagonal( int min, int max)
 std::map<string,std::vector<int>> octagonal;
 void getOctagonal( int min, int max)
 {
-	for(int i=1; i<max; i++)
+	for(int i=1; i<MAX; i++)
 	{
 		int o = i*(3*i-2);
 		string key = to_string(o).substr( 0, 2);
+		
+		if( o < min) continue; if( o > max) { break;}
+		
 		map<string,vector<int>>::iterator it = octagonal.find( key);
 		if( it != octagonal.end()) {
 			it->second.push_back( o);
@@ -162,6 +178,18 @@ int main(int argc, char** argv)
 	getHeptagonal( 1000, 9999);
 	getOctagonal( 1000, 9999);
 
+
+	for( auto it = triangle.begin(); it != triangle.end(); it++)
+	{
+//		cout << "triangle key=" << it->first << " size=" << it->second.size() << endl;
+		for( int i = 0; i< it->second.size(); i++)
+		{
+//			cout << "\t" << it->second[i];
+			// TODO call findCycle code
+		}
+		cout << endl;
+	}
+	
 	cout << "triangle=" << triangle.size() << " square=" << square.size() << " pentagonal=" << pentagonal.size() << " hexagonal=" << hexagonal.size() << " heptagonal=" << heptagonal.size() << " octagonal=" << octagonal.size() << endl;
 
 	/* end of code */
