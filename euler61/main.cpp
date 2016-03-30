@@ -9,7 +9,7 @@
 #include <cmath>
 
 //#include <string.h>
-//#include <algorithm>
+#include <algorithm>
 using namespace std;
 
 int MAX = 100000;
@@ -155,15 +155,61 @@ void getOctagonal( int min, int max)
 	}
 }
 
-// call ex ) findCyclical( TriangleN(0), now, sum, [ 4,5,6,7,8]);
-
 bool findCyclical( int begin, int now, int sum, std::vector<int> todo)
 {
 	if( todo.size() <= 0) { 
 		// end of recursion
+		//cout << "done" << endl;
+		string bFirst = to_string(begin).substr( 0, 2);
+		string nLast = to_string(now).substr( 2, 2);
+		if (bFirst.compare( nLast) == 0) {
+			cout << "begin=" << begin << " now=" << now << " sum=" << sum << endl;
+		} else {
+			cout << "begin=" << begin << " now=" << now << endl;
+		}
 		return true;
 	}
+
+	string nextKey = to_string(now).substr( 2, 2);
+//	cout << "todo.size=" << todo.size() << " nextKey=" << nextKey << endl;
+	for(int i=0; i<todo.size(); i++)
+	{
+		map<string,vector<int>>* m = NULL;
+
+		if( todo[i] == 4) m = &square;
+		else if( todo[i] == 5) m = &pentagonal;
+		else if( todo[i] == 6) m = &hexagonal;
+		else if( todo[i] == 7) m = &heptagonal;
+		else if( todo[i] == 8) m = &octagonal;
+
+		map<string,vector<int>>::iterator it;
+		if (m != NULL) {
+			it = m->find( nextKey);
+
+			
+			if (it != m->end()) {
+				// dbg
+				for(int i=0; i<todo.size(); i++) { cout << " "; } cout << "key=" << nextKey << endl;
+
+				// make todo vector for next recursive
+				std::vector<int> v(todo);
+				v.erase( std::find(v.begin(),v.end(), todo[i]));
+				cout << "v.size()=" << v.size() << endl;
+				for(int j=0; j<it->second.size(); j++)
+				{
+					findCyclical( begin, it->second[j], sum + it->second[j], v);
+				}
+			} else {
+	//			cout << "todo[i]=" << todo[i] << " key=" << nextKey << endl;
+			}
+		}
+	}
 	return false;
+	/*
+	std::vector<int> v( todo);
+	v.pop_back();
+	findCyclical( begin, now, sum, v);
+	*/
 }
 
 int main(int argc, char** argv)
@@ -175,19 +221,21 @@ int main(int argc, char** argv)
 	getSquare( 1000, 9999);
 	getPentagonal( 1000, 9999);
 	getHexagonal( 1000, 9999);
-	getHeptagonal( 1000, 9999);
+//	getHeptagonal( 1000, 9999);
 	getOctagonal( 1000, 9999);
-
 
 	for( auto it = triangle.begin(); it != triangle.end(); it++)
 	{
-//		cout << "triangle key=" << it->first << " size=" << it->second.size() << endl;
 		for( int i = 0; i< it->second.size(); i++)
 		{
-//			cout << "\t" << it->second[i];
-			// TODO call findCycle code
+			std::vector<int> v;
+			v.push_back( 4);
+			v.push_back(5);
+			v.push_back(6);
+		//	v.push_back(7);
+			v.push_back(8);
+			findCyclical( it->second[i], it->second[i], it->second[i], v);
 		}
-		cout << endl;
 	}
 	
 	cout << "triangle=" << triangle.size() << " square=" << square.size() << " pentagonal=" << pentagonal.size() << " hexagonal=" << hexagonal.size() << " heptagonal=" << heptagonal.size() << " octagonal=" << octagonal.size() << endl;
