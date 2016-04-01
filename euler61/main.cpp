@@ -10,7 +10,7 @@
 #include <algorithm>
 using namespace std;
 
-int MAX = 100000;
+int MAX = 10000;
 
 std::map<string,std::vector<int>> triangle;
 void getTriangle( int min, int max)
@@ -86,9 +86,9 @@ void getHexagonal( int min, int max)
 {
 	for(int i=1; i<MAX; i++)
 	{
-		int h = i*(2*h-1);
+		int h = i*(2*i-1);
 		string key = to_string(h).substr( 0, 2);
-		
+	
 		if( h < min) continue; if( h > max) { break;}
 
 		map<string,vector<int>>::iterator it = hexagonal.find( key);
@@ -153,75 +153,66 @@ void getOctagonal( int min, int max)
 	}
 }
 
-void printMade( std::vector<pair<int,int>> made)
+int printMade( std::vector<pair<int,int>> made)
 {
+	int sum = 0;
 	for(int i=0; i<made.size(); i++)
 	{
 		auto it = made[i];
 		cout << "[" << it.first << "]" << it.second << " ";
+		sum += it.second;
 	}
 	cout << endl;
+	return sum;
 }
 
 bool findCyclical( int begin, int now, int sum, std::vector<int> todo, std::vector<pair<int, int>> made)
 {
 	if( todo.size() <= 0) { 
 		// end of recursion
-		//cout << "done" << endl;
 		string bFirst = to_string(begin).substr( 0, 2);
 		string nLast = to_string(now).substr( 2, 2);
 		if (bFirst.compare( nLast) == 0) {
-//			cout << "begin=" << begin << " now=" << now << " sum=" << sum << endl;
-			printMade(made);
-		} else {
-//			cout << "begin=" << begin << " now=" << now << endl;
+			// SOLUTION!!!!!
+			int sum = printMade(made);
+			cout << "sum=" << sum << endl;
 		}
 		return true;
 	}
 
 	string nextKey = to_string(now).substr( 2, 2);
-//	cout << "todo.size=" << todo.size() << " nextKey=" << nextKey << endl;
 	for(int i=0; i<todo.size(); i++)
 	{
 		map<string,vector<int>>* m = NULL;
-
 		if( todo[i] == 4) m = &square;
 		else if( todo[i] == 5) m = &pentagonal;
 		else if( todo[i] == 6) m = &hexagonal;
 		else if( todo[i] == 7) m = &heptagonal;
 		else if( todo[i] == 8) m = &octagonal;
+		else { cout << "abnormal!" << endl; return false; }
+
+		if( m == NULL) return false;
 
 		map<string,vector<int>>::iterator it;
-		if (m != NULL) {
-			it = m->find( nextKey);
+		it = m->find( nextKey);
+		if (it != m->end()) {
+			// dbg
+			//				for(int i=0; i<todo.size(); i++) { cout << " "; } cout << "key=" << nextKey << endl;
 
-			
-			if (it != m->end()) {
-				// dbg
-//				for(int i=0; i<todo.size(); i++) { cout << " "; } cout << "key=" << nextKey << endl;
+			// make todo vector for next recursive
+			std::vector<int> v(todo);
+			v.erase( std::find(v.begin(),v.end(), todo[i]));
 
-				// make todo vector for next recursive
-				std::vector<int> v(todo);
-				v.erase( std::find(v.begin(),v.end(), todo[i]));
-
-				for(int j=0; j<it->second.size(); j++)
-				{
-					// make made vector for next recursive
-					std::vector<pair<int, int>> ma( made);
-					ma.push_back( std::make_pair(todo[i], it->second[j])); 
-					findCyclical( begin, it->second[j], sum + it->second[j], v, ma);
-				}
-			} else {
-	//			cout << "todo[i]=" << todo[i] << " key=" << nextKey << endl;
+			for(int j=0; j<it->second.size(); j++)
+			{
+				// make made vector for next recursive
+				std::vector<pair<int, int>> ma( made);
+				ma.push_back( std::make_pair(todo[i], it->second[j])); 
+				findCyclical( begin, it->second[j], sum + it->second[j], v, ma);
 			}
 		}
 	}
 	return false;
-	/*
-	std::vector<int> v( todo);
-	v.pop_back();
-	findCyclical( begin, now, sum, v);
-	*/
 }
 
 int main(int argc, char** argv)
@@ -232,20 +223,20 @@ int main(int argc, char** argv)
 	getTriangle( 1000, 9999);
 	getSquare( 1000, 9999);
 	getPentagonal( 1000, 9999);
-//	getHexagonal( 1000, 9999);
-//	getHeptagonal( 1000, 9999);
-//	getOctagonal( 1000, 9999);
+	getHexagonal( 1000, 9999);
+	getHeptagonal( 1000, 9999);
+	getOctagonal( 1000, 9999);
 
 	for( auto it = triangle.begin(); it != triangle.end(); it++)
 	{
 		for( int i = 0; i< it->second.size(); i++)
 		{
 			std::vector<int> v;
-			v.push_back( 4);
+			v.push_back(4);
 			v.push_back(5);
-//			v.push_back(6);
-		//	v.push_back(7);
-//			v.push_back(8);
+			v.push_back(6);
+			v.push_back(7);
+			v.push_back(8);
 
 			std::vector<pair<int,int>> made;
 			made.push_back( std::make_pair(3, it->second[i]));
