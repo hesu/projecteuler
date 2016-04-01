@@ -7,8 +7,6 @@
 #include <vector>
 #include <map>
 #include <cmath>
-
-//#include <string.h>
 #include <algorithm>
 using namespace std;
 
@@ -155,7 +153,17 @@ void getOctagonal( int min, int max)
 	}
 }
 
-bool findCyclical( int begin, int now, int sum, std::vector<int> todo)
+void printMade( std::vector<pair<int,int>> made)
+{
+	for(int i=0; i<made.size(); i++)
+	{
+		auto it = made[i];
+		cout << "[" << it.first << "]" << it.second << " ";
+	}
+	cout << endl;
+}
+
+bool findCyclical( int begin, int now, int sum, std::vector<int> todo, std::vector<pair<int, int>> made)
 {
 	if( todo.size() <= 0) { 
 		// end of recursion
@@ -163,9 +171,10 @@ bool findCyclical( int begin, int now, int sum, std::vector<int> todo)
 		string bFirst = to_string(begin).substr( 0, 2);
 		string nLast = to_string(now).substr( 2, 2);
 		if (bFirst.compare( nLast) == 0) {
-			cout << "begin=" << begin << " now=" << now << " sum=" << sum << endl;
+//			cout << "begin=" << begin << " now=" << now << " sum=" << sum << endl;
+			printMade(made);
 		} else {
-			cout << "begin=" << begin << " now=" << now << endl;
+//			cout << "begin=" << begin << " now=" << now << endl;
 		}
 		return true;
 	}
@@ -189,15 +198,18 @@ bool findCyclical( int begin, int now, int sum, std::vector<int> todo)
 			
 			if (it != m->end()) {
 				// dbg
-				for(int i=0; i<todo.size(); i++) { cout << " "; } cout << "key=" << nextKey << endl;
+//				for(int i=0; i<todo.size(); i++) { cout << " "; } cout << "key=" << nextKey << endl;
 
 				// make todo vector for next recursive
 				std::vector<int> v(todo);
 				v.erase( std::find(v.begin(),v.end(), todo[i]));
-				cout << "v.size()=" << v.size() << endl;
+
 				for(int j=0; j<it->second.size(); j++)
 				{
-					findCyclical( begin, it->second[j], sum + it->second[j], v);
+					// make made vector for next recursive
+					std::vector<pair<int, int>> ma( made);
+					ma.push_back( std::make_pair(todo[i], it->second[j])); 
+					findCyclical( begin, it->second[j], sum + it->second[j], v, ma);
 				}
 			} else {
 	//			cout << "todo[i]=" << todo[i] << " key=" << nextKey << endl;
@@ -220,9 +232,9 @@ int main(int argc, char** argv)
 	getTriangle( 1000, 9999);
 	getSquare( 1000, 9999);
 	getPentagonal( 1000, 9999);
-	getHexagonal( 1000, 9999);
+//	getHexagonal( 1000, 9999);
 //	getHeptagonal( 1000, 9999);
-	getOctagonal( 1000, 9999);
+//	getOctagonal( 1000, 9999);
 
 	for( auto it = triangle.begin(); it != triangle.end(); it++)
 	{
@@ -231,10 +243,13 @@ int main(int argc, char** argv)
 			std::vector<int> v;
 			v.push_back( 4);
 			v.push_back(5);
-			v.push_back(6);
+//			v.push_back(6);
 		//	v.push_back(7);
-			v.push_back(8);
-			findCyclical( it->second[i], it->second[i], it->second[i], v);
+//			v.push_back(8);
+
+			std::vector<pair<int,int>> made;
+			made.push_back( std::make_pair(3, it->second[i]));
+			findCyclical( it->second[i], it->second[i], it->second[i], v, made);
 		}
 	}
 	
