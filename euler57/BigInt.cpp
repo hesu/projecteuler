@@ -110,7 +110,6 @@ BigInt BigInt::operator + (BigInt rhs)
 		retdg.pop_back();
 	}
 	ret.setdg( retdg);
-	cout << endl;
 	return ret;
 }
 
