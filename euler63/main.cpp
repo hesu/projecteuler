@@ -6,8 +6,10 @@
 #include <ctime>
 #include <math.h>
 #include <string.h>
-using namespace std;
 
+#include "BigInt.h"
+
+using namespace std;
 int main(int argc, char** argv)
 {
 	clock_t begin = clock();
@@ -19,26 +21,37 @@ int main(int argc, char** argv)
 	unsigned long int i=2;
 	while( i < 10)
 	{
-		bool made = false;
 		for(int j=1; ; j++)
 		{
-			unsigned long int powed = pow(i, j);
-			int digitlen = log10( powed) + 1;
-			if (digitlen == j) {
-					cout << "i=" << i << " j=" << j << " digitlen=" << digitlen << " powed=" << powed << endl;
+			BigInt powed = BigInt(1);
+			for(int k=0; k<j; k++) { 
+				BigInt operand(i);
+				powed = powed * operand;
+			}
+			cout << endl;
+			
+			int digitlen = powed.getDigitsLen();
+			if( digitlen == j) {
 					cnt++;
-					made = true;
+					cout << "i=" << i << " j=" << j << " powed="; powed.print(); cout << " cnt=" << cnt << endl;
+			}
+			
+			if( digitlen < j) {
+				break;
 			}
 
-			// TODO j finite condition
-			//if( made && powed > 10) {
-			if( powed > 10) {
-				unsigned long int left = powed/10;
-				if( j >= 10 && log10(left * i)+1 < digitlen) {
-					cout << "powed=" << powed << " left*i=" << left*i << " digitlen=" << digitlen << endl;
+			/*
+			if( digitlen >= 2) {
+				BigInt left; left.copy( powed);
+				left.shift(1);
+				BigInt operand(i);
+				left = left * operand;
+				if( j >= 10 && left.getDigitsLen() < digitlen) {
 					break;
 				}
-			}
+			} 
+			*/
+			
 		}
 		i++;
 	}

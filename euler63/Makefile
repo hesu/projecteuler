@@ -2,19 +2,13 @@
 CXX=g++
 CXXFLAGS=-g -std=c++11 #-Wall
 
-all : main t
+all : main
 
 main : main.o
-	$(CXX) -o main main.o
+	$(CXX) -o main main.o BigInt.o
 
-main.o : main.cpp
-	$(CXX) $(CXXFLAGS) -c main.cpp
-
-t : t.o
-	$(CXX) -o t t.o
-
-t.o : t.cpp
-	$(CXX) $(CXXFLAGS) -c t.cpp
+main.o : main.cpp BigInt.cpp
+	$(CXX) $(CXXFLAGS) -c main.cpp BigInt.cpp
 
 clean :
-	rm -f *.o main t
+	rm -f *.o main
