@@ -35,23 +35,7 @@ int main(int argc, char** argv)
 					cnt++;
 					cout << "i=" << i << " j=" << j << " powed="; powed.print(); cout << " cnt=" << cnt << endl;
 			}
-			
-			if( digitlen < j) {
-				break;
-			}
-
-			/*
-			if( digitlen >= 2) {
-				BigInt left; left.copy( powed);
-				left.shift(1);
-				BigInt operand(i);
-				left = left * operand;
-				if( j >= 10 && left.getDigitsLen() < digitlen) {
-					break;
-				}
-			} 
-			*/
-			
+			if( digitlen < j) break;
 		}
 		i++;
 	}
