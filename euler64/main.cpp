@@ -65,11 +65,12 @@ class Fraction
 			n = nearby;
 			
 			int nextNn = nn;
-			while( nextNn <= 0) {
-				n++;
-				nextNn -= nextDn;
+			while( nextNn > 0) {
+//				n++;
+				nextNn = nextNn - nextDn;
 			}
-			next.set( NULL, 0, nsr, nextDn, NULL, nextNn);
+			cout << "n = " << n << " nextNn=" << nextNn << " nextDn=" << nextDn << endl;
+			next.set( NULL, 0, nsr, nextDn, dsr, nextNn);
 		}
 			else if( dn != 0) {
 			n = 1;
