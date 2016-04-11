@@ -57,23 +57,15 @@ class Fraction
 			next.set( NULL, 0, NULL, diff, nextNsr, nearby);
 		} else if( dsr.getn() != 0) {
 			// TODO	
-			int nextDn = (dsr.getn() - pow( dn, 2))/(nn);
-			cout << "nextDn=" << nextDn << endl;
-
-			int nearby;
-			for(int i=1;; i++) { if (pow(i, 2) <= dsr.getn() && pow(i+1, 2) >= dsr.getn()) { nearby = i; break; } }
-			n = nearby;
-			
-			int nextNn = nn;
-			while( nextNn > 0) {
-//				n++;
-				nextNn = nextNn - nextDn;
-			}
-			cout << "n = " << n << " nextNn=" << nextNn << " nextDn=" << nextDn << endl;
-			next.set( NULL, 0, nsr, nextDn, dsr, nextNn);
-		}
-			else if( dn != 0) {
+			cout << "newf2?" << endl;
+		} else if( dn != 0) {
+			cout << "newf1?" << endl;
+			// TODO
 			n = 1;
+
+			int nextDn = (dn-nn)*(-1);
+			cout << " (dn-nn)*(-1)=" << nextDn << " dn=" << dn << endl;
+			
 			next.set( NULL, 0, nsr, (dn-nn)*(-1), NULL, dn);
 		} else {
 			cout << "TODO" << endl;
