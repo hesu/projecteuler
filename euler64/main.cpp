@@ -123,25 +123,6 @@ Fraction getFirstFraction( int n)
 	return f;
 }
 
-bool isRepeating( std::vector<int> chain)
-{
-	for(int i=1; i<=(chain.size()/2); i++)
-	{
-		std::vector<int> sub;
-		for(int j=0; j<i; j++) { sub.push_back( chain[j]); }
-
-		bool same = true;
-		for(int j=0; j< sub.size(); j++)
-		{
-			if( chain.size() <= sub.size() + j) { same = false; break; }
-			if( chain[sub.size() + j] != sub[j]){ same = false; break; }
-		}
-
-		if( same) return true;
-	}
-	return false;
-}
-
 int main(int argc, char** argv)
 {
 	clock_t begin = clock();
@@ -175,7 +156,7 @@ int main(int argc, char** argv)
 			next = next.getConversed();
 			if (next.hasSameFractionWith( first)) { break; }
 		}
-		cout << "i=" << i << " seq=" << seq << endl;
+//		cout << "i=" << i << " seq=" << seq << endl;
 		if( seq%2 == 1) { oddcnt++; }
 	}
 
