@@ -5,6 +5,7 @@
 #include <iostream>
 #include <ctime>
 #include <cmath>
+#include <vector>
 
 using namespace std;
 
@@ -58,11 +59,38 @@ class Fraction
 	Fraction getRationalized()
 	{
 		Fraction f;
-		// TODO
+		// intermediate
+		int f_dn = (dsr.getn() - ( dn * dn)) / nn;
+		SquareRoot f_nsr( dsr.getn());
+		int f_nn = (dn * -1);
+		int nearby = getnearby( dsr);
+	
+		// set final
+		int f_n = (int)((nearby + f_nn) / f_dn);
+		f.set( NULL, f_n, NULL, f_dn, f_nsr, f_nn - (f_n * f_dn));
 		return f;
 	}
 
+	Fraction copy()
+	{
+		Fraction f;
+		f.set( sr, n, dsr, dn, nsr, nn);
+		return f;
+	}
+
+	bool hasSameFractionWith( Fraction f)
+	{
+		return 
+			((dsr.getn() == f.getdsr().getn()) && ( dn == f.getdn()) 
+			&&
+			(nsr.getn() == f.getnsr().getn()) && ( nn == f.getnn()));
+	}
+
 	int getn() { return n; }
+	SquareRoot getdsr() { return dsr; }
+	int getdn() { return dn; }
+	SquareRoot getnsr() { return nsr; }
+	int getnn() { return nn; }
 
 	void print()
 	{
@@ -86,17 +114,72 @@ class Fraction
 
 };
 
+Fraction getFirstFraction( int n)
+{
+	SquareRoot s(n);
+	int nearby = getnearby( s);
+	Fraction f;
+	f.set( NULL, nearby, s, (-1)*nearby, NULL, 1);
+	return f;
+}
+
+bool isRepeating( std::vector<int> chain)
+{
+	for(int i=1; i<=(chain.size()/2); i++)
+	{
+		std::vector<int> sub;
+		for(int j=0; j<i; j++) { sub.push_back( chain[j]); }
+
+		bool same = true;
+		for(int j=0; j< sub.size(); j++)
+		{
+			if( chain.size() <= sub.size() + j) { same = false; break; }
+			if( chain[sub.size() + j] != sub[j]){ same = false; break; }
+		}
+
+		if( same) return true;
+	}
+	return false;
+}
+
 int main(int argc, char** argv)
 {
 	clock_t begin = clock();
 	
 	/* starting code */
-	SquareRoot s = SquareRoot( 23);
-	Fraction f; f.set(s, 0, NULL, 0, NULL, 0);
-	f.print(); cout << endl;
+/*
+	Fraction f0 = getFirstFraction(23);
+	f0.print(); cout << endl;
+	Fraction rf0 = f0.getRationalized();
+	rf0.print(); cout << endl;
 
-	// TODO
+	Fraction f1; f1 = rf0.getConversed();
+	f1.print(); cout << endl;
+	Fraction rf1 = f1.getRationalized();
+	rf1.print(); cout << endl;
+	*/
 
+	int oddcnt = 0;
+	for(int i=1; i<=10000; i++)
+	{
+		if( sqrt(i) == floor( sqrt(i))) { continue; }
+		
+		Fraction first = getFirstFraction( i);
+		int firstN = first.getn();
+
+		int seq = 0;
+		Fraction next = first.copy();
+		while( true) {
+			seq++;
+			next = next.getRationalized();
+			next = next.getConversed();
+			if (next.hasSameFractionWith( first)) { break; }
+		}
+		cout << "i=" << i << " seq=" << seq << endl;
+		if( seq%2 == 1) { oddcnt++; }
+	}
+
+	cout << "oddcnt = " << oddcnt << endl;
 	/* end of code */
 	clock_t end = clock();
 	std::cout << "elapsed time=" << double(end - begin) / CLOCKS_PER_SEC << std::endl;
