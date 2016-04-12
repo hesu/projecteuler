@@ -23,6 +23,13 @@ class SquareRoot
 	}
 };
 
+int getnearby( SquareRoot sr)
+{
+	int nearby;
+	for(int i=1;; i++) { if (pow(i, 2) <= sr.getn() && pow(i+1, 2) >= sr.getn()) { nearby = i; break; } }
+	return nearby;
+}
+
 class Fraction
 {
 	private :
@@ -41,36 +48,18 @@ class Fraction
 		sr = _sr; n = _n; dsr = _dsr; dn =_dn; nsr = _nsr; nn = _nn;
 	}
 
-	Fraction getNextFraction()
+	Fraction getConversed()
 	{
-		Fraction next;
-		if( sr.getn() != 0) {
-			int nearby;
-			for(int i=1;; i++) { if (pow(i, 2) <= sr.getn() && pow(i+1, 2) >= sr.getn()) { nearby = i; break; } }
-			n = nearby;
+		Fraction f;
+		f.set( NULL, 0, nsr, nn, dsr, dn);
+		return f;
+	}
 
-			cout << "nearby=" << nearby<< endl;
-
-			int diff = sr.getn() - pow(nearby, 2);
-			SquareRoot nextNsr(sr.getn());
-
-			next.set( NULL, 0, NULL, diff, nextNsr, nearby);
-		} else if( dsr.getn() != 0) {
-			// TODO	
-			cout << "newf2?" << endl;
-		} else if( dn != 0) {
-			cout << "newf1?" << endl;
-			// TODO
-			n = 1;
-
-			int nextDn = (dn-nn)*(-1);
-			cout << " (dn-nn)*(-1)=" << nextDn << " dn=" << dn << endl;
-			
-			next.set( NULL, 0, nsr, (dn-nn)*(-1), NULL, dn);
-		} else {
-			cout << "TODO" << endl;
-		}
-		return next;
+	Fraction getRationalized()
+	{
+		Fraction f;
+		// TODO
+		return f;
 	}
 
 	int getn() { return n; }
@@ -106,20 +95,7 @@ int main(int argc, char** argv)
 	Fraction f; f.set(s, 0, NULL, 0, NULL, 0);
 	f.print(); cout << endl;
 
-	cout << "<newf0>" << endl;
-	Fraction newf0 = f.getNextFraction();
-	newf0.print(); cout << endl; 
-	cout << "prev n=" << f.getn() << endl;
-
-	Fraction newf1 = newf0.getNextFraction();
-	cout << "<newf1>" << endl;
-	newf1.print(); cout << endl;
-	cout << "prev newf0=" << newf0.getn() << endl;
-	
-	Fraction newf2 = newf1.getNextFraction();
-	cout << "<newf2>" << endl;
-	newf2.print(); cout << endl;
-	cout << "prev newf1=" << newf1.getn() << endl;
+	// TODO
 
 	/* end of code */
 	clock_t end = clock();

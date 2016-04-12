@@ -23,6 +23,13 @@ class SquareRoot
 	}
 };
 
+int getnearby( SquareRoot sr)
+{
+	int nearby;
+	for(int i=1;; i++) { if (pow(i, 2) <= sr.getn() && pow(i+1, 2) >= sr.getn()) { nearby = i; break; } }
+	return nearby;
+}
+
 class Fraction
 {
 	private :
@@ -45,11 +52,11 @@ class Fraction
 	{
 		Fraction next;
 		if( sr.getn() != 0) {
-			int nearby;
-			for(int i=1;; i++) { if (pow(i, 2) <= sr.getn() && pow(i+1, 2) >= sr.getn()) { nearby = i; break; } }
+			cout << "this case 1?" << endl;
+			int nearby = getnearby( sr);
 			n = nearby;
 
-			cout << "nearby=" << nearby<< endl;
+			//cout << "nearby=" << nearby<< endl;
 
 			int diff = sr.getn() - pow(nearby, 2);
 			SquareRoot nextNsr(sr.getn());
@@ -57,25 +64,21 @@ class Fraction
 			next.set( NULL, 0, NULL, diff, nextNsr, nearby);
 		} else if( dsr.getn() != 0) {
 			// TODO	
-			cout << "newf2 generated at here" << endl;
-			int nextDn = (dsr.getn() - pow( dn, 2))/(nn);
-			cout << "nextDn=" << nextDn << endl;
+			cout << "newf2?" << endl;
 
-			int nearby;
-			for(int i=1;; i++) { if (pow(i, 2) <= dsr.getn() && pow(i+1, 2) >= dsr.getn()) { nearby = i; break; } }
-			n = nearby;
-			
-			int nextNn = nn;
-			while( nextNn > 0) {
-//				n++;
-				nextNn = nextNn - nextDn;
-			}
-			cout << "n = " << n << " nextNn=" << nextNn << " nextDn=" << nextDn << endl;
-			next.set( NULL, 0, nsr, nextDn, dsr, nextNn);
-		}
-			else if( dn != 0) {
-			n = 1;
-			next.set( NULL, 0, nsr, (dn-nn)*(-1), NULL, dn);
+		} else if( dn != 0) {
+			cout << "newf1?" << endl;
+			int nextDn = (dn-nn)*(-1);
+			cout << " (dn-nn)*(-1)=" << nextDn << " dn=" << dn << " nn=" << nn << endl;
+
+			//next.set( NULL, 0, nsr, (dn-nn)*(-1), NULL, dn);
+			int nearby = getnearby( nsr);
+			int that = (nsr.getn() - nextDn * nextDn)/dn;
+			n = (int)(nearby + (dn-nn))/(that);
+
+			int nextNn = (dn-nn) - (that * n);
+			next.set( NULL, 0, NULL, that, nsr, nextNn);
+			//next.set( NULL, 0, nsr, nextNn, NULL, that);
 		} else {
 			cout << "TODO" << endl;
 		}
@@ -120,13 +123,13 @@ int main(int argc, char** argv)
 	newf0.print(); cout << endl; 
 	cout << "prev n=" << f.getn() << endl;
 
-	Fraction newf1 = newf0.getNextFraction();
 	cout << "<newf1>" << endl;
+	Fraction newf1 = newf0.getNextFraction();
 	newf1.print(); cout << endl;
 	cout << "prev newf0=" << newf0.getn() << endl;
 	
-	Fraction newf2 = newf1.getNextFraction();
 	cout << "<newf2>" << endl;
+	Fraction newf2 = newf1.getNextFraction();
 	newf2.print(); cout << endl;
 	cout << "prev newf1=" << newf1.getn() << endl;
 
