@@ -8,22 +8,16 @@
 #include <cmath>
 using namespace std;
 
-
-std::vector<int> getx( int d, int miny, int maxy)
+int getMinX( int d)
 {
-	std::vector<int> x;
-
-	for(int i=miny; i<=maxy; i++)
+	for(int i=1;;i++)
 	{
 		double sqrted = sqrt( pow(i,2)* d + 1);
 		if( sqrted == ceil(sqrted)) {
-
 			cout << "D=" << d << " y=" << i << " x=" << sqrted << endl;
-			x.push_back(sqrted);
+			return sqrted;
 		}
 	}
-
-	return x;
 }
 
 int main(int argc, char** argv)
@@ -31,8 +25,27 @@ int main(int argc, char** argv)
 	clock_t begin = clock();
 	/* starting code */
 
-	std::vector<int> x = getx( 2, 1, 100);
-	cout << "x.size()=" << x.size() << endl;
+	int MAXD = 1000;
+
+	std::vector<int> xvec;
+	for(int d=2; d<=MAXD; d++)
+	{
+		double sqrted = sqrt( d);
+		if( sqrted == ceil( sqrted)) { continue; }
+		xvec.push_back(getMinX( d));
+	}
+
+	int indexD = 0;
+	int xmax = xvec[0];
+	for(int i=0; i<xvec.size(); i++)
+	{
+		if( xvec[i] > xmax) {
+			indexD = i;
+			xmax = xvec[i]; 
+		}
+	}
+
+	cout << "xmax=" << xmax<< " indexD = " << indexD << endl;
 
 	/* end of code */
 	clock_t end = clock();
