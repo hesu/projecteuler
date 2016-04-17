@@ -7,7 +7,6 @@
 #include <vector>
 #include <map>
 #include <string.h>
-
 #include "BigInt.h"
 
 using namespace std;
