@@ -14,7 +14,7 @@ int getMinX( int d)
 	{
 		double sqrted = sqrt( pow(i,2)* d + 1);
 		if( sqrted == ceil(sqrted)) {
-			cout << "D=" << d << " y=" << i << " x=" << sqrted << endl;
+//			cout << "D=" << d << " y=" << i << " x=" << sqrted << endl;
 			return sqrted;
 		}
 	}
@@ -27,25 +27,18 @@ int main(int argc, char** argv)
 
 	int MAXD = 1000;
 
-	std::vector<int> xvec;
+	int xmax = 0;
 	for(int d=2; d<=MAXD; d++)
 	{
 		double sqrted = sqrt( d);
 		if( sqrted == ceil( sqrted)) { continue; }
-		xvec.push_back(getMinX( d));
-	}
 
-	int indexD = 0;
-	int xmax = xvec[0];
-	for(int i=0; i<xvec.size(); i++)
-	{
-		if( xvec[i] > xmax) {
-			indexD = i;
-			xmax = xvec[i]; 
+		int minX = getMinX(d);
+		if (minX > xmax) {
+			xmax = minX;
+			cout << "xmax = " << xmax << " D=" << d << endl;
 		}
 	}
-
-	cout << "xmax=" << xmax<< " indexD = " << indexD << endl;
 
 	/* end of code */
 	clock_t end = clock();
