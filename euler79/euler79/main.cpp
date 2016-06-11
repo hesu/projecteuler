@@ -8,13 +8,64 @@
 
 using namespace std;
 
-std::map<int, std::map<int, int>> sequence;
+std::vector<int> findShortest(std::map<int, std::vector<int>> seq, std::map<int, std::vector<int>>::iterator seqit, std::vector<int> now, int startAt)
+{
+	if (now.size() == 0) {
+		cout << "first!" << endl;
+		now.push_back(seqit->first);
+		for (int i = 0; i < seqit->second.size(); i++){ now.push_back(seqit->second[i]);}
+
+		for (int i = 0; i < now.size(); i++) cout << now[i] << " ";
+		cout << endl;
+
+		return findShortest(seq, ++seqit, now, 1);
+	} else {
+		if (startAt >= now.size()) {
+
+			cout << "need to sequence change. size=" << now.size() << " seqit->first=" << seqit->first << " seq.begin()->first=" << seq.begin()->first << " seq.end()->first" << seq.end()->first << endl;
+			// END condition
+			if (seqit->first == seq.end()->first) { return now; }
+			
+			// check next sequence rule
+			std::vector<int>::iterator vit = find(now.begin(), now.end(), seqit->first);
+			if (vit == now.end()) {
+				now.insert(now.begin(), seqit->first);
+				cout << "br 1?" << endl;
+				return findShortest(seq, ++seqit, now, 1);
+			}
+			return findShortest( seq, ++seqit, now, startAt);
+		}
+
+			for (int j = startAt + 1; j < now.size()-1; j++)
+			{
+				std::map<int, std::vector<int>>::iterator jseq = seq.find(j);
+				std::vector<int>::iterator vit = find(jseq->second.begin(), jseq->second.end(), now[startAt]);
+				if (vit != jseq->second.end()) {
+					// need to change
+					int swap = now[startAt];
+					now[startAt] = now[j];
+					now[j] = swap;
+					
+					cout << "swapped!" << endl;
+					for(int x=0; x<now.size(); x++) cout << now[x] << " ";
+					cout << endl;
+				}
+			}
+
+		cout << "findShortest!" << endl;
+		for(int x=0; x<now.size(); x++) cout << now[x] << " ";
+		cout << endl;
+		return findShortest(seq, seqit, now, startAt+1);
+
+	}
+}
 
 int main(int argc, char** argv)
 {
 	clock_t begin = clock();
 
 	/* starting code */
+	std::map<int, std::vector<int>> sequence;
 	string line;
 	ifstream inf("p079_keylog.txt");
 
@@ -22,43 +73,54 @@ int main(int argc, char** argv)
 		int first = line[0] - '0';
 		int second = line[1] - '0';
 		int third = line[2] - '0';
-		cout << first << second << third << endl;
+		//cout << first << second << third << endl;
 
-		std::map<int, std::map<int, int>>::iterator it = sequence.find(first);
+		std::map<int, std::vector<int>>::iterator it = sequence.find(first);
 		if (it == sequence.end()) {
-			std::map<int, int> secondMap;
-			secondMap.insert(std::map<int, int>::value_type(second, third));
-			sequence.insert(std::map<int, std::map<int,int>>::value_type(first, secondMap));
-		}
-
-		/*
-		for (int i = 0; i < line.length(); i++) cout << "[" << i << "]" << line[i];
-		cout << endl;
-		*/
-
-		/*
-		int n; istringstream convert(line); convert >> n;
-		cout << "n=" << n << endl;
-		*/
-	}
-
-	/*
-	ofstream of("output.txt");
-	for (int i = 0; i<numbers.size(); i++) {
-		BigInt m = BigInt(bmap.begin()->first);
-		for (std::map<string, BigInt>::iterator it = bmap.begin(); it != bmap.end(); it++)
-		{
-			//cout << it->first << endl;
-			if ((it->second <= numbers[i]) && m < it->second) {
-				m = it->second;
+			std::vector<int> v;
+			v.push_back(second);
+			sequence.insert(std::map<int, std::vector<int>>::value_type(first, v));
+		} else {
+			std::vector<int>::iterator vit = find(it->second.begin(), it->second.end(), second);
+			if (vit == it->second.end()) {
+				it->second.push_back(second);
 			}
 		}
 
-		cout << "max for " << numbers[i].toString() << " = " << m.toString() << endl;
-		of << m.toString() << endl;
+		// same do with second & third
+		it = sequence.find(second);
+		if (it == sequence.end()) {
+			std::vector<int> v;
+			v.push_back(third);
+			sequence.insert(std::map<int, std::vector<int>>::value_type(second, v));
+		}
+		else {
+			std::vector<int>::iterator vit = find(it->second.begin(), it->second.end(), third);
+			if (vit == it->second.end()) {
+				it->second.push_back(third);
+			}
+		}
 	}
-	of.close();
-	*/
+	inf.close();
+
+	for (std::map<int, std::vector<int>>::iterator it = sequence.begin(); it != sequence.end(); ++it)
+	{
+		cout << it->first << endl;
+		for (std::vector<int>::iterator sit = it->second.begin(); sit != it->second.end(); ++sit)
+		{
+			cout << "\t" << *sit << endl;
+		}
+	}
+
+	cout << endl;
+
+	std::map<int, std::vector<int>>::iterator seqit = sequence.begin();
+	std::vector<int> start;
+	std::vector<int> sol = findShortest(sequence, seqit, start, 0);
+
+	cout << "shortest solution=";
+	for (std::vector<int>::iterator it = sol.begin(); it != sol.end(); ++it) cout << *it;
+	cout << endl;
 
 	cout << "Press Any Key.." << endl;
 	fgetc(stdin);
