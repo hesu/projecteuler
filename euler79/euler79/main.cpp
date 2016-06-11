@@ -36,11 +36,14 @@ std::vector<int> findShortest(std::map<int, std::vector<int>> seq, std::map<int,
 			return findShortest( seq, ++seqit, now, startAt);
 		}
 
-			for (int j = startAt + 1; j < now.size()-1; j++)
+			for (int j = startAt + 1; j < now.size(); j++)
 			{
-				std::map<int, std::vector<int>>::iterator jseq = seq.find(j);
+				std::map<int, std::vector<int>>::iterator jseq = seq.find(now[j]);
+				if (jseq == seq.end()) { continue; }
+
 				std::vector<int>::iterator vit = find(jseq->second.begin(), jseq->second.end(), now[startAt]);
 				if (vit != jseq->second.end()) {
+					cout << "[" << j << "]" << now[j] << " - [" << startAt << "]" << now[startAt] << " found at sequence rule" << endl;
 					// need to change
 					int swap = now[startAt];
 					now[startAt] = now[j];
@@ -49,6 +52,8 @@ std::vector<int> findShortest(std::map<int, std::vector<int>> seq, std::map<int,
 					cout << "swapped!" << endl;
 					for(int x=0; x<now.size(); x++) cout << now[x] << " ";
 					cout << endl;
+//					break;	
+					return findShortest( seq, seqit, now, startAt);
 				}
 			}
 
@@ -56,7 +61,6 @@ std::vector<int> findShortest(std::map<int, std::vector<int>> seq, std::map<int,
 		for(int x=0; x<now.size(); x++) cout << now[x] << " ";
 		cout << endl;
 		return findShortest(seq, seqit, now, startAt+1);
-
 	}
 }
 
