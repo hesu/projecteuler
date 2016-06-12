@@ -10,6 +10,7 @@ using namespace std;
 
 std::vector<int> findShortest(std::map<int, std::vector<int>> seq, std::map<int, std::vector<int>>::iterator seqit, std::vector<int> now, int startAt)
 {
+	cout << "findShortest!" << endl;
 	if (now.size() == 0) {
 		cout << "first!" << endl;
 		now.push_back(seqit->first);
@@ -21,16 +22,14 @@ std::vector<int> findShortest(std::map<int, std::vector<int>> seq, std::map<int,
 		return findShortest(seq, ++seqit, now, 1);
 	} else {
 		if (startAt >= now.size()) {
-
 			cout << "need to sequence change. size=" << now.size() << " seqit->first=" << seqit->first << " seq.begin()->first=" << seq.begin()->first << " seq.end()->first" << seq.end()->first << endl;
 			// END condition
-			if (seqit->first == seq.end()->first) { return now; }
+			if (seqit->first == seq.begin()->first) { return now; }
 			
 			// check next sequence rule
 			std::vector<int>::iterator vit = find(now.begin(), now.end(), seqit->first);
 			if (vit == now.end()) {
 				now.insert(now.begin(), seqit->first);
-				cout << "br 1?" << endl;
 				return findShortest(seq, ++seqit, now, 1);
 			}
 			return findShortest( seq, ++seqit, now, startAt);
@@ -52,12 +51,10 @@ std::vector<int> findShortest(std::map<int, std::vector<int>> seq, std::map<int,
 					cout << "swapped!" << endl;
 					for(int x=0; x<now.size(); x++) cout << now[x] << " ";
 					cout << endl;
-//					break;	
 					return findShortest( seq, seqit, now, startAt);
 				}
 			}
 
-		cout << "findShortest!" << endl;
 		for(int x=0; x<now.size(); x++) cout << now[x] << " ";
 		cout << endl;
 		return findShortest(seq, seqit, now, startAt+1);
