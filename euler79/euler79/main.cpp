@@ -3,7 +3,6 @@
 #include <vector>
 #include <map>
 #include <string.h>
-#include <sstream>
 #include <fstream>
 
 using namespace std;
@@ -123,8 +122,8 @@ int main(int argc, char** argv)
 	for (std::vector<int>::iterator it = sol.begin(); it != sol.end(); ++it) cout << *it;
 	cout << endl;
 
-	cout << "Press Any Key.." << endl;
-	fgetc(stdin);
+//	cout << "Press Any Key.." << endl;
+//	fgetc(stdin);
 
 	/* end of code */
 	clock_t end = clock();
