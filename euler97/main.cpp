@@ -4,7 +4,6 @@
 	
 #include <iostream>
 #include <ctime>
-
 #include "BigInt.h"
 
 using namespace std;
@@ -18,24 +17,16 @@ int main(int argc, char** argv)
 	BigInt n = BigInt(2);
 	for(int i=1; i<MAX; i++)
 	{
-		cout << "i=" << i << " n=";
-	//	cout << "i=" << i << endl;
-//		if( i%10000 == 0) { cout << "i=" << i << endl; }
 		BigInt mul = BigInt(2);
 		n = n.multiply( mul, 10);
-
-		n.print();
-		cout <<endl;
 	}
 
 	BigInt mul2 = BigInt(28433);
 	BigInt one = BigInt(1);
-
 	n = mul2 * n + one;
 
 	string number = n.toString();
 	cout << "number=" << number << endl;
-
 
 	if (number.size() >= 10) cout << "solution=" << number.substr( number.size()-10, number.size()) << endl;
 
