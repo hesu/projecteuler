@@ -2,11 +2,6 @@
  	Problem 81 - Path sum: two ways
 */
 
-// Related Problems?
-// 1) Lattice paths(prob 15)
-// 2) Maximum path sum 1(prob 18) 
-// 3) Maximum path sum 2(prob 67)
-
 #include <iostream>
 #include <ctime>
 #include <fstream>
@@ -100,7 +95,6 @@ int main(int argc, char** argv)
     cout << endl;
   }
 
-  // how to?
   int **memo = (int**) malloc( sizeof( int*) * row);
   for(int i=0; i<row; i++)
   {
