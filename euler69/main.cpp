@@ -5,6 +5,7 @@
 #include <map>
 #include <vector>
 #include <ctime>
+#include <cmath>
 
 using namespace std;
 struct _PrimeFactor
@@ -19,7 +20,6 @@ class PrimeFactors
 	private: 
 		std::map<int, PrimeFactor> pf;
 	public:
-		
 		PrimeFactors(int n, int e)
 		{
 			while( true)
@@ -51,6 +51,7 @@ class PrimeFactors
 			}
 		}
 
+
 		void print()
 		{
 			for( std::map<int, PrimeFactor>::iterator it = pf.begin(); it != pf.end(); it++)
@@ -59,6 +60,11 @@ class PrimeFactors
 				cout << p->p << "^" << p->e <<"*";
 			}
 //			cout << endl;
+		}
+		
+    std::map<int, PrimeFactor> getpf()
+		{
+      return pf;
 		}
 
 		std::vector<int> getPrimes()
@@ -95,28 +101,20 @@ class PrimeFactors
 		}
 };
 
-std::map<int, PrimeFactors> pfsMap;
 int MAX = 1000000;
+//int MAX = 10;
 
-bool hasSameDivisor( int src, int compare)
+int getTotient( PrimeFactors p)
 {
-//	cout << "hasSameDivisor. src=" << src << " compare=" << compare << endl;
-	if( src == compare || compare == 1) return true;
-
-	// (src > compare)
-  std::map<int, PrimeFactors>::iterator sit = pfsMap.find( src);
-  std::map<int, PrimeFactors>::iterator cit = pfsMap.find( compare);
-
-	std::vector<int> primes = cit->second.getPrimes();
-	for(int i=0; i<primes.size(); i++)
+  int n = 1;
+  std::map<int, PrimeFactor> m = p.getpf();
+	for( std::map<int, PrimeFactor>::iterator it = m.begin(); it != m.end(); it++)
 	{
-		if( sit->second.find( primes[i]) != -1) {
-//			cout << "hasSameDivisor\t\tsrc=" << src << " compare=" << compare << endl;
-			return true;	
-		}
+		PrimeFactor *p = &(it->second);
+    n = n * ( pow( p->p, p->e) - pow( p->p, (p->e -1)));
 	}
-//	cout << "notSameDivisor\t\tsrc=" << src << " compare=" << compare << endl;
-	return false;
+
+  return n;
 }
 
 int main(int argc, char** argv)
@@ -124,37 +122,21 @@ int main(int argc, char** argv)
 	clock_t begin = clock();
 
 	/* starting code */
-
+	float max = 0;
+	int maxn = 0;
+  
   for(int i=2; i<=MAX; i++)
   {
-//    if( i%1000 == 0) { cout << "\ti=" << i << endl; }
+    if( i%10000==0) { cout << "i=" << i << endl; }
 		PrimeFactors p = PrimeFactors( i, 1);
-	//	cout << "i=" << i << "\t\t";
-	//	p.print();
-	//	cout << endl;
-		pfsMap.insert( std::map<int, PrimeFactors>::value_type( i, p));
-  }
-
-	cout << "get totient.." << endl;
-
-	int max = 0;
-	int maxn = 0;
-	for(int i=1; i<=MAX; i++)
-	{
-    double t = 0;
-		for(int j=i; j>=1; j--)
-		{
-			if( !hasSameDivisor(i, j)) {
-				t++;
-			}
-		}
-    double val = (double)i / t;
-		cout << " for " << i << " totient = " << t << " totient val=" << val << endl;
-    if( val > max) {
+    
+    int totient = getTotient( p);
+    float val = i / ((float)totient);
+    if (max < val) {
       max = val;
       maxn = i;
     }
-	}
+  }
 
 	cout << "max totient : " << max << " at number : " << maxn << endl;
 	
