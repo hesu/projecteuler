@@ -1,11 +1,11 @@
 /*
  	Problem 99 - Largest exponential
 */
+
 #include <iostream>
 #include <map>
 #include <vector>
 #include <ctime>
-//#include <cmath>
 #include <fstream>
 
 using namespace std;
@@ -100,10 +100,28 @@ class PrimeFactors
 			}
 			return true; 
 		}
+
+    /*
+    bool operator <=( BigInt const &rhs)
+    {
+      const int llen = getDigitsLen();
+      const int rlen = rhs.getDigitsLen();
+      if( llen != rlen) { return (llen < rlen); }
+      std::vector<int> rdg = rhs.getDigits();
+      for(int i=rlen-1; i>=0; i--)
+      {
+        if( dg[i] == rdg[i]	) { continue; }
+        return (dg[i] < rdg[i]);
+      }
+      return true;
+    }
+    */
 };
 
-bool compare(PrimeFactors &a, PrimeFactors &b)
+PrimeFactor getBigger(PrimeFactors &a, PrimeFactors &b)
 { 
+  PrimeFactor big;
+
   std::map<int, PrimeFactor> apf = a.getpf();
   std::map<int, PrimeFactor> bpf = b.getpf();
 
@@ -112,19 +130,36 @@ bool compare(PrimeFactors &a, PrimeFactors &b)
     PrimeFactor *p = &(it->second);
     std::map<int, PrimeFactor>::iterator bit = bpf.find( p->p);
  
-/*
-    int be = &(bit->second)->e;
-    cout << "p " << p->p << " of a'e=" << p->e << " b'e=" << &(bit->second)->e << endl;
-    if( be != -1) { }
-    */
-   
    if( bit != bpf.end()) {
      PrimeFactor *bp = &(bit->second);
-     cout << "find!() a=" << p->p << "^" << p->e << " b=" << bp->p << "^" << bp->e << endl;
+ //    cout << "find!() a=" << p->p << "^" << p->e << " b=" << bp->p << "^" << bp->e << endl;
+     
+     int small = (p->e < bp->e)? p->e : bp->e;
+  //   cout << "small=" << small << endl;
+     p->e -= small;
+     bp->e -= small;
    }
   }
+ 
+  // real compare with <apf & bpf>
+	for( std::map<int, PrimeFactor>::iterator it = apf.begin(); it != apf.end(); it++)
+	{
+		PrimeFactor *p = &(it->second);
+		cout << "\t" << p->p << "^" << p->e <<"*";
+	}
+  cout << endl;
+	
+  for( std::map<int, PrimeFactor>::iterator it = bpf.begin(); it != bpf.end(); it++)
+	{
+		PrimeFactor *p = &(it->second);
+		cout << "\t" << p->p << "^" << p->e <<"*";
+	}
+  cout << endl;
 
-  return true;
+  cout << "=================================================" << endl;
+
+
+  return big;
 }
 
 int main(int argc, char** argv)
@@ -150,22 +185,18 @@ int main(int argc, char** argv)
       line.erase( 0, pos + lenDelim);
 
       p = atoi(token.c_str());
-//      cout << "token1=" << token <<  " ";
     }
- //   cout << "token2=" << line << endl;
      e = atoi(line.c_str());
 
      PrimeFactors pf = PrimeFactors( p, e);
      v.push_back( pf);
-//     cout << "p=" << p << " e=" << e << endl;
   }
   inf.close();
 
   for(int i=0; i<v.size(); i++)
   {
-//     v[i].print(); cout << endl;
      if( i+1 < v.size()) { 
-      compare( v[i], v[i+1]);
+      getBigger( v[i], v[i+1]);
      }
   }
 
