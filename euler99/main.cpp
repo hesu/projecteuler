@@ -101,22 +101,6 @@ class PrimeFactors
 			}
 			return true; 
 		}
-
-    /*
-    bool operator <=( BigInt const &rhs)
-    {
-      const int llen = getDigitsLen();
-      const int rlen = rhs.getDigitsLen();
-      if( llen != rlen) { return (llen < rlen); }
-      std::vector<int> rdg = rhs.getDigits();
-      for(int i=rlen-1; i>=0; i--)
-      {
-        if( dg[i] == rdg[i]	) { continue; }
-        return (dg[i] < rdg[i]);
-      }
-      return true;
-    }
-    */
 };
 
 bool isBiggerThanSrc(PrimeFactors &a, PrimeFactors &b)
