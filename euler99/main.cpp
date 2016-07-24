@@ -7,6 +7,7 @@
 #include <vector>
 #include <ctime>
 #include <fstream>
+#include <math.h>
 
 using namespace std;
 struct _PrimeFactor
@@ -118,48 +119,30 @@ class PrimeFactors
     */
 };
 
-PrimeFactor getBigger(PrimeFactors &a, PrimeFactors &b)
+bool isBiggerThanSrc(PrimeFactors &a, PrimeFactors &b)
 { 
-  PrimeFactor big;
+  double ar = 0;
+  double br = 0;
 
   std::map<int, PrimeFactor> apf = a.getpf();
-  std::map<int, PrimeFactor> bpf = b.getpf();
 
   for( std::map<int, PrimeFactor>::iterator it = apf.begin(); it != apf.end(); it++)
   {
     PrimeFactor *p = &(it->second);
-    std::map<int, PrimeFactor>::iterator bit = bpf.find( p->p);
- 
-   if( bit != bpf.end()) {
-     PrimeFactor *bp = &(bit->second);
- //    cout << "find!() a=" << p->p << "^" << p->e << " b=" << bp->p << "^" << bp->e << endl;
-     
-     int small = (p->e < bp->e)? p->e : bp->e;
-  //   cout << "small=" << small << endl;
-     p->e -= small;
-     bp->e -= small;
-   }
+    ar += log( p->p) * (p->e);
   }
- 
-  // real compare with <apf & bpf>
-	for( std::map<int, PrimeFactor>::iterator it = apf.begin(); it != apf.end(); it++)
-	{
-		PrimeFactor *p = &(it->second);
-		cout << "\t" << p->p << "^" << p->e <<"*";
-	}
-  cout << endl;
-	
+  
+  std::map<int, PrimeFactor> bpf = b.getpf();
   for( std::map<int, PrimeFactor>::iterator it = bpf.begin(); it != bpf.end(); it++)
-	{
-		PrimeFactor *p = &(it->second);
-		cout << "\t" << p->p << "^" << p->e <<"*";
-	}
-  cout << endl;
+  {
+    PrimeFactor *p = &(it->second);
+    br += log( p->p) * (p->e);
+  }
 
-  cout << "=================================================" << endl;
+  cout << "ar=" << ar << " br=" << br << endl;
 
-
-  return big;
+  if( ar < br) return true;
+  else return false;
 }
 
 int main(int argc, char** argv)
@@ -193,14 +176,21 @@ int main(int argc, char** argv)
   }
   inf.close();
 
+  PrimeFactors bigger = v[0];
+  int maxat = 0;
   for(int i=0; i<v.size(); i++)
   {
-     if( i+1 < v.size()) { 
-      getBigger( v[i], v[i+1]);
+     if( i < v.size()) { 
+      if(isBiggerThanSrc( bigger, v[i])) {
+        cout << "i=" << i << endl;
+        maxat = i;
+        bigger = v[i];
+      }
      }
   }
 
   cout << "size=" << v.size() << endl;
+  cout << "max at =" << maxat+1 << endl;
 
 	/* end of code */
 	clock_t end = clock();
