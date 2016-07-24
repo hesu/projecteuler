@@ -110,14 +110,18 @@ bool compare(PrimeFactors &a, PrimeFactors &b)
   for( std::map<int, PrimeFactor>::iterator it = apf.begin(); it != apf.end(); it++)
   {
     PrimeFactor *p = &(it->second);
-    
     std::map<int, PrimeFactor>::iterator bit = bpf.find( p->p);
-    
-    cout << "p " << p->p << " of a'e=" << p->e << " b'e=" << be << endl;
-
-    if( be != -1) {
-      
-    }
+ 
+/*
+    int be = &(bit->second)->e;
+    cout << "p " << p->p << " of a'e=" << p->e << " b'e=" << &(bit->second)->e << endl;
+    if( be != -1) { }
+    */
+   
+   if( bit != bpf.end()) {
+     PrimeFactor *bp = &(bit->second);
+     cout << "find!() a=" << p->p << "^" << p->e << " b=" << bp->p << "^" << bp->e << endl;
+   }
   }
 
   return true;
