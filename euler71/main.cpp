@@ -66,19 +66,18 @@ int main(int argc, char** argv)
 	/* starting code */
 
   int MAX = 1000000;
-  std::vector<Fraction> rpf;
-
-  Fraction comp( 3, 7);
   double compval = double(7)/double(3);
   double mindiff = compval;
 
-  int n;
-  int d;
+  cout << "compval=" << compval << endl;
+
+  double n;
+  double d;
 
   for(int i=2; i<=MAX; i++)
   {
     if( i%10000 == 0) { cout << "i=" << i << endl; }
-    for(int j=1; j<i; j++)
+    for(int j=((2.0)/(7.0)) * i; j<(3.0)/(7.0)* i; j++)
     {
 //      cout << "done" << endl;
       double val = double(i) / double( j);
@@ -90,7 +89,7 @@ int main(int argc, char** argv)
       if( gcd_this == 1) {
         double diff = val - compval;
       //  cout << "diff=" << diff << " val=" << val << " compval=" << compval << endl;
-        if( diff < mindiff) {
+        if( diff < mindiff && diff > 0) {
           mindiff = diff;
           n = i;
           d = j;
@@ -103,6 +102,7 @@ int main(int argc, char** argv)
   }
 
   cout << "n=" << n << " d=" << d << endl;
+  cout << "retval=" << n/d << " diff=" << mindiff << endl; 
 
   /*
   for(int i=2; i<=MAX; i++)
