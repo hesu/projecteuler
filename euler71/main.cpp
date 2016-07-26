@@ -40,79 +40,62 @@ class Fraction
     Fraction f = Fraction( nu, de);
     return f;
   }
-
 };
 
-// 1) fraction map function
-std::vector<Fraction> reducedProperFractions(int d)
+// using Stern-Brocot Tree
+Fraction getLeftNeighbor( Fraction that, int depth)
 {
-  // get reduced Proper Fractions which denominator is 'd'
-  std::vector<Fraction> v;
-
-  for(int i=1; i<d; i++)
+  std::vector<Fraction> start;
+  start.push_back( Fraction( 0, 1));
+  start.push_back( Fraction( 1, 1));
+ 
+  Fraction left(0, 0);
+  for(int i=1; i<depth; i++)
   {
-    int gcd_this = gcd( d, i);
-    if( gcd_this == 1) {
-      Fraction f( i, d);
-      v.push_back( f);
+    if( i <= that.d) {
+      cout << "i=============== " << i << endl;
+      std::vector<Fraction> next;
+      for(int j=0; j<start.size(); j++)
+      {
+        next.push_back( start[j]);
+        if( j < start.size()-1) {
+          Fraction f( start[j].n + start[j+1].n, start[j].d + start[j+1].d);
+          next.push_back( f);
+        }
+      }
+     start = next;
+      for(int j=0; j<start.size(); j++){ cout << start[j].n << "/" << start[j].d << endl; }
+    } else if( i == that.d+1) {
+      cout << "i=============== " << i << endl;
+      for(int j=0; j<start.size(); j++){ cout << start[j].n << "/" << start[j].d << endl; }
+      for(int j=0; j<start.size(); j++){ 
+        //cout << start[j].n << "/" << start[j].d << endl; 
+        if( start[j].n == that.n && start[j].d == that.d) {
+          left.n = start[j-1].n;
+          left.d = start[j-1].d;
+          break;
+        }
+      }
+    } else {
+      // just find
+      left.n = left.n + that.n;
+      left.d = left.d + that.d;
     }
   }
-  return v;
+  return left;
 }
 
 int main(int argc, char** argv)
 {
 	clock_t begin = clock();
 	/* starting code */
-
   int MAX = 1000000;
-  double compval = double(7)/double(3);
-  double mindiff = compval;
 
-  cout << "compval=" << compval << endl;
+  Fraction crit( 3, 7);
+  Fraction ret = getLeftNeighbor( crit, 8);
 
-  double n;
-  double d;
-
-  for(int i=2; i<=MAX; i++)
-  {
-    if( i%10000 == 0) { cout << "i=" << i << endl; }
-    for(int j=((2.0)/(7.0)) * i; j<(3.0)/(7.0)* i; j++)
-    {
-//      cout << "done" << endl;
-      double val = double(i) / double( j);
-
-//      cout << "val=" << val << " denominator=" << i << " numerator=" << n << endl;
-      if( val <= compval) break;
-
-      int gcd_this = gcd( j, i);
-      if( gcd_this == 1) {
-        double diff = val - compval;
-      //  cout << "diff=" << diff << " val=" << val << " compval=" << compval << endl;
-        if( diff < mindiff && diff > 0) {
-          mindiff = diff;
-          n = i;
-          d = j;
-
-      //    cout << n << "/" << d << " mindiff=" << mindiff << endl;
-        }
-      }
-
-    }
-  }
-
-  cout << "n=" << n << " d=" << d << endl;
-  cout << "retval=" << n/d << " diff=" << mindiff << endl; 
-
-  /*
-  for(int i=2; i<=MAX; i++)
-  {
-    if( i % 100 == 0) { cout << "i=" << i << endl; }
-    std::vector<Fraction> v = reducedProperFractions( i);
-    rpf.insert( rpf.end(), v.begin(), v.end());
-  }
-  */
-
+  cout << "left neighbor : " << ret.n << "/" << ret.d << endl;
+  cout << "numerator : " << ret.n << endl;
 
 	/* end of code */
 	clock_t end = clock();
