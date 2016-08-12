@@ -6,27 +6,44 @@
 #include <ctime>
 #include <algorithm>
 #include <vector>
-#include <map>
 
 using namespace std;
 
-std::map<int, int> memo;
-
+void printv( std::vector<int> v)
+{
+  for(int i=0; i<v.size(); i++) cout << v[i] << "-";
+  cout << endl;
+}
 
 int sum = 0;
-void countingSummations( std::vector<int> v, int i)
+void countingSummations( std::vector<int> &v, int i)
 {
   // 아이디어 : 'collapse' 한다고 생각해 보자.
   // 수들이 무너진다는 아이디어.
 
+  // 현재 풀이에서는 몇 가지 경우를 놓친다.
+  // 좋은 방법이 없을까? 
+  // 1씩만 무너지는게 문제일 것 같은데.
+
   if( v[i] > 1) {
     // collapse
-    v[i] = v[i]--;
-    if (v.size() >= i) { v[i+1]++; }
-    else { v.push_back(1); }
+    int c = 1; // how much collapse at this time
+    v[i] -= c;
 
+    // where to add? 
+    if ((v.size() > i+1) && (v[i+1]+c <= v[i]))  { 
+      cout << "v.size=" << v.size() << " idx=" << i << endl;
+      v[i+1] += c;
+    } else { 
+      cout << "pushback " << c << endl;
+      v.push_back(c); 
+    }
+
+    printv( v);
     sum++;
-    countingSummations( v, i+1);
+
+    std::vector<int> newv(v);
+    countingSummations( newv, i+1);
 
   } else {
     // move foward
@@ -37,7 +54,8 @@ void countingSummations( std::vector<int> v, int i)
     }
 
     if( i < 0) return;
-    countingSummations( v, i);
+    std::vector<int> newv(v);
+    countingSummations( newv, i);
   }
 }
 
@@ -47,7 +65,7 @@ int main(int argc, char** argv)
 	
   /* starting code */
   std::vector<int> v;
-  v.push_back(2);
+  v.push_back(6);
   
   countingSummations(v, 0);
   cout << "sum=" << sum << endl;
