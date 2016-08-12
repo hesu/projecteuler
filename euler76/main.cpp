@@ -4,32 +4,55 @@
 	
 #include <iostream>
 #include <ctime>
-#include <map>
+#include <algorithm>
 #include <vector>
+#include <map>
 
 using namespace std;
 
-int countingSummations( int n)
-{
-  cout << "n=" << n << endl;
-  if( n == 0) return 0;
-  if( n <= 2) return 1;
+std::map<int, int> memo;
 
-  if( n % 2 == 0) {
-    return countingSummations(n-1) + 1;
+
+int sum = 0;
+void countingSummations( std::vector<int> v, int i)
+{
+  // 아이디어 : 'collapse' 한다고 생각해 보자.
+  // 수들이 무너진다는 아이디어.
+
+  if( v[i] > 1) {
+    // collapse
+    v[i] = v[i]--;
+    if (v.size() >= i) { v[i+1]++; }
+    else { v.push_back(1); }
+
+    sum++;
+    countingSummations( v, i+1);
+
   } else {
-    return countingSummations(n-1) + 2;
+    // move foward
+    for(int j=i; j>=0; j--)
+    {
+      i--;
+      if (v[i] > 1) break;
+    }
+
+    if( i < 0) return;
+    countingSummations( v, i);
   }
 }
 
 int main(int argc, char** argv)
 {
 	clock_t begin = clock();
-	/* starting code */
-
-  int n = countingSummations(100);
-  cout << "summations=" << n << endl;
-	/* end of code */
+	
+  /* starting code */
+  std::vector<int> v;
+  v.push_back(2);
+  
+  countingSummations(v, 0);
+  cout << "sum=" << sum << endl;
+	
+  /* end of code */
 	clock_t end = clock();
 	std::cout << "elapsed time=" << double(end - begin) / CLOCKS_PER_SEC << std::endl;
 	return 0;
