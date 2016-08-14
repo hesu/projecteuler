@@ -18,60 +18,50 @@ void printv( std::vector<int> v)
 int sum = 0;
 bool flatLowerMost = false;
 
-void countingSummations( std::vector<int> &v, int i)
+void countingSummations( std::vector<int> &v, int i, int depth)
 {
-  // 아이디어 : 'collapse' 한다고 생각해 보자.
-  // 수들이 무너진다는 아이디어.
-
-  if( v[i] > 1) {
-    // 1~c 까지 무너지게 하니까 케이스들이 중복된다.
-    // 중복 케이스를 빼낼 방법?
-    // 한번 1로 all collapsed 가 되면.. 그 이후부터는 같은높이의 계단 collapsed 만 체크하면 될거같다.
-    // flatLowerMost 를 만들었으니 체크해보자.
-
+  for(int j=i; j>=0; j--) {
+  
+  if( v[j] > 1) {
     // c : how much collapse at this time
-    for(int c=1; c<= v[i]/2; c++) {
-      v[i] -= c;
+    int val = v[j];
+    for(int c=1; c< val/2+1; c++) {
+      
+      std::vector<int> newv(v);
+
+      //for(int d=0; d<depth; d++) cout << " ";
+      //cout << "howmuchcollapsed? : " << c << endl;
+
+      newv[j] -= c;
   
       // where to add? 
-      if ((v.size() > i+1) && (v[i+1]+c <= v[i]))  { 
+      if ((newv.size() > j+1) && (newv[j+1]+c <= newv[j]))  { 
       //  cout << "v.size=" << v.size() << " idx=" << i << endl;
-        v[i+1] += c;
+        newv[j+1] += c;
       } else { 
        // cout << "pushback " << c << endl;
-        v.push_back(c); 
+        newv.push_back(c); 
       }
  
       if (flatLowerMost) {
         // sum++ only flat case
         // http://stackoverflow.com/questions/20287095/checking-if-all-elements-of-a-vector-are-equal-in-c
-        if ( std::adjacent_find( v.begin(), v.end(), std::not_equal_to<int>() ) == v.end() ){
-          if (v[i] == 1) return;
-          printv( v);
+        if ( std::adjacent_find( newv.begin(), newv.end(), std::not_equal_to<int>() ) == newv.end() ){
+          if (newv[j] == 1) return;
+          printv( newv);
           sum++;
         }
       } else {
-        printv( v);
+        printv( newv);
         sum++;
       }
   
-      std::vector<int> newv(v);
-      countingSummations( newv, i+1);
+      countingSummations( newv, j+1 , depth++);
     }
-
   } else {
-    printv( v);
-    //cout << "infinite loop? i=" << i << endl;
-    // move foward
+//    cout << "j=" << j << " v[j]=" << v[j] << " depth=" << depth << endl;
+  }
 
-    while( v[i] <= 1) {
-      i--;
-
-      if( i < 0) { flatLowerMost = true; return; }
-    }
-
-    std::vector<int> newv(v);
-    return countingSummations( newv, i);
   }
 }
 
@@ -80,11 +70,13 @@ int main(int argc, char** argv)
 	clock_t begin = clock();
 	
   /* starting code */
-  std::vector<int> v;
-  v.push_back(8);
+
+  int number = 8;
   
-  countingSummations(v, 0);
-  cout << "sum=" << sum << endl;
+  std::vector<int> v;
+  v.push_back(number);
+  countingSummations(v, 0, 0);
+  cout << "sum of " << number << " : " << sum << endl;
 	
   /* end of code */
 	clock_t end = clock();
