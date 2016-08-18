@@ -33,39 +33,26 @@ class Fraction
   }
 };
 
-int sum = 0;
-
-/* using Stern-Brocot Tree
-Fraction getLeftNeighbor( Fraction that, Fraction leftbound, int depth)
+// using Stern-Brocot Tree
+int countingFractions( Fraction left, Fraction right, int maxd)
 {
-  Fraction answer = Fraction( that.n + leftbound.n, that.d + leftbound.d);
+  if ((left.d + right.d) > maxd) { return 0; }
 
-  while(true)
-  {
-    if (answer.d + that.d > depth) break;
-    answer.d += that.d;
-    answer.n += that.n;
-  }
-  return answer;
+  Fraction next = Fraction( left.n + right.n, left.d + right.d);
+  return 1 + countingFractions( left, next, maxd) + countingFractions( next, right, maxd);
 }
-*/
 
 int main(int argc, char** argv)
 {
 	clock_t begin = clock();
-	/* starting code */
-  
-  /*
-  int MAX = 1000000;
 
-  Fraction crit( 3, 7);
-  Fraction leftbound( 2, 5);
-  Fraction ret = getLeftNeighbor( crit, leftbound, MAX);
+  /* starting code */
 
-  cout << "left neighbor : " << ret.n << "/" << ret.d << endl;
-  cout << "numerator : " << ret.n << endl;
-  cout << "gcd: " << gcd( ret.n, ret.d) << endl;
-  */
+  int maxd = 12000;
+  Fraction left(1,3);
+  Fraction right(1,2);
+  int howmany = countingFractions( left, right, maxd);
+  cout << "howmany=" << howmany << endl;
 
 	/* end of code */
 	clock_t end = clock();
