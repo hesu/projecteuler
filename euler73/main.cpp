@@ -2,7 +2,7 @@
  	Problem 73 - Counting fractions in a range
 */
 
-// idea : stern-brocot 트리로 모든 유리수를 셀 수 있으므로 depth 1~12000까지 1/3 과 1/2 사이의 tree leaf 들을 모두 세면 되지 않을까..? 
+// idea : stern-brocot 트리로 모든 유리수를 셀 수 있으므로 depth 1~12000까지 1/3 과 1/2 사이의 depth 별 tree leaf 들을 모두 세면 되지 않을까..? 
 	
 #include <iostream>
 #include <ctime>
@@ -32,6 +32,8 @@ class Fraction
     d = de;
   }
 };
+
+int sum = 0;
 
 /* using Stern-Brocot Tree
 Fraction getLeftNeighbor( Fraction that, Fraction leftbound, int depth)
