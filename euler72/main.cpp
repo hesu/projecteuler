@@ -2,6 +2,8 @@
  	Problem 72 - Counting fractions
 */
 
+// 마지막 depth 를 어떻게 구하느냐 인것 같은데..
+
 #include <iostream>
 #include <ctime>
 
