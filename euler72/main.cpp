@@ -1,142 +1,153 @@
 /*
  	Problem 72 - Counting fractions
 */
-
-// 마지막 depth 를 어떻게 구하느냐 인것 같은데..
-
 #include <iostream>
-#include <ctime>
+#include <map>
 #include <vector>
-
-#include <math.h>
+#include <ctime>
+#include <cmath>
 
 using namespace std;
-
-class Fraction
+struct _PrimeFactor
 {
-  public :
-  unsigned int n;
-  unsigned int d;
+	int p; // prime number
+	int e; // exponent
+};
+typedef struct _PrimeFactor PrimeFactor;
+
+class PrimeFactors 
+{
+	private: 
+		std::map<int, PrimeFactor> pf;
+	public:
+		PrimeFactors(int n, int e)
+		{
+			while( true)
+			{
+				if( n <= 1) break;
+				for(int i=2; i<=n; i++)
+				{
+					if (n%i == 0) {
+						n = n/i;
+						std::map<int, PrimeFactor>::iterator it = pf.find(i);
+						if (it!= pf.end()) {
+							(it->second.e)++;
+						} else {
+							PrimeFactor p;
+							p.p = i;
+							p.e = 1;
+							pf.insert( std::map<int,PrimeFactor>::value_type(i, p));
+						}
+						break;
+					}
+				}
+			}
+
+			for( std::map<int, PrimeFactor>::iterator it = pf.begin(); it != pf.end(); it++)
+			{
+				PrimeFactor *p = &(it->second);
+				if (e <= 1) break;
+				p->e = (p->e)*(e);
+			}
+		}
+
+
+		void print()
+		{
+			for( std::map<int, PrimeFactor>::iterator it = pf.begin(); it != pf.end(); it++)
+			{
+				PrimeFactor *p = &(it->second);
+				cout << p->p << "^" << p->e <<"*";
+			}
+//			cout << endl;
+		}
 		
-  Fraction( unsigned int nu, unsigned int de)
-  {
-    n = nu;
-    d = de;
-  }
+    std::map<int, PrimeFactor> getpf()
+		{
+      return pf;
+		}
+
+		std::vector<int> getPrimes()
+		{
+			std::vector<int> p;
+			for( std::map<int, PrimeFactor>::iterator it = pf.begin(); it != pf.end(); it++)
+			{
+				p.push_back( it->first);
+			}
+			return p;
+		}
+
+		int find( int p)
+		{
+			std::map<int,PrimeFactor>::iterator it = pf.find( p);
+			if( it != pf.end()) {
+				return (it->second).e;
+			}
+			return -1;
+		}
+
+		int npf() { return pf.size();}
+
+		bool operator == ( PrimeFactors& rhs)
+		{
+			if( npf() != rhs.npf()) return false;
+			for( std::map<int, PrimeFactor>::iterator it = pf.begin(); it != pf.end(); it++)
+			{
+				PrimeFactor *p = &(it->second);
+				int e = rhs.find( p->p);
+				if (e == -1 || e != p->e) { return false;}
+			}
+			return true; 
+		}
 };
 
-int findFirstTreeDepth( Fraction left, Fraction right, int maxd)
+int MAX = 1000000;
+//int MAX = 10;
+
+int getTotient( PrimeFactors p)
 {
-  int depth = 0;
-  Fraction ans = Fraction( left.n + right.n, left.d + right.d);
+  int n = 1;
+  std::map<int, PrimeFactor> m = p.getpf();
+	for( std::map<int, PrimeFactor>::iterator it = m.begin(); it != m.end(); it++)
+	{
+		PrimeFactor *p = &(it->second);
+    n = n * ( pow( p->p, p->e) - pow( p->p, (p->e -1)));
+	}
 
-  while( ans.d < maxd) {
-    if( depth %2 == 0) {
-      left.n = ans.n; left.d = ans.d;
-    } else {
-      right.n = ans.n; right.d = ans.d;
-    }
-
-    ans.n = left.n + right.n; ans.d = left.d + right.d;
-    if( ans.d > maxd) { break; }
-    depth++;
-  }
-
-  cout << "tree depth=" << depth << " (next) ans=" << ans.n << "/" << ans.d << endl;
-  return depth;
+  return n;
 }
 
-// using Stern-Brocot Tree
-unsigned int countingFractions( std::vector<Fraction> v, unsigned int maxd)
+int getFareySequenceSize( int d)
 {
-  unsigned int depth = 0;
-  
-  std::vector<Fraction> thisturn_new;
-  std::vector<Fraction> newv;
+  /*
+  if( d % 10000 == 0) { cout << "now d=" << d << endl; }
+  if( d == 1) { return 2; }
+  PrimeFactors pf( d, 1);
+  return getFareySequenceSize( d-1) + getTotient( pf);
+  */
 
-  bool findmaxd = false;
-  while( !findmaxd) {
-
-    int vsize = v.size();
-    for(int i=0; i<vsize; i++)
-    {
-      newv.push_back( v[i]);
-      
-      if( i < (vsize-1)) {
-        Fraction f( v[i].n + v[i+1].n , v[i].d + v[i+1].d);
-        thisturn_new.push_back(f);
-        newv.push_back(f);
-      }
-      
-    }
-
-  //  cout << "tree depth=" << depth << " thisturn_new.size()=" << thisturn_new.size() << endl;
-
-    bool all_over = true;
-    for(int i=0; i<thisturn_new.size(); i++) {
-      if( thisturn_new[i].d >= maxd) { 
-        cout << "found!" << endl; all_over = false; 
-        break; 
-      }
-    }
-    if( all_over == false) { findmaxd = true; continue;}
-
-    depth++;
-//    if( depth % 1000 == 0) { cout << "depth=" << depth << " thisturn_new.size() " << thisturn_new.size() << endl; }
-
-    v = newv;
-
-    newv.clear();
-    thisturn_new.clear();
-  }
-
-  cout << "depth=" << depth << " vector.size()=" << v.size() << endl;
-  
-  int sum=0;
-  for(int i=0; i<v.size(); i++)
+  int sum = 0;
+  for(int i=2; i<d; i++)
   {
-    if( v[i].d <= maxd) {
-      cout << v[i].n << "/" << v[i].d <<  " ";
-      sum++;
-    }
+    if( i % 10000 == 0) { cout << "i=" << i << endl; }
+    PrimeFactors pf( i, 1);
+    sum += getTotient( pf);
   }
-  cout << endl;
-
-  return sum - 2;
+  return sum;
 }
 
 int main(int argc, char** argv)
 {
 	clock_t begin = clock();
 
-  /* starting code */
-
-  unsigned int maxd = 1000000;
-  //unsigned int maxd = 8;
- 
-  Fraction left(0,1);
-  Fraction right(1,1);
+	/* starting code */
   
-  std::vector<Fraction> f;
-  f.push_back( left);
-  f.push_back( right);
-  
-//  unsigned int howmany = countingFractions( f, maxd);
-  //cout << "howmany=" << howmany << endl;
-
-  unsigned int depth = findFirstTreeDepth( left, right, maxd);
-  cout << "depth=" << depth << endl;
-
-
-  int sum=0;
-  for(int i=0; i<=depth; i++)
-  {
-    sum += pow( 2, i);
-  }
-  cout << "sum=" << sum << endl;
+  int sol = getFareySequenceSize( MAX);
+  cout << "sol=" << sol << endl;
 
 	/* end of code */
 	clock_t end = clock();
 	std::cout << "elapsed time=" << double(end - begin) / CLOCKS_PER_SEC << std::endl;
 	return 0;
 }
+
