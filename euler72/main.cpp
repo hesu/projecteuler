@@ -1,6 +1,7 @@
 /*
  	Problem 72 - Counting fractions
 */
+
 #include <iostream>
 #include <map>
 #include <vector>
@@ -101,8 +102,8 @@ class PrimeFactors
 		}
 };
 
-int MAX = 1000000;
-//int MAX = 10;
+int MAX = 100 * 10000 + 1;
+//int MAX = 9;
 
 int getTotient( PrimeFactors p)
 {
@@ -119,13 +120,6 @@ int getTotient( PrimeFactors p)
 
 unsigned long int getFareySequenceSize( int d)
 {
-  /*
-  if( d % 10000 == 0) { cout << "now d=" << d << endl; }
-  if( d == 1) { return 2; }
-  PrimeFactors pf( d, 1);
-  return getFareySequenceSize( d-1) + getTotient( pf);
-  */
-
   unsigned long int sum = 0;
   for(int i=2; i<d; i++)
   {
@@ -142,8 +136,8 @@ int main(int argc, char** argv)
 
 	/* starting code */
   
-  unsigned long int sol = getFareySequenceSize( MAX);
-  cout << "sol=" << sol << endl;
+  unsigned long int ans = getFareySequenceSize( MAX);
+  cout << "answer=" << ans << endl;
 
 	/* end of code */
 	clock_t end = clock();
