@@ -6,16 +6,17 @@
 
 #include <iostream>
 #include <ctime>
+#include <vector>
 
 using namespace std;
 
 class Fraction
 {
   public :
-  unsigned long long int n;
-  unsigned long long int d;
+  unsigned int n;
+  unsigned int d;
 		
-  Fraction( unsigned long long int nu, unsigned long long int de)
+  Fraction( unsigned int nu, unsigned int de)
   {
     n = nu;
     d = de;
@@ -23,12 +24,27 @@ class Fraction
 };
 
 // using Stern-Brocot Tree
-unsigned long long int countingFractions( Fraction left, Fraction right, unsigned long long int maxd)
+unsigned int countingFractions( std::vector<Fraction> v, unsigned int maxd)
 {
-  if ((left.d + right.d) > maxd) { return 0; }
+  int depth = 0;
+  
+  std::vector<Fraction> newv;
 
-  Fraction next = Fraction( left.n + right.n, left.d + right.d);
-  return 1 + countingFractions( left, next, maxd) + countingFractions( next, right, maxd);
+while( depth < maxd) {
+
+  int vsize = v.size();
+  for(int i=0; i<vsize; i++)
+  {
+    if( i == 0 || i == vsize-1) {
+      newv.push_back( v[i]);
+    } else {
+      Fraction f( v[i].n + v[i+1].n , v[i].d + v[i+1].d);
+      newv.push_back(f);
+    }
+  }
+  depth++;
+}
+
 }
 
 int main(int argc, char** argv)
@@ -37,10 +53,16 @@ int main(int argc, char** argv)
 
   /* starting code */
 
-  unsigned long long int maxd = 100000;
+  unsigned int maxd = 1000000;
+ 
   Fraction left(0,1);
   Fraction right(1,1);
-  unsigned long long int howmany = countingFractions( left, right, maxd);
+  
+  std::vector<Fraction> f;
+  f.push_back( left);
+  f.push_back( right);
+  
+  unsigned int howmany = countingFractions( f, maxd);
   cout << "howmany=" << howmany << endl;
 
 	/* end of code */
