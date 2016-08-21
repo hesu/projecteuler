@@ -117,7 +117,7 @@ int getTotient( PrimeFactors p)
   return n;
 }
 
-int getFareySequenceSize( int d)
+unsigned long int getFareySequenceSize( int d)
 {
   /*
   if( d % 10000 == 0) { cout << "now d=" << d << endl; }
@@ -126,7 +126,7 @@ int getFareySequenceSize( int d)
   return getFareySequenceSize( d-1) + getTotient( pf);
   */
 
-  int sum = 0;
+  unsigned long int sum = 0;
   for(int i=2; i<d; i++)
   {
     if( i % 10000 == 0) { cout << "i=" << i << endl; }
@@ -142,7 +142,7 @@ int main(int argc, char** argv)
 
 	/* starting code */
   
-  int sol = getFareySequenceSize( MAX);
+  unsigned long int sol = getFareySequenceSize( MAX);
   cout << "sol=" << sol << endl;
 
 	/* end of code */
