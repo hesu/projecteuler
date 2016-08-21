@@ -1,12 +1,12 @@
 /*
  	Problem 70 - Totient permutation
 */
+
 #include <iostream>
 #include <map>
 #include <vector>
 #include <ctime>
 #include <cmath>
-
 #include <string.h>
 
 using namespace std;
@@ -103,7 +103,7 @@ class PrimeFactors
 		}
 };
 
-unsigned int MAX = 1000000;
+unsigned int MAX = 10000000;
 
 unsigned int getTotient( PrimeFactors p)
 {
@@ -177,6 +177,7 @@ int main(int argc, char** argv)
     if( hasSameDigit( totient, i)) {
       float val = i / ((float)totient);
       if (min > val) {
+        cout << "totient=" << totient << " i=" << i << " ratio=" << val << endl;
         min= val;
         minn= i;
       }
