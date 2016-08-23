@@ -117,28 +117,6 @@ unsigned int getTotient( PrimeFactors p)
   return n;
 }
 
-bool hasSameDigit( unsigned int a, unsigned int b)
-{
-  int achar[10] = {0,};
-  int bchar[10] = {0,};
-
-  char abuf[1000] = {0,};
-  sprintf( abuf, "%d", a);
-  for(int i=0; i<strlen(abuf); i++) achar[ abuf[i] - '0']++;
-  
-  char bbuf[1000] = {0,};
-  sprintf( bbuf, "%d", b);
-  for(int i=0; i<strlen(bbuf); i++) bchar[ bbuf[i] - '0']++;
-
-
-  // compare
-  for(int i=0; i<10; i++)
-  {
-    if( achar[i] != bchar[i]) return false;
-  }
-  return true;
-}
-
 int main(int argc, char** argv)
 {
 	clock_t begin = clock();
