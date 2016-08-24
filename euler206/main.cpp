@@ -8,10 +8,10 @@
 
 using namespace std;
 
-bool isConcealedSquare( unsigned long int n)
+bool isConcealedSquare( unsigned long long int n)
 {
   char buf[100] = {0,};
-  sprintf( buf, "%lu", n*n);
+  sprintf( buf, "%llu", n*n);
 
   if( strlen( buf) == 19) {
     for(int i=0; i<=9; i++)
@@ -29,10 +29,13 @@ int main(int argc, char** argv)
 
   /* starting code */
 
-  int n = 1000000000;
+  unsigned long long int n = 1000000000;
   while( !isConcealedSquare( n * 10)) { 
     cout << "n=" << n * 10 << endl; 
     n++;
+
+    char buf[100] = {0,}; sprintf( buf, "%llu", n*n*100);
+    if( strlen(buf) > 19) { cout << "over.." << endl; break; }
   }
   cout << "solved n=" << n * 10<< endl;
 
