@@ -11,13 +11,19 @@ using namespace std;
 bool isConcealedSquare( unsigned long long int n)
 {
   char buf[100] = {0,};
-  sprintf( buf, "%llu", n*n);
+  sprintf( buf, "%llu", n);
 
   if( strlen( buf) == 19) {
-    for(int i=0; i<=9; i++)
+    cout << "try n*n=" << n << " buf=" << buf << endl;
+    int cnt=1;
+    for(int i=0; i<=18; i++)
     {
-      if( buf[i*2] != i+1 + '0') return false;
+      if( i%2 == 0 && cnt <= 9) {
+        if (buf[i] - '0' != cnt) return false;
+        cnt++;
+      }
     }
+    cout << "find : ";
     return true;
   }
   return false;
@@ -28,20 +34,18 @@ int main(int argc, char** argv)
 	clock_t begin = clock();
 
   /* starting code */
+  unsigned long long int n = 1000 * 1000 * 10;
+  while( true) {
+    if( isConcealedSquare( n*n)) break;
 
-  unsigned long long int n = 1000000000;
-  while( !isConcealedSquare( n * 10)) { 
-    cout << "n=" << n * 10 << endl; 
-    n++;
-
-    char buf[100] = {0,}; sprintf( buf, "%llu", n*n*100);
+    char buf[100] = {0,}; sprintf( buf, "%llu", n*n);
     if( strlen(buf) > 19) { cout << "over.." << endl; break; }
+    n+=10;
   }
-  cout << "solved n=" << n * 10<< endl;
+  cout << "solved n=" << n << " for sqaure=" << n*n << endl;
 
 	/* end of code */
 	clock_t end = clock();
 	std::cout << "elapsed time=" << double(end - begin) / CLOCKS_PER_SEC << std::endl;
 	return 0;
 }
-
