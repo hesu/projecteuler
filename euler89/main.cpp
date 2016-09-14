@@ -5,7 +5,6 @@
 #include <iostream>
 #include <ctime>
 #include <fstream>
-#include <vector>
 
 using namespace std;
 
