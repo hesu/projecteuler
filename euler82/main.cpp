@@ -2,8 +2,6 @@
  	Problem 82 - Path sum: three ways
 */
 
-// TODO TODO TODO start solving
-
 #include <iostream>
 #include <ctime>
 #include <fstream>
@@ -47,8 +45,8 @@ int main(int argc, char** argv)
 {
 	clock_t begin = clock();
 
-  int row=80;
-  int col=80;
+  int row=5; // 80;
+  int col=5; // 80;
 
   int **mat = (int**) malloc( sizeof( int*) * row);
   for(int i=0; i<row; i++)
@@ -57,15 +55,13 @@ int main(int argc, char** argv)
     mat[i] = row;
   }
 
-  string fname = "p082_matrix.txt";
+  string fname = "p082_matrix.small.txt";
   ifstream inf(fname);
   string line;
  
   int irow = 0;
   while( std::getline( inf, line)) {
-    cout << "line=" << line << endl;
-    
-    // Tokenize 
+    //cout << "line=" << line << endl;
     string delim = ",";
     size_t lenDelim = delim.length();
     size_t pos = 0;
@@ -73,39 +69,46 @@ int main(int argc, char** argv)
     int icol = 0;
     while(( pos = line.find( delim)) != std::string::npos) {
       string token = line.substr( 0, pos);
- //     cout << "token=" << token << " "; 
       line.erase( 0, pos + lenDelim);
       
       mat[irow][icol] = atoi( token.c_str());
       icol++;
     } 
 
-//    cout << "last=" << line << endl;
     mat[irow][icol] = atoi( line.c_str());
     irow++;
   }
   inf.close();
 
+/*
   cout << "MATRIX DEBUG!" << endl;
   for(int y=0; y<row; y++)
   {
-    for(int x=0; x<col; x++)
-    {
-      cout << mat[y][x] << " ";
-    }
+    for(int x=0; x<col; x++) cout << mat[y][x] << " ";
     cout << endl;
   }
+  */
 
-  int **memo = (int**) malloc( sizeof( int*) * row);
-  for(int i=0; i<row; i++)
+  for(int left=0; left<row; left++)
   {
-    int* row = (int*) malloc( sizeof( int) * col);
-    for(int j=0; j<col; j++) row[j] = 0;
-    memo[i] = row;
-  }
+    for(int right=0; right<row; right++)
+    {
 
-  int min = getMinPathValue( row-1, col-1, mat, memo);
-  cout << "min=" << min << endl;
+      int **memo = (int**) malloc( sizeof( int*) * row);
+      for(int i=0; i<row; i++)
+      {
+        int* row = (int*) malloc( sizeof( int) * col);
+        for(int j=0; j<col; j++) row[j] = 0;
+        memo[i] = row;
+      }
+
+      int min = getMinPathValue( row-1, col-1, mat, memo);
+      cout << "min=" << min << endl;
+
+      for(int i=0; i<row; i++) { free( memo[i]);}
+      free(memo);
+    }
+  }
 
 	clock_t end = clock();
 	std::cout << "elapsed=" << double( end-begin) / CLOCKS_PER_SEC << endl;
