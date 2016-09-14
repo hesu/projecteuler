@@ -7,39 +7,6 @@
 #include <fstream>
 
 using namespace std;
-  
-int getMinPathValue( int row, int col, int **mat, int** memo)
-{
-//  cout << "getMinPathValue() row=" << row << " col=" << col << " val=" << mat[row][col] << endl;
-  if( row == 0 && col == 0) { return mat[row][col]; }
-
-  int upper, left;
-
-  if (row-1 < 0) { upper = -1; }
-  else if (memo[row-1][col] != 0) { upper = memo[ row-1][col]; }
-  else {
-    upper = getMinPathValue( row-1, col, mat, memo);
-    memo[row-1][col] = upper;
-  }
-  
-  if (col-1 < 0) { left = -1; }
-  else if (memo[row][col-1] != 0) { upper = memo[ row][col-1]; }
-  else {
-    left = getMinPathValue( row, col-1, mat, memo);
-    memo[row][col-1] = left;
-  }
-//  cout << "upper=" << upper << " left=" << left << endl;
-
-  int min = -1;
-  if( upper == -1) { min = left; }
-  else if( left == -1) { min = upper; }
-  else {
-    upper < left ? min = upper : min = left;
-  }
-//  cout << "min=" << min << endl;
-  
-  return mat[row][col] + min;
-}
 
 int main(int argc, char** argv)
 {
@@ -102,8 +69,7 @@ int main(int argc, char** argv)
         memo[i] = row;
       }
 
-      int min = getMinPathValue( row-1, col-1, mat, memo);
-      cout << "min=" << min << endl;
+      // LOGIC TODO
 
       for(int i=0; i<row; i++) { free( memo[i]);}
       free(memo);
