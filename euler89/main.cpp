@@ -69,7 +69,6 @@ bool descending( char a, char b)
 int numberFromRomans( string r)
 {
   int n = 0;
-//  cout << r << " len=" << r.size() << endl;
   for(int i=0; i<r.size(); i++)
   {
     int j=i+1;
@@ -85,17 +84,6 @@ int numberFromRomans( string r)
     } else {
       n += roman( r[i]);
     }
-    /*
-    if( i < r.size()-1) {
-      if( descending( r[i], r[j+1])) {
-        n += roman(r[i]);
-      } else {
-        n -= roman(r[i]);
-      }
-    } else {
-        n += roman(r[i]);
-    }
-    */
   }
   return n;
 }
