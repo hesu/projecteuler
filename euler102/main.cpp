@@ -22,7 +22,7 @@ class Point
   }
 };
 
-// Is point(x1, y1) and point(x2,y2) are in same side divided by l1-l2 line plane?
+// Is point(a) and point(b) are in same side divided by l1-l2 line plane?
 bool isSameSide( Point l1, Point l2, Point a, Point b)
 {
   float sidea = ((l2.x - l1.x) * (a.y - l1.y) - ( l2.y - l1.y) * ( a.x - l1.x));
