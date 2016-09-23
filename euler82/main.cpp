@@ -9,31 +9,73 @@
 
 using namespace std;
 
-
 #define MATSIZE 5
 
-int getPathSum( int **mat, int col, int yrow, int sum)
+// call : int ps = getPathSum( mat, 0, 4, mat[0][4]);
+int getPathSum( int **mat, int row, int col, int sum)
 {
+  cout << "mat[" << row << "][" << col << "]=" << mat[row][col] << endl;
   if (col <= 0) { return sum ; }
 
-
-  // 지금 col, yrow 에서
+  // 지금 col, row 에서
   // 이전 col 의 어느 값까지의 최소경로를 찾는다.
   int min = -1;
+  int nextrow;
 
   for(int r=0; r<MATSIZE; r++)
   {
+    cout << "** check to reach mat[" << r << "][" << col-1 << "]" << endl;
     int minval = -1;
-    if( r == yrow) {
-      minval = mat[col-1][r] + mat[col][yrow];
-      cout << "found!" << endl;
+    if( r == row) {
+      minval = mat[row][col-1];
+      cout << "r=row. r=" << r << " minval=" << minval << endl;
+    } else {
+      cout << "else;" << endl;
+      // get foward column path
+      int fval = mat[row][col-1];
+      if( r > row) {
+        for(int i=r-1; i>=row; i--)
+        {
+          fval += mat[i][-1];
+        }
+      } else {
+        for(int i=r+1; i<=row; i++)
+        {
+          fval += mat[i][col-1];
+        }
+      }
+      //fval += mat[row][col];
+
+      // get backward column path
+      int bval = mat[r][col-1];
+      if( r > row) {
+        for(int i=r-1; i>=row; i--)
+        {
+          fval += mat[i][col];
+        }
+      } else {
+        for(int i=r+1; i<=row; i++)
+        {
+          fval += mat[i][col];
+        }
+      }
+      //fval += mat[row][col];
+      cout << "  at row " << r << ": fval=" << fval << " bval=" << bval << endl;
+
+      if( minval > fval || minval > bval) {
+        (fval < bval) ? minval = fval : minval = bval;
+      }
     }
 
-    if( min == -1) min = minval;
-    else if( minval > min) min = minval;
+    if( min == -1) { min = minval; nextrow = r; }
+    else if( minval > min) { min = minval; nextrow = r; }
+
   }
- 
-  return getPathSum( mat, col-1, yrow, sum);
+  cout << "min=" << min << " nextrow=" << nextrow << endl;
+
+  cout << " next : row=" << nextrow << " col=" << col-1 << endl;
+  
+  return getPathSum( mat, nextrow, col-1, sum + min);
 }
 
 int main(int argc, char** argv)
@@ -80,8 +122,7 @@ int main(int argc, char** argv)
 
   std::vector<int> pathsums;
 
-  int yrow = 0;
-  int ps = getPathSum( mat, col, yrow, 0);
+  int ps = getPathSum( mat, 0, 4, mat[0][4]);
   cout << "ps=" << ps << endl;
 /*
   for(int left=0; left<row; left++)
