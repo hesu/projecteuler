@@ -24,58 +24,71 @@ int getPathSum( int **mat, int row, int col, int sum)
 
   for(int r=0; r<MATSIZE; r++)
   {
-    cout << "** check to reach mat[" << r << "][" << col-1 << "]" << endl;
+    cout << "** check to reach mat[" << r << "][" << col-1 << "]" << "=" << mat[r][col-1] << endl;
     int minval = -1;
     if( r == row) {
-      minval = mat[row][col-1];
-      cout << "r=row. r=" << r << " minval=" << minval << endl;
+      int val = mat[row][col-1] + mat[row][col];
+      minval = val;
+     cout << "r=row. r=" << r << " minval=" << minval << endl;
     } else {
-      cout << "else;" << endl;
+//      cout << "else;" << endl;
       // get foward column path
-      int fval = mat[row][col-1];
+      int fval = 0;
       if( r > row) {
-        for(int i=r-1; i>=row; i--)
+        for(int i=row+1; i<=r; i++)
         {
-          fval += mat[i][-1];
+          fval += mat[i][col];
         }
       } else {
-        for(int i=r+1; i<=row; i++)
+        for(int i=row-1; i>=r; i--)
         {
-          fval += mat[i][col-1];
+          fval += mat[i][col];
         }
       }
-      //fval += mat[row][col];
+      fval += mat[row][col];
+      fval += mat[r][col-1];
 
       // get backward column path
-      int bval = mat[r][col-1];
+      int bval = 0;
+      if( r-1 != 0) {
       if( r > row) {
         for(int i=r-1; i>=row; i--)
         {
-          fval += mat[i][col];
+          bval += mat[i][col-1];
         }
       } else {
         for(int i=r+1; i<=row; i++)
         {
-          fval += mat[i][col];
+          bval += mat[i][col-1];
         }
       }
-      //fval += mat[row][col];
+      bval += mat[row][col];
+      bval += mat[r][col-1];
+      }
+
       cout << "  at row " << r << ": fval=" << fval << " bval=" << bval << endl;
 
-      if( minval > fval || minval > bval) {
-        (fval < bval) ? minval = fval : minval = bval;
+      if( minval == -1) { minval = fval; }
+      if( minval > fval) { 
+        //cout << "minval will be change. minval=" << minval << " fval=" << fval << endl;
+        minval = fval; 
+      }
+      else if( minval > bval) { 
+        //cout << "minval will be change. minval=" << minval << " bval=" << bval << endl;
+        if( r-1 != 0) {
+        minval = bval; 
+        }
       }
     }
 
-    if( min == -1) { min = minval; nextrow = r; }
-    else if( minval > min) { min = minval; nextrow = r; }
+    if( min == -1 || min > minval) { cout << "set min <-minval " << endl; min = minval; nextrow = r; }
 
   }
-  cout << "min=" << min << " nextrow=" << nextrow << endl;
-
-  cout << " next : row=" << nextrow << " col=" << col-1 << endl;
+  cout << "RESULT min=" << min << " nextrow=" << nextrow << endl;
+  //cout << " next : row=" << nextrow << " col=" << col-1 << endl;
+  cout << endl;
   
-  return getPathSum( mat, nextrow, col-1, sum + min);
+  return getPathSum( mat, nextrow, col-1, sum + min - mat[row][col]);
 }
 
 int main(int argc, char** argv)
