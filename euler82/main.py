@@ -1,8 +1,10 @@
 import copy
 import sys
+import datetime
 
 size = 80
 
+memo = [[ None for i in range(size)] for j in range(size)]
 memo_r = [[ None for i in range(size)] for j in range(size)]
 memo_u = [[ None for i in range(size)] for j in range(size)]
 memo_d = [[ None for i in range(size)] for j in range(size)]
@@ -43,6 +45,9 @@ def setVertexMatrix( mat, vmat):
   return vmat
 
 def traverse( vertex, vmat, record, traversum):
+#  if memo[vertex.row][vertex.col] is not None:
+#     return memo[ vertex.row][vertex.col]
+
   if record is None:
     record = [ (vertex.row, vertex.col)]
 
@@ -53,17 +58,19 @@ def traverse( vertex, vmat, record, traversum):
   upval = sys.maxint
   if vertex.up is not None :
     if memo_u[vertex.row][vertex.col] is not None :
+      print( "up cache!")
       upval = memo_u[ vertex.row][ vertex.col]
     else :
       if (vertex.row-1, vertex.col) not in record :
         ur = copy.deepcopy( record)
         ur.append( ( vertex.row, vertex.col))
         upval = traversum + traverse( vmat[ vertex.row-1][vertex.col], vmat, ur, vertex.val)
-        memo_u[ vertex.row][vertex.co] = upval
+        memo_u[ vertex.row][vertex.col] = upval
 
   downval = sys.maxint
   if vertex.down is not None :
    if memo_d[ vertex.row][vertex.col] is not None:
+    print( "down cache!")
     downval = memo_d[ vertex.row][vertex.col]
    else :
     if (vertex.row+1, vertex.col) not in record :
@@ -78,14 +85,24 @@ def traverse( vertex, vmat, record, traversum):
     else :
       rr = copy.deepcopy( record)
       rightval = traversum + traverse( vmat[ vertex.row][vertex.col+1], vmat, rr, vertex.val)
+      #memo_r[ vertex.row][vertex.col] = rightval
 
   minval = min( upval, downval, rightval)
+  print( "minval=", minval, "row=", vertex.row, "col=", vertex.col)
+
+#  if memo_u[ vertex.row][vertex.col] is not None and memo_d[ vertex.row][vertex.col] is not None and memo_r[ vertex.row][vertex.col] is not None :
+#    memo[ vertex.row][vertex.col] = minval
+
   return minval
+
+### PROGRAM START!
+
+stime = datetime.datetime.now()
 
 print( sys.setrecursionlimit( 6500)) 
 print( sys.getrecursionlimit()) 
-with open( "p082_matrix.txt") as f:
-#with open( "p082_matrix.small.txt") as f:
+#with open( "p082_matrix.txt") as f:
+with open( "p082_matrix.small.txt") as f:
   matrix = parse( f)
 #  print( matrix)
   vmatrix = setVertexMatrix( matrix, None)
@@ -97,3 +114,6 @@ with open( "p082_matrix.txt") as f:
   print( "minval=", min(minvals))
 #  minval = traverse( vmatrix[
 #print( vmatrix)
+etime = datetime.datetime.now()
+
+print( "elapsed sec=", (etime-stime).microseconds/1e6)
