@@ -9,12 +9,13 @@
 
 using namespace std;
 
-#define MATSIZE 5
+#define MATSIZE 80 
+//#define MATSIZE 5
 
 // call : int ps = getPathSum( mat, 0, 4, mat[0][4]);
 int getPathSum( int **mat, int row, int col, int sum)
 {
-  cout << "mat[" << row << "][" << col << "]=" << mat[row][col] << endl;
+//  cout << "mat[" << row << "][" << col << "]=" << mat[row][col] << endl;
   if (col <= 0) { return sum ; }
 
   // 지금 col, row 에서
@@ -24,12 +25,12 @@ int getPathSum( int **mat, int row, int col, int sum)
 
   for(int r=0; r<MATSIZE; r++)
   {
-    cout << "** check to reach mat[" << r << "][" << col-1 << "]" << "=" << mat[r][col-1] << endl;
+ //   cout << "** check to reach mat[" << r << "][" << col-1 << "]" << "=" << mat[r][col-1] << endl;
     int minval = -1;
     if( r == row) {
       int val = mat[row][col-1] + mat[row][col];
       minval = val;
-     cout << "r=row. r=" << r << " minval=" << minval << endl;
+  //   cout << "r=row. r=" << r << " minval=" << minval << endl;
     } else {
 //      cout << "else;" << endl;
       // get foward column path
@@ -66,8 +67,7 @@ int getPathSum( int **mat, int row, int col, int sum)
       bval += mat[r][col-1];
       }
 
-      cout << "  at row " << r << ": fval=" << fval << " bval=" << bval << endl;
-
+      //cout << "  at row " << r << ": fval=" << fval << " bval=" << bval << endl;
       if( minval == -1) { minval = fval; }
       if( minval > fval) { 
         //cout << "minval will be change. minval=" << minval << " fval=" << fval << endl;
@@ -81,12 +81,10 @@ int getPathSum( int **mat, int row, int col, int sum)
       }
     }
 
-    if( min == -1 || min > minval) { cout << "set min <-minval " << endl; min = minval; nextrow = r; }
+    if( min == -1 || min > minval) { min = minval; nextrow = r; }
 
   }
-  cout << "RESULT min=" << min << " nextrow=" << nextrow << endl;
-  //cout << " next : row=" << nextrow << " col=" << col-1 << endl;
-  cout << endl;
+//  cout << "RESULT min=" << min << " nextrow=" << nextrow << endl;
   
   return getPathSum( mat, nextrow, col-1, sum + min - mat[row][col]);
 }
@@ -105,7 +103,8 @@ int main(int argc, char** argv)
     mat[i] = row;
   }
 
-  string fname = "p082_matrix.small.txt";
+  //string fname = "p082_matrix.small.txt";
+  string fname = "p082_matrix.txt";
   ifstream inf(fname);
   string line;
  
@@ -130,34 +129,26 @@ int main(int argc, char** argv)
   }
   inf.close();
 
-  cout << "MATRIX DEBUG!" << endl;
-  for(int y=0; y<row; y++) { for(int x=0; x<col; x++) cout << mat[y][x] << " "; cout << endl; }
+//  cout << "MATRIX DEBUG!" << endl;
+ // for(int y=0; y<row; y++) { for(int x=0; x<col; x++) cout << mat[y][x] << " "; cout << endl; }
 
   std::vector<int> pathsums;
 
-  int ps = getPathSum( mat, 0, 4, mat[0][4]);
-  cout << "ps=" << ps << endl;
-/*
-  for(int left=0; left<row; left++)
+  for(int i=0; i<MATSIZE; i++)
   {
-    for(int right=0; right<row; right++)
-    {
-
-      int **memo = (int**) malloc( sizeof( int*) * row);
-      for(int i=0; i<row; i++)
-      {
-        int* row = (int*) malloc( sizeof( int) * col);
-        for(int j=0; j<col; j++) row[j] = 0;
-        memo[i] = row;
-      }
-
-      // LOGIC TODO
-
-      for(int i=0; i<row; i++) { free( memo[i]);}
-      free(memo);
-    }
+    // call : int ps = getPathSum( mat, 0, 4, mat[0][4]);
+    int ps = getPathSum( mat, i, MATSIZE-1, mat[i][MATSIZE-1]);
+    pathsums.push_back( ps);
   }
-  */
+
+  cout << "pathsums.size()=" << pathsums.size() << endl;
+  int minsum = pathsums[0];
+  for(int i=0; i<pathsums.size(); i++)
+  {
+    if( pathsums[i] < minsum) minsum = pathsums[i];
+  }
+
+  cout << "minsum=" << minsum << endl;
 
 	clock_t end = clock();
 	std::cout << "elapsed=" << double( end-begin) / CLOCKS_PER_SEC << endl;
