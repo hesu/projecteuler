@@ -2,7 +2,10 @@ import copy
 import sys
 
 size = 80
-memo = [[None for i in range(size)] for j in range(size)]
+
+memo_r = [[ None for i in range(size)] for j in range(size)]
+memo_u = [[ None for i in range(size)] for j in range(size)]
+memo_d = [[ None for i in range(size)] for j in range(size)]
 
 class Vertex :
   def __init__(self, row=0, col=0, val=0) :
@@ -40,9 +43,6 @@ def setVertexMatrix( mat, vmat):
   return vmat
 
 def traverse( vertex, vmat, record, traversum):
-#  if memo[vertex.row][vertex.col] is not None :
-#    return memo[vertex.row][vertex.col]
-
   if record is None:
     record = [ (vertex.row, vertex.col)]
 
@@ -52,13 +52,20 @@ def traverse( vertex, vmat, record, traversum):
 
   upval = sys.maxint
   if vertex.up is not None :
-    if (vertex.row-1, vertex.col) not in record :
-      ur = copy.deepcopy( record)
-      ur.append( ( vertex.row, vertex.col))
-      upval = traversum + traverse( vmat[ vertex.row-1][vertex.col], vmat, ur, vertex.val)
+    if memo_u[vertex.row][vertex.col] is not None :
+      upval = memo_u[ vertex.row][ vertex.col]
+    else :
+      if (vertex.row-1, vertex.col) not in record :
+        ur = copy.deepcopy( record)
+        ur.append( ( vertex.row, vertex.col))
+        upval = traversum + traverse( vmat[ vertex.row-1][vertex.col], vmat, ur, vertex.val)
+        memo_u[ vertex.row][vertex.co] = upval
 
   downval = sys.maxint
   if vertex.down is not None :
+   if memo_d[ vertex.row][vertex.col] is not None:
+    downval = memo_d[ vertex.row][vertex.col]
+   else :
     if (vertex.row+1, vertex.col) not in record :
       dr = copy.deepcopy( record)
       dr.append( (vertex.row, vertex.col))
@@ -66,16 +73,13 @@ def traverse( vertex, vmat, record, traversum):
   
   rightval = sys.maxint
   if vertex.right is not None :
-    rr = copy.deepcopy( record)
-    rightval = traversum + traverse( vmat[ vertex.row][vertex.col+1], vmat, rr, vertex.val)
+    if memo_r[vertex.row][vertex.col] is not None:
+      rightval = memo_r[ vertex.row][vertex.col]
+    else :
+      rr = copy.deepcopy( record)
+      rightval = traversum + traverse( vmat[ vertex.row][vertex.col+1], vmat, rr, vertex.val)
 
-  print( "REACHED!!!!!", "row=", vertex.row, "col=", vertex.col)
   minval = min( upval, downval, rightval)
-  
-  if memo[vertex.row][vertex.col] is None :
-    print( "memo. minval=", minval, "row=", vertex.row, "col=", vertex.col)
-    memo[vertex.row][vertex.col] = minval
-
   return minval
 
 print( sys.setrecursionlimit( 6500)) 
