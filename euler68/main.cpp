@@ -1,12 +1,10 @@
 /*
-  Problem 87 - Prime power triples
+  Problem 68 - Magic 5-gon ring
 */
 
 #include <iostream>
 #include <ctime>
 #include <vector>
-
-#define LIMIT 50000000
 
 using namespace std;
 
