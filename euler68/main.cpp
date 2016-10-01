@@ -5,10 +5,26 @@
 #include <iostream>
 #include <ctime>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
-int cnt=0;
+
+class GonRing
+{
+  public:
+    std::vector<int> tails;
+    std::vector<int> rings;
+
+    int solutionset()
+    {
+      int totalsum = 0;
+      return 0;
+    }
+};
+
+std::vector<GonRing> gonrings;
+
 void combination( std::vector<int> n, int limit, int now, std::vector<int> result)
 {
  // cout << "combi : now=" << now << endl;
@@ -22,13 +38,20 @@ void combination( std::vector<int> n, int limit, int now, std::vector<int> resul
 
   if( result.size() >= limit) {
     // Made combination! do something.
-    for( std::vector<int>::iterator it = result.begin(); it != result.end(); ++it)
+    GonRing g;
+    for(int i=0; i<n.size(); i++)
     {
-      cout << "[" << *it << "]"; 
-      if( it != result.end() -1) { cout << "-"; }
+      // if found n[i] in result, push tails
+      if( std::find( result.begin(), result.end(), n[i]) != result.end()) {
+        g.tails.push_back( n[i]);
+
+      } else {
+        g.rings.push_back( n[i]);
+      // else push rings
+      }
     }
-    cout << endl;
-    cnt++;
+    gonrings.push_back( g);
+
     // end of do something
     return;
   }
@@ -53,7 +76,12 @@ int main(int argc, char** argv)
     combination( n, n.size()/2, i, c);
   }
 
-  cout << "cnt=" << cnt << endl;
+  cout << "sizeof gonrings=" << gonrings.size() << endl;
+
+  for(int i=0; i<gonrings.size(); i++)
+  {
+    gonrings[i].solutionset(); 
+  }
 
   clock_t end = clock();
   std::cout << "elapsed time=" << double( end-begin) / CLOCKS_PER_SEC << endl;
