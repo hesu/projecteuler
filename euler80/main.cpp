@@ -12,9 +12,26 @@ using namespace std;
 
 #define MAX 100
 
-std::vector<int> digital_expansion( int n, int max)
+class AfterDecimal; 
+{
+  public:
+    Small( int _e, int _n)
+    {
+      e = _e; n = _n;
+    }
+
+  private:
+  int e; // minus
+  int n;
+};
+
+std::vector<int> digital_expansion( double n, int max)
 {
   std::vector<int> v;
+
+  AfterDecimal n( _e, _n);
+  
+
   return v;
 }
 
