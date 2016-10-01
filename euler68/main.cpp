@@ -6,81 +6,101 @@
 #include <ctime>
 #include <vector>
 #include <algorithm>
+#include <numeric>
 
 using namespace std;
-
 
 class GonRing
 {
   public:
+    GonRing( std::vector<int> t, std::vector<int> r)
+    {
+      tails.assign( t.begin(), t.end());
+      std::sort( tails.begin(), tails.begin() + tails.size());
+
+      rings.assign( r.begin(), r.end());
+      std::sort( rings.begin(), rings.begin() + rings.size());
+    }
+    
+    std::vector<std::vector<int>> solutionset()
+    {
+      do {
+        std::vector<std::vector<int>> tsums;
+        for(int i=0; i<tails.size(); i++)
+        {
+          std::vector<int> v;
+          v.push_back( tails[i]);
+
+          // push from rings!
+          // v.push_back( from Rings)
+          v.push_back( rings[i]);
+          v.push_back( rings[(i+1)%rings.size()]);
+          ///////////////////
+          tsums.push_back( v);
+        }
+
+        int totalsum = std::accumulate( tsums[0].begin(), tsums[0].end(), 0);
+        int made = true;
+        for(int i=1; i<tsums.size(); i++)
+        {
+          if( std::accumulate( tsums[i].begin(), tsums[i].end(), 0) != totalsum) {
+            made = false; break;
+          }
+        }
+
+        if( made) {
+          cout << "made & found! total sum=" << totalsum << endl;
+          return tsums;
+        }
+
+      } while( std::next_permutation( rings.begin(), rings.begin()+rings.size()));
+
+      std::vector<std::vector<int>> empty;
+      return empty;
+    }
+
+  private:
     std::vector<int> tails;
     std::vector<int> rings;
 
-    int solutionset()
-    {
-      int totalsum = 0;
-      return 0;
-    }
 };
 
-std::vector<GonRing> gonrings;
-
-void combination( std::vector<int> n, int limit, int now, std::vector<int> result)
+void print_string( std::vector<std::vector<int>> set)
 {
- // cout << "combi : now=" << now << endl;
-//  if( now > limit) return;
+  cout << "set.size()=" << set.size() << endl;
 
-  if( now >= 0) {
-    result.push_back( n[now]);
-  }
-
-  //cout << "result.size()=" << result.size() << endl;
-
-  if( result.size() >= limit) {
-    // Made combination! do something.
-    GonRing g;
-    for(int i=0; i<n.size(); i++)
-    {
-      // if found n[i] in result, push tails
-      if( std::find( result.begin(), result.end(), n[i]) != result.end()) {
-        g.tails.push_back( n[i]);
-
-      } else {
-        g.rings.push_back( n[i]);
-      // else push rings
-      }
-    }
-    gonrings.push_back( g);
-
-    // end of do something
-    return;
-  }
-
-  for(int i=now+1; i<n.size();i++)
+  for(int i=0; i<set.size(); i++)
   {
-    combination( n, limit, i, result);
+     for(int j=0; j<set[i].size(); j++)
+     {
+        cout << set[i][j] << " ";
+     }
+     cout << endl;
   }
+
 }
 
 int main(int argc, char** argv)
 {
   clock_t begin = clock();
 
-  // 1) n 개의 수에서 1/2 n 을 선택하는 로직.
-  
   std::vector<int> n = { 1, 2, 3, 4, 5, 6 };
+  std::vector<GonRing> gr;
 
-  std::vector<int> c;
-  for(int i=0; i< n.size()/2 + 1; i++)
+  gr.push_back( GonRing( {1,2,3,4,5}, {6,7,8,9,10}));
+  gr.push_back( GonRing( {6,7,8,9,10}, {1,2,3,4,5}));
+  gr.push_back( GonRing( {1,3,5,7,9}, {2,4,6,8,10}));
+  gr.push_back( GonRing( {2,4,6,8,10}, {1,3,5,7,9}));
+
+  for(int i=0; i<gr.size(); i++)
   {
-    combination( n, n.size()/2, i, c);
-  }
+    cout << "gonring for [" << i << "]" << endl;
+    std::vector<std::vector<int>> set = gr[i].solutionset();
 
-  cout << "sizeof gonrings=" << gonrings.size() << endl;
-
-  for(int i=0; i<gonrings.size(); i++)
-  {
-    gonrings[i].solutionset(); 
+    if( set.size() > 0) {
+      cout << "MAXIMUM : " << endl;
+      print_string( set);
+    }
   }
 
   clock_t end = clock();
