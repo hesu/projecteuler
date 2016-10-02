@@ -8,14 +8,16 @@
 #include <cmath>
 #include <algorithm>
 
+#include "BigInt.h"
+
 using namespace std;
 
 #define MAX 100
 
-class AfterDecimal; 
+class AfterDecimal
 {
   public:
-    Small( int _e, int _n)
+    AfterDecimal( int _e, int _n)
     {
       e = _e; n = _n;
     }
@@ -25,11 +27,18 @@ class AfterDecimal;
   int n;
 };
 
-std::vector<int> digital_expansion( double n, int max)
+std::vector<int> digital_expansion( int num, int max)
 {
   std::vector<int> v;
+  
+  std::vector<int> input;
+  input.push_back(num);
+  for(int i=0;i<MAX;i++) input.push_back(0);
 
-  AfterDecimal n( _e, _n);
+  BigInt n(input);
+  n.print();
+//  cout << n.toString() << endl;
+
   
 
   return v;
