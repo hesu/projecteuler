@@ -43,7 +43,7 @@ int main(int argc, char** argv)
 
     for(int y=1;;y++)
     {
-      if( y%1000 == 0) { cout << "\t\ty=" << y << endl;
+      if( y%1000 == 0) { cout << "\t\ty=" << y << endl; }
       BigInt _y(y);
       BigInt ysq = _y * _y;
       BigInt ysqd = ysq * d;
