@@ -272,3 +272,23 @@ string BigInt::toString()
 	}
 	return s;
 }
+
+void BigInt::setIdxVal( int idx, int val)
+{
+  if( dg.size() > idx) {
+    dg[idx] = val; 
+  } else {
+    cout << "error! can't set val at index. dg.size()= " << dg.size() << " param idx=" << idx << endl;
+  }
+}
+
+int BigInt::getIdxVal( int idx)
+{
+  if( dg.size() > idx) {
+    return dg[idx];
+  } else {
+    cout << "error! can't get val at index. dg.size()= " << dg.size() << " param idx=" << idx << endl;
+    return 0;
+  }
+  
+}

@@ -23,7 +23,16 @@ class BigInt
 				dg.push_back( buf[i]-'0');
 			}
 		};
+		
+    BigInt( std::vector<int> v)
+		{
+      dg = v;
+		};
 		void copy( BigInt& n);
+		
+    void setIdxVal( int idx, int val);
+		int getIdxVal( int idx);
+
 		void setdg( std::vector<int> _dg) { dg = _dg; }
 		inline std::vector<int> getDigits() const { return dg; }
 		int getDigitsLen() const { return dg.size(); }
