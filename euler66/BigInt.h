@@ -47,7 +47,10 @@ class BigInt
 		void shift(int n); 
 		bool operator <( BigInt const &rhs);
 		bool operator <=( BigInt const &rhs);
+		bool operator ==( BigInt const &rhs);
 		unsigned long long int toint();
+
+    BigInt squareRoot();
 
 		string toString();
 };

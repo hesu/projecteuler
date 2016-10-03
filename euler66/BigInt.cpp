@@ -240,6 +240,20 @@ bool BigInt::operator <=( BigInt const &rhs)
 	return true;
 }
 
+bool BigInt::operator ==( BigInt const &rhs)
+{
+	const int llen = getDigitsLen();
+	const int rlen = rhs.getDigitsLen();
+	if( llen != rlen) { return false; }
+	std::vector<int> rdg = rhs.getDigits();
+	for(int i=rlen-1; i>=0; i--)
+	{
+		if( dg[i] != rdg[i]	) return false;
+	}
+	return true;
+}
+
+
 unsigned long long int BigInt::toint()
 {
 	int toi = 0;
@@ -291,4 +305,41 @@ int BigInt::getIdxVal( int idx)
     return 0;
   }
   
+}
+
+// if irrational return BigInt(0)
+BigInt BigInt::squareRoot()
+{
+  int len = getDigitsLen();
+  std::vector<int> initv;
+  for(int i=0; i<(len/2)-1; i++)
+  {
+    initv.push_back(0);
+  }
+  if( len >= 2 && len%2 == 1) { initv.push_back(0); }
+  initv.push_back(1);
+
+  BigInt sqr(initv);
+//  cout << "sqr init=" << sqr.toString() << endl;
+
+  for(int i=initv.size()-1; i>=0; i--) {
+    for(int j=0; j<9; j++) {
+      sqr.setIdxVal( i, j+1);
+      BigInt sqr2( sqr);
+
+      BigInt squared = sqr * sqr2;
+
+      if( *this < squared) {
+        sqr.setIdxVal( i, j);
+        break;
+      }
+    }
+  }
+
+  BigInt sameCheck = sqr * sqr;
+  if( sameCheck == *this) {
+    return sqr;
+  } 
+   
+  return BigInt(0);
 }
