@@ -18,8 +18,12 @@ int digital_expansion( int num, int max)
 {
   std::vector<int> input;
   for(int i=0;i<MAX*2;i++) input.push_back(0);
-  input.push_back(num);
-  
+
+  input.push_back( num%10);
+  if( num/10 > 0) {
+    input.push_back(num/10);
+  }
+
   BigInt n(input);
 
   // Get First Integer!
