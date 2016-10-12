@@ -88,26 +88,20 @@ int getMinPathValue( pair<int,int> now, pair<int,int> goal, int **mat, memo_t** 
    // cout << "nowx=" << now.second << " nowy=" << now.first << " visited=" << visited.size() << endl;
   }
 
-  if (!inbound( now, matsize)) { return -1; }
-
   int northroot = -1, southroot = -1, eastroot = -1, westroot = -1;
- 
+  
   if( memo[now.first][now.second].n < INT_MAX ) { northroot = memo[now.first][now.second].n; }
   if( memo[now.first][now.second].s < INT_MAX ) { southroot = memo[now.first][now.second].s; }
   if( memo[now.first][now.second].e < INT_MAX ) { eastroot = memo[now.first][now.second].e; }
   if( memo[now.first][now.second].w < INT_MAX ) { westroot = memo[now.first][now.second].w; }
 
-  pair<int,int> n = make_pair(now.first-1, now.second);
-  pair<int,int> s = make_pair(now.first+1, now.second);
-  pair<int,int> e = make_pair(now.first, now.second+1);
-  pair<int,int> w = make_pair(now.first, now.second-1);
-  std::vector<pair<int,int>> visited_north(visited);
-  std::vector<pair<int,int>> visited_south(visited);
-  std::vector<pair<int,int>> visited_east(visited);
-  std::vector<pair<int,int>> visited_west(visited);
+  pair<int,int> n, s, e, w;
+  std::vector<pair<int,int>> visited_north, visited_south, visited_east, visited_west;
   
   // north discover;
   if( northroot == -1 && inbound( n, matsize) && need_discovery( visited, n)) {
+    n = make_pair(now.first-1, now.second);
+    visited_north = visited;
     visited_north.push_back( n);
     //cout << "call north " << endl;
     northroot = getMinPathValue( n, goal, mat, memo, matsize, visited_north, depth+1);
@@ -115,6 +109,8 @@ int getMinPathValue( pair<int,int> now, pair<int,int> goal, int **mat, memo_t** 
   
   // south discover;
   if( southroot == -1 && inbound( s, matsize) && need_discovery( visited, s)) {
+    s = make_pair(now.first+1, now.second);
+    visited_south = visited;
     visited_south.push_back( s);
     //cout << "call south" << endl;
     southroot = getMinPathValue( s, goal, mat, memo, matsize, visited_south, depth+1);
@@ -122,6 +118,8 @@ int getMinPathValue( pair<int,int> now, pair<int,int> goal, int **mat, memo_t** 
   
   // east discover;
   if( eastroot == -1 && inbound( e, matsize) && need_discovery( visited, e)) {
+    e = make_pair(now.first, now.second+1);
+    visited_east = visited;
     visited_east.push_back( e);
     //cout << "call east" << endl;
     eastroot = getMinPathValue( e, goal, mat, memo, matsize, visited_east, depth+1);
@@ -129,6 +127,8 @@ int getMinPathValue( pair<int,int> now, pair<int,int> goal, int **mat, memo_t** 
   
   // west discover;
   if( westroot == -1 && inbound( w, matsize) && need_discovery( visited, w)) {
+    w = make_pair(now.first, now.second-1);
+    visited_west = visited;
     visited_west.push_back( w);
     //cout << "call west" << endl;
     westroot = getMinPathValue( w, goal, mat, memo, matsize, visited_west, depth+1);
@@ -154,13 +154,11 @@ int getMinPathValue( pair<int,int> now, pair<int,int> goal, int **mat, memo_t** 
 int main(int argc, char** argv)
 {
 	clock_t begin = clock();
-/*
+
   int matsize = 5;
   string fname = "p083_matrix.small.txt";
-  */
-
-  int matsize = 80;
-  string fname = "p083_matrix.txt";
+  //int matsize = 80;
+  //string fname = "p083_matrix.txt";
   int row=matsize, col=matsize;
 
   int **mat = (int**) malloc( sizeof( int*) * row);
@@ -201,19 +199,29 @@ int main(int argc, char** argv)
   memo_t **memo = (memo_t**) malloc( sizeof( memo_t*) * row);
   for(int i=0; i<row; i++)
   {
-    memo_t* trow = (memo_t*) malloc( sizeof( memo_t) * col);
+    memo_t* row = (memo_t*) malloc( sizeof( memo_t) * col);
     for(int j=0; j<col; j++) {
-      trow[j].n = INT_MAX;
-      trow[j].s = INT_MAX;
-      trow[j].e = INT_MAX;
-      trow[j].w = INT_MAX;
+      row[j].n = INT_MAX;
+      row[j].s = INT_MAX;
+      row[j].e = INT_MAX;
+      row[j].w = INT_MAX;
     }
-    memo[i] = trow;
+    memo[i] = row;
   }
-  cout << "memo created done" << endl;
  
+ /*
+  int **memo = (int**) malloc( sizeof( int*) * row);
+  for(int i=0; i<row; i++)
+  {
+    int* row = (int*) malloc( sizeof( int) * col);
+    for(int j=0; j<col; j++) row[j] = 0;
+    memo[i] = row;
+  }
+  */
+
   pair<int,int> current = make_pair( row-1, col-1);
   pair<int,int> goal = make_pair( 0, 0);
+
   vector<pair<int,int>> visited;
   visited.push_back( current);
 
