@@ -67,7 +67,7 @@ bool need_discovery( vector<pair<int,int>> visited, pair<int,int> p)
   return false;
 }
 
-int getMinPathValue( pair<int,int> now, pair<int,int> goal, int **mat, int** memo, int matsize, vector<pair<int,int>> visited)
+int getMinPathValue( pair<int,int> now, pair<int,int> goal, int **mat, int** memo, int matsize, vector<pair<int,int>> visited, int depth)
 {
   if(adjacent( now, goal)) {
     int retval = value( mat, matsize, now) + value( mat, matsize, goal);
@@ -94,54 +94,54 @@ int getMinPathValue( pair<int,int> now, pair<int,int> goal, int **mat, int** mem
   if( inbound( n, matsize) && need_discovery( visited, n)) {
     visited_north.push_back( n);
     //cout << "call north " << endl;
-    northroot = getMinPathValue( n, goal, mat, memo, matsize, visited_north);
+    northroot = getMinPathValue( n, goal, mat, memo, matsize, visited_north, depth+1);
   }
   
   // south discover;
   if( inbound( s, matsize) && need_discovery( visited, s)) {
     visited_south.push_back( s);
     //cout << "call south" << endl;
-    southroot = getMinPathValue( s, goal, mat, memo, matsize, visited_south);
+    southroot = getMinPathValue( s, goal, mat, memo, matsize, visited_south, depth+1);
   }
   
   // east discover;
   if( inbound( e, matsize) && need_discovery( visited, e)) {
     visited_east.push_back( e);
     //cout << "call east" << endl;
-    eastroot = getMinPathValue( e, goal, mat, memo, matsize, visited_east);
+    eastroot = getMinPathValue( e, goal, mat, memo, matsize, visited_east, depth+1);
   }
   
   // west discover;
   if( inbound( w, matsize) && need_discovery( visited, w)) {
     visited_west.push_back( w);
     //cout << "call west" << endl;
-    westroot = getMinPathValue( w, goal, mat, memo, matsize, visited_west);
+    westroot = getMinPathValue( w, goal, mat, memo, matsize, visited_west, depth+1);
   }
 
   //cout << "n=" << northroot << " s=" << southroot << " e=" << eastroot << " w=" << westroot << endl;
   std::vector<int> minroot = { northroot, southroot, eastroot, westroot };
 
   if( minOf(minroot) == -1) { 
-  //   cout << "unexpected case at (" << now.second << "," << now.first << ")" << endl; 
-//     return -1;
+     cout << "no-way out at (" << now.second << "," << now.first << ")" << endl; 
+     return -1;
   }
 
   int retval = minOf(minroot) + value(mat, matsize, now);
-  cout << "minval at (" << now.second << "," << now.first << ")=" << retval << endl; 
+  //cout << "minval at (" << now.second << "," << now.first << ")=" << retval << endl; 
 
-  if( minOf(minroot) == northroot) {
+  if( minOf(minroot) == northroot && depth == 0) {
 //    cout << "north root" << endl;
     printpath( visited_north, mat);
   }
-  if( minOf(minroot) == southroot) {
+  if( minOf(minroot) == southroot && depth == 0) {
  //   cout << "south root" << endl;
     printpath( visited_south, mat);
   }
-  if( minOf(minroot) == westroot ) {
+  if( minOf(minroot) == westroot && depth == 0) {
   //  cout << "west root" << endl;
     printpath( visited_west, mat);
   }
-  if( minOf(minroot) == eastroot) {
+  if( minOf(minroot) == eastroot && depth == 0) {
    // cout << "east root" << endl;
     printpath( visited_east, mat);
   }
@@ -153,9 +153,8 @@ int main(int argc, char** argv)
 {
 	clock_t begin = clock();
 
-  int matsize = 5;
-  //int row=80;
-  //int col=80;
+  //int matsize = 5;
+  int matsize = 80;
   int row=matsize, col=matsize;
 
   int **mat = (int**) malloc( sizeof( int*) * row);
@@ -165,8 +164,8 @@ int main(int argc, char** argv)
     mat[i] = row;
   }
 
-  string fname = "p083_matrix.small.txt";
-  //string fname = "p083_matrix.txt";
+  //string fname = "p083_matrix.small.txt";
+  string fname = "p083_matrix.txt";
   ifstream inf(fname);
   string line;
  
@@ -222,7 +221,7 @@ int main(int argc, char** argv)
   visited.push_back( current);
 
   char from = '0';
-  int min = getMinPathValue( current, goal, mat, memo, matsize, visited);
+  int min = getMinPathValue( current, goal, mat, memo, matsize, visited, 0);
   cout << "min=" << min << endl;
 
 	clock_t end = clock();
