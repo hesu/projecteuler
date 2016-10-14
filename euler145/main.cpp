@@ -4,25 +4,11 @@
 
 #include <iostream>
 #include <ctime>
-#include <vector>
-#include <cmath>
-#include <algorithm>
-
-#include "BigInt.h"
+#include <string.h>
 
 using namespace std;
 
 #define MAX 1000000000
-//#define MAX 1000
-
-bool consistOnlyOddDigits( vector<int> v)
-{
-  for(int i=0; i<v.size(); i++)
-  {
-    if( v[i] % 2 == 0) { return false; }
-  }
-  return true;
-}
 
 int main(int argc, char** argv)
 {
@@ -32,17 +18,29 @@ int main(int argc, char** argv)
   for(unsigned long long int i=1;i<MAX;i++)
   {
     if( i % 100000 == 0) cout << "i=" << i << endl;
-    if( i%10 == 0) continue;
-    BigInt n(i);
-    std::vector<int> ndg = n.getDigits();
-    std::vector<int> rev_dg( ndg);
-    reverse(rev_dg.begin(), rev_dg.end());
-    BigInt rev(rev_dg);
+    if( i % 10 == 0) continue;
 
-    BigInt added = n + rev;
+    char n[1024];
+    sprintf(n, "%lld", i);
+    int len = strlen( n);
 
-//    cout << "n=" << n.toString() << " rev=" << rev.toString() << " added=" << added.toString() << endl;
-    if( consistOnlyOddDigits( added.getDigits())) { sol++; }
+    bool is = true;
+    int carry = 0;
+    for(int j=len-1;j>=0;j--)
+    {
+      int rev = (len-j-1);
+      int digit = n[j] - '0' + n[rev] - '0' + carry;
+      if (digit % 2 == 0) { is =false; break;}
+
+      if( digit >= 10) {
+        carry = digit/10;
+        if( carry >=2) { cout << "abnormal! carry=" << carry <<" i=" << i << endl; }
+      } else {
+        carry = 0;
+      }
+    }
+
+    if( is) sol++;
   }
 
   cout << "sol=" << sol << endl;
