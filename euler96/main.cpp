@@ -26,48 +26,54 @@ class Sudoku
     }
   };
 
-  void print()
+  void print( pair<int,int> p)
   {
     for(int i=0; i<9;i++)
     {
-      for(int j=0;j<9;j++) cout << orig[i][j] << " ";
+      for(int j=0;j<9;j++) { 
+        if( i == p.first && j == p.second) cout << orig[i][j] << "< ";
+        else cout << orig[i][j] << "  ";
+      }
       cout << endl;
     }
   }
 
-  bool solve( std::vector<pair<int,int>> filled, std::map<pair<int,int>, vector<int>> incorrect) 
+  int get_top_left_corner()
+  {
+    return orig[0][0] * 100 + orig[0][1] * 10 + orig[0][2];
+  }
+
+  bool solve( std::vector<pair<int,int>> filled, std::map<pair<int,int>, vector<int>> incorrect, int depth) 
   {
     int i, j;
     int minzero = findStartingPoint( orig, &i, &j);
     if( minzero == 0) { 
       cout << "sudoku solved!" << endl; 
-      print(); 
-      return true; 
-    } 
-    
-    cout << "try solve i:" << i << " j:" << j << endl;
+      pair<int,int> trypair = make_pair(0,0);
+      print( trypair);
 
+      return true; 
+    }
+
+  
+    //pair<int,int> trypair = make_pair(i,j);
+    //print( trypair);
     vector<int> fill = determine( orig, i, j, incorrect);
 
     if (fill.size() > 0) {
       for(int vi=0; vi<fill.size(); vi++)
       {
-        cout << "vi=" << vi << " fill.size()=" << fill.size() << endl;
-        cout << "fill at [" << i << "] [" << j << "] : " << fill[vi] << endl;
         filled.push_back( make_pair(i,j));
         orig[i][j] = fill[vi];
-        bool res = solve( filled, incorrect);
+        bool res = solve( filled, incorrect, depth+1);
         if( res == true) return res;
-        else{ cout << "Try Another" << endl; }
+        else{ 
+          orig[i][j] = 0;
+        }
       }
-      filled.pop_back();
       return false;
     } else {
-      cout << "can't solve with previous filled" << endl;
       std::pair<int,int> last = filled[ filled.size()-1];
-
-      // Add Error Map
-      cout << "AddErrorMap" << endl;
       std::map<pair<int,int>, vector<int>>::iterator it = incorrect.find( last);
 
       if( it == incorrect.end()) {
@@ -78,8 +84,11 @@ class Sudoku
       } else {
         it->second.push_back( orig[ last.first][last.second]);
       }
-     
+    
+    /*
+      for(int x=0;x<depth;x++) cout<< " ";
       cout << "Clear This incorrect path" << endl;
+      */
       orig[ last.first][last.second] = 0;
       filled.pop_back();
       return false;
@@ -98,13 +107,6 @@ class Sudoku
       // value to 1 ~ 9
       for(int v=1; v<=9; v++)
       {
-        // 0) is in incorrect map?
-        std::map<pair<int,int>, vector<int>>::iterator it = incorrect.find( make_pair(i, j));
-        if( it != incorrect.end()){
-          cout << "v=" << v << endl;
-          if( find( it->second.begin(), it->second.end(), v) != it->second.end()) continue;
-        }
-
         // 1) 3by3 block has value?
         int k=i/3;
         int l=j/3;
@@ -160,7 +162,7 @@ class Sudoku
           for(int wj=0; wj<9; wj++) { if( arr[wi][wj] == 0) {allsolved = false; break;}}
         }
       }
-      if( allsolved) { cout << "allsolved;" << endl; return 0; }
+      if( allsolved) { return 0; }
 
       // find zero 3 by 3 block
       for(int k=0;k<3;k++)
@@ -214,8 +216,10 @@ int main(int argc, char** argv)
 	
   /* starting code */
 
-  ifstream inf( "p096_sudoku.small.txt");
-  //ifstream inf( "p096_sudoku.txt");
+  //ifstream inf( "p096_sudoku.small.txt");
+  ifstream inf( "p096_sudoku.txt");
+
+  int sol = 0;
 
   vector<string> sv;
 
@@ -236,13 +240,18 @@ int main(int argc, char** argv)
 
       vector<pair<int,int>> filled;
       map<pair<int,int>, vector<int>> incorrect;
+
+      cout << "try to sudoku solve at linecnt = " << linecnt << endl;
       Sudoku sdk = Sudoku(sv);
-      sdk.print();
-      bool b = sdk.solve(filled, incorrect);
-      cout << "solved? : " << b << endl;
+//      sdk.print();
+      if( sdk.solve(filled, incorrect, 0)) {
+        sol += sdk.get_top_left_corner();
+      }
     }
   }
   inf.close();
+
+  cout << "sol=" << sol << endl;
 
 	/* end of code */
 	clock_t end = clock();
