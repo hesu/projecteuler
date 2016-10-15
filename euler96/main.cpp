@@ -43,7 +43,7 @@ class Sudoku
     return orig[0][0] * 100 + orig[0][1] * 10 + orig[0][2];
   }
 
-  bool solve( std::vector<pair<int,int>> filled, std::map<pair<int,int>, vector<int>> incorrect, int depth) 
+  bool solve( std::vector<pair<int,int>> filled, int depth) 
   {
     int i, j;
     int minzero = findStartingPoint( orig, &i, &j);
@@ -55,17 +55,16 @@ class Sudoku
       return true; 
     }
 
-  
     //pair<int,int> trypair = make_pair(i,j);
     //print( trypair);
-    vector<int> fill = determine( orig, i, j, incorrect);
+    vector<int> fill = determine( orig, i, j);
 
     if (fill.size() > 0) {
       for(int vi=0; vi<fill.size(); vi++)
       {
         filled.push_back( make_pair(i,j));
         orig[i][j] = fill[vi];
-        bool res = solve( filled, incorrect, depth+1);
+        bool res = solve( filled, depth+1);
         if( res == true) return res;
         else{ 
           orig[i][j] = 0;
@@ -74,21 +73,6 @@ class Sudoku
       return false;
     } else {
       std::pair<int,int> last = filled[ filled.size()-1];
-      std::map<pair<int,int>, vector<int>>::iterator it = incorrect.find( last);
-
-      if( it == incorrect.end()) {
-        std::vector<int> mapv;
-        mapv.push_back( orig[ last.first][last.second]);
-        std::pair<int,int> key = make_pair( last.first, last.second);
-      // incorrect.insert( map<pair<int,int>,vector<int>>::value_type( key, mapv));
-      } else {
-        it->second.push_back( orig[ last.first][last.second]);
-      }
-    
-    /*
-      for(int x=0;x<depth;x++) cout<< " ";
-      cout << "Clear This incorrect path" << endl;
-      */
       orig[ last.first][last.second] = 0;
       filled.pop_back();
       return false;
@@ -100,7 +84,7 @@ class Sudoku
     int solved[9][9];
     int memo[9][9];
 
-    vector<int> determine( int arr[9][9], int i, int j, std::map<pair<int,int>, vector<int>> incorrect)
+    vector<int> determine( int arr[9][9], int i, int j)
     {
       vector<int> vec;
 
@@ -128,7 +112,6 @@ class Sudoku
 
         if( !ok) continue;
 
-//cout << "vert" << endl;
         // 2) vertical has value?
         for(int vi=0; vi<9; vi++)
         {
@@ -137,7 +120,6 @@ class Sudoku
 
       if( !ok) continue;
 
-//cout << "hori" << endl;
         // 3) horizontal has value?
         for(int hj=0; hj<9; hj++)
         {
@@ -222,7 +204,6 @@ int main(int argc, char** argv)
   int sol = 0;
 
   vector<string> sv;
-
   string line;
   int linecnt = 0;
   while( std::getline( inf, line)) {
@@ -239,12 +220,10 @@ int main(int argc, char** argv)
       }
 
       vector<pair<int,int>> filled;
-      map<pair<int,int>, vector<int>> incorrect;
 
       cout << "try to sudoku solve at linecnt = " << linecnt << endl;
       Sudoku sdk = Sudoku(sv);
-//      sdk.print();
-      if( sdk.solve(filled, incorrect, 0)) {
+      if( sdk.solve(filled, 0)) {
         sol += sdk.get_top_left_corner();
       }
     }
