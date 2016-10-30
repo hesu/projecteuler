@@ -4,10 +4,7 @@
 
 #include <iostream>
 #include <ctime>
-#include <vector>
 #include <map>
-#include <algorithm>
-#include <functional>
 
 using namespace std;
 
@@ -31,39 +28,44 @@ long long int coin_partition( long long int n)
   int sign = 1;
   
   map<long long int, long long int>::iterator it;
+  it = waysmap.find(n);
+  if( it != waysmap.end()) { return it->second; }
 
   for(int i=1;i<n;i++)
   {
     int sign;
-    if( i%4 > 1) { sign = -1; } else {sign = 1; }
+    if( i%2 == 0) { sign = -1; } else {sign = 1; }
 
-    int each = pentagonal_number( n - i);
-    if( each < 0) break;
+    int each = pentagonal_number( i);
+    int each2 = pentagonal_number( (-1) * i);
+
+    //cout << "n=" << n << " t1=" << each << " t2=" << each2 << " sign=" << sign << endl;
+    
+    if( each < 0 || n< each) break;
     int val;
-      it = waysmap.find( each);
+      it = waysmap.find( n-each);
       if( it == waysmap.end()) {
         val =  sign * coin_partition(n-each);
       } else{
-        val = it->second;
+        val = sign * (it->second);
       }
 
-    if( val < 0) break;
-    else sum += val;
-
-    int each2 = pentagonal_number( n + i);
-    if( each2 < 0) break;
+    sum += val;
+    //cout << "\tval=" << val << endl;
+    
+    if( each2 < 0 || n < each2) break;
     int val2;
-      it = waysmap.find( each2);
+      it = waysmap.find( n-each2);
       if( it == waysmap.end()) {
         val2 =  sign * coin_partition(n-each2);
       } else{
-        val2 = it->second;
+        val2 = sign * (it->second);
       }
 
-    if( val2 < 0) break;
-    else sum += val2;
-
+    sum += val2;
+//    cout << "\tval2=" << val2 << endl;
   }
+
 
   if( max_overed) {
     sum = sum % ( MAX * 10);
@@ -82,14 +84,14 @@ int main(int argc, char** argv)
 {
   clock_t begin = clock();
 
+/*
   cout << "cp(1)=" << coin_partition(1) << endl;
   cout << "cp(2)=" << coin_partition(2) << endl;
   cout << "cp(3)=" << coin_partition(3) << endl;
   cout << "cp(4)=" << coin_partition(4) << endl;
   cout << "cp(5)=" << coin_partition(5) << endl;
   cout << "cp(6)=" << coin_partition(6) << endl;
- 
- /*
+*/ 
   long long int sol=1;
   while(true)
   {
@@ -98,7 +100,6 @@ int main(int argc, char** argv)
     sol++;
   }
   cout << "sol=" << sol << endl;
-  */
 
   clock_t end = clock();
   std::cout << "elapsed time=" << double( end-begin) / CLOCKS_PER_SEC << endl;
