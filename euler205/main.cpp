@@ -202,7 +202,7 @@ vector<Fraction> me_win_probability( polynomials dice_me, polynomials dice_you)
 //      식이 이게 아닌가..
 //      맞는다고 생각했는데 계속 오답이 나옴.
 //      나중에 다시 고민해 보자.
-        Fraction f = Fraction( myc * youall + youc * myall, all);
+        Fraction f = Fraction( myc * youc , all);
 ////////////////////////
 
         fv.push_back( f);
@@ -222,6 +222,7 @@ vector<Fraction> me_win_probability( polynomials dice_me, polynomials dice_you)
   cout << "sum : ( " << sum.n << "," << sum.d << ")" << endl;
   cout << "intsum : " << intsum << endl;
   cout << "all=" << all << " myall=" << myall << " youall = " << youall << endl;
+  cout << "my.size=" << myv.size() << " you.size=" << youv.size() << " f.size()=" << fv.size() << endl;
   //Fraction sumf( sum, all);
   //return sumf;
   return fv;
@@ -250,12 +251,16 @@ int main(int argc, char** argv)
   vector<Fraction> winprob = me_win_probability( pdice_rolled, cdice_rolled);
 //  cout << " winprob n=" << winprob.n << " d=" << winprob.d << endl;
 
+  int intsum = 0;
   for(int i=0; i<winprob.size(); i++)
   {
+    intsum += winprob[i].n;
 //    cout << "(" << winprob[i].n << "/" << winprob[i].d << ")" << endl;
   }
 
 //  cout << setprecision(7) << (float)winprob.n/(float)winprob.d << endl;
+
+  cout << setprecision(7) << (float)intsum/(float)winprob[0].d << endl;
 
   clock_t end = clock();
   std::cout << "elapsed time=" << double( end-begin) / CLOCKS_PER_SEC << endl;
