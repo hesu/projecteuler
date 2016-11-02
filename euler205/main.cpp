@@ -19,14 +19,14 @@ class poly
     {
       c = _c; e = _e;
     }
-    int getc() { return c;}
-    int gete() { return e;}
+    const int getc() { return c;}
+    const int gete() { return e;}
     void setc( int _c) { c = _c; }
     string getString()
     {
       stringstream ss;
       ss << c;
-      ss << "X^";
+      ss << "*x^";
       ss << e;
       return ss.str();
     }
@@ -34,6 +34,11 @@ class poly
     int c; // coefficient(계수)
     int e; // exponent(지수)
 };
+
+bool polySort( poly a, poly b)
+{
+  return (a.gete() < b.gete());
+}
 
 class polynomials
 {
@@ -83,6 +88,11 @@ class polynomials
       return that;
     }
 
+    void sort()
+    {
+      std::sort( p.begin(), p.end(), polySort);
+    }
+
     polynomials pow( int n)
     {
       polynomials powed;
@@ -92,6 +102,9 @@ class polynomials
       {
         powed = powed * mul;
       }
+
+      powed.sort();
+
       return powed;
     }
 
@@ -174,93 +187,73 @@ class Fraction
   int d;
 };
 
-vector<Fraction> me_win_probability( polynomials dice_me, polynomials dice_you)
+float me_win_probability( polynomials dice_me, polynomials dice_you)
 {
   // win probability for my dice.
   // return (whole_prob, me_win_prob)
-
-  std::vector<Fraction> fv;
-
-  int myall = dice_me.coefficientsum();
-  int youall = dice_you.coefficientsum();
-  int all = myall * youall;
+  unsigned int sum = 0;
+  unsigned int all = pow(4,9) * pow(6,6);
 
   std::vector<poly> myv = dice_me.get();
   std::vector<poly> youv = dice_you.get();
+
+  unsigned int sum_lose_or_tie = 0;
+
+  int my_dice_max = myv[ myv.size() -1].gete();
+  int you_dice_max = youv[ youv.size() -1].gete();
+
+  cout << "my_dice_max=" << my_dice_max << " you_dice_max=" << you_dice_max << endl;
   
   for(int i=0; i<myv.size(); i++)
   {
     for(int j=0; j<youv.size(); j++)
     {
-      int myc = myv[i].getc();
-      int youc = youv[j].getc();
+      unsigned int myc = myv[i].getc();
+      unsigned int youc = youv[j].getc();
 
       if( myv[i].gete() > youv[j].gete()) {
-//        Fraction f = Fraction(myc, myall) * Fraction( youc, youall);
-
-////////////////////////
-//      식이 이게 아닌가..
-//      맞는다고 생각했는데 계속 오답이 나옴.
-//      나중에 다시 고민해 보자.
-        Fraction f = Fraction( myc * youc , all);
-////////////////////////
-
-        fv.push_back( f);
+        sum += myc*youc;
+      } else {
+        sum_lose_or_tie += myc * youc;
       }
     }
   }
 
-  int intsum = 0;
-  cout << "get sum.." << endl;
-  Fraction sum = Fraction(0,1);
-  for(int i=0; i<fv.size(); i++)
-  {
-    intsum += fv[i].n;
-//    sum += fv[i];
-  }
+  cout << " sum_win=" << sum << " sum_lose_or_tie=" << sum_lose_or_tie << " all=" << all << " win+lose+tie=" << sum + sum_lose_or_tie << endl;
 
-  cout << "sum : ( " << sum.n << "," << sum.d << ")" << endl;
-  cout << "intsum : " << intsum << endl;
-  cout << "all=" << all << " myall=" << myall << " youall = " << youall << endl;
-  cout << "my.size=" << myv.size() << " you.size=" << youv.size() << " f.size()=" << fv.size() << endl;
-  //Fraction sumf( sum, all);
-  //return sumf;
-  return fv;
+  cout << "myv.size()=" << myv.size() << " youv.size()=" << youv.size() << endl;
+  cout << "all=" << all << endl;
+  
+  float f = (float)sum/(float)all;
+  cout << setprecision(7) << "probability =" << f << endl;
+
+  return f;
 }
 
 int main(int argc, char** argv)
 {
   clock_t begin = clock();
 
-  // 주사위 여러개 = (x + x^2 + .. x^n, n=주사위 제일 큰눈) 인 다항식을 주사위 개수만큼 곱한후,
-  // 계수를 구하면 될듯.
-  // 따라서 다항식 코드를 구현해야함.
-  std::vector<poly> v;
-  for(int i=1; i<=4; i++) v.push_back( poly(1, i));
-  polynomials pdice( v);
+  std::vector<poly> pv;
+  for(int i=1; i<=4; i++) {
+    pv.push_back( poly(1, i));
+  }
+  polynomials pdice( pv);
   polynomials pdice_rolled = pdice.pow(9);
   cout << pdice_rolled.getString() << endl;
-
+  
   cout << endl;
-  std::vector<poly> v2;
-  for(int i=1; i<=6; i++) v2.push_back( poly(1, i));
-  polynomials cdice( v);
-  polynomials cdice_rolled = pdice.pow(6);
+ 
+  std::vector<poly> cv;
+  for(int i=1; i<=6; i++) {
+    cv.push_back( poly(1, i));
+  }
+  polynomials cdice( cv);
+  polynomials cdice_rolled = cdice.pow(6);
   cout << cdice_rolled.getString() << endl;
 
-  vector<Fraction> winprob = me_win_probability( pdice_rolled, cdice_rolled);
-//  cout << " winprob n=" << winprob.n << " d=" << winprob.d << endl;
-
-  int intsum = 0;
-  for(int i=0; i<winprob.size(); i++)
-  {
-    intsum += winprob[i].n;
-//    cout << "(" << winprob[i].n << "/" << winprob[i].d << ")" << endl;
-  }
-
-//  cout << setprecision(7) << (float)winprob.n/(float)winprob.d << endl;
-
-  cout << setprecision(7) << (float)intsum/(float)winprob[0].d << endl;
+  float winprob = me_win_probability( pdice_rolled, cdice_rolled);
+  cout << "winprob=" << winprob << endl;
 
   clock_t end = clock();
   std::cout << "elapsed time=" << double( end-begin) / CLOCKS_PER_SEC << endl;
