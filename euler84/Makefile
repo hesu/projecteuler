@@ -7,8 +7,8 @@ all : main
 main : main.o 
 	$(CXX) -o main main.o
 
-main.o : main.cpp
-	$(CXX) $(CXXFLAGS) -c main.cpp
+main.o : main.cpp BigInt.cpp
+	$(CXX) $(CXXFLAGS) -c main.cpp BigInt.cpp
 
 clean :
 	rm -f *.o main

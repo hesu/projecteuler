@@ -5,13 +5,26 @@
 #include <iostream>
 #include <ctime>
 #include <map>
+#include <vector>
+
+#include "BigInt.h"
 
 using namespace std;
 
-class Dices
+class Dice
 {
-
+  public :
+    map<int, Fraction> roll();
 };
+
+// 주사위는 최대 3번까지 던질 수 있다.
+// 여기서는 rand 를 쓰는 게 아니라.. 어떤 경우의 수를 펼쳐놓은 것(map 같은?) 을 보고 싶은데..
+// 3번까지 던졌을 때 각 2~35(=12+12+11) 점 까지 도착할 모든 확률표.
+map<int, Fraction> Dice::roll()
+{
+  map<int, Fraction> result;
+  return result;
+}
 
 int main(int argc, char** argv)
 {
