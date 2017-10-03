@@ -146,8 +146,10 @@ int main(int argc, char** argv)
 
     while(true)
     {
-      Dice d1(6);
-      Dice d2(6);
+      //Dice d1(6);
+      //Dice d2(6);
+      Dice d1(4);
+      Dice d2(4);
 
       int val1 = d1.roll();
       int val2 = d2.roll();
