@@ -70,11 +70,12 @@ int communityChestCard(int now)
 
 int getNextR(int now)
 {
-  if (now <= 4 || now >= 36) { return 5; }
-  if (now >= 5 || now <= 14) { return 15; }
-  if (now >= 15 || now <= 24) { return 25; }
-  if (now >= 15 || now <= 24) { return 25; }
-  if (now >= 25 || now <= 34) { return 35; }
+  if (now == 7) return 15; // CH1 -> R2
+  if (now == 22) return 25; // CH2 -> R3
+  if (now == 36) return 5; // CH3 -> R1
+
+  cout << "error case! now=" << now << endl;
+  return -1;
 }
 
 int getNextU(int now)
@@ -138,15 +139,10 @@ int main(int argc, char** argv)
     tiles.insert(map<int, int>::value_type(i, 0));
   }
 
-  // 1부터 40까지의 각 점에서 주사위를 던졌을 때 각 점에 도착할 확률을 계산한다.
-  // 6면체로 계산해서 예제의 답과 같은지 먼저 비교해 본다.
-  for( auto it = tiles.begin(); it != tiles.end(); it++)
+  int now = 0;
+  for(int i=0; i<10000000; i++)
   {
-    for(int i=0; i<1000000; i++)
-    {
     int nroll = 0;
-
-    int now = (it->first);
 
     while(true)
     {
@@ -160,9 +156,11 @@ int main(int argc, char** argv)
       now += val1 + val2;
       if (now >= 40) now -= 40;
 
-      // 2. 3번 연속 더블시 칸의 체크 없이 바로 감옥행, 종료
+      // 2. 더블 체크
+      // 3번 연속 더블시 칸의 체크 없이 바로 감옥행, 종료
       if ((val1 == val2) && (nroll >= 2)) {
         addPoint(tiles, _JAIL);
+        now = _JAIL;
         break;
       }
 
@@ -173,49 +171,68 @@ int main(int argc, char** argv)
         break;
       }
 
-      /// G2J 이면 G2J+1, JAIL+1 하고 종료.
+      /// G2J 이면 JAIL+1 하고 종료.
       if (now == 30) // 30 : G2J
       {
         addPoint(tiles, now);
         addPoint(tiles, _JAIL);
+        now = _JAIL;
         break;
       }
 
       /// 공동 기금 카드 계산
       if (now == 2 || now == 17 || now == 33)
       {
-        addPoint(tiles, now);
-        
         int ret = communityChestCard(now);
         if (ret >= 0)
         {
+          now = ret;
           addPoint(tiles, ret);
-          if (ret == _JAIL) break;
+          if (ret == _JAIL) {
+            break;
+          }
+        } else {
+          addPoint(tiles, now);
         }
       }
-
-      /// 찬스카드 계산
-      if (now == 7 || now == 22 || now == 26)
+      else if (now == 7 || now == 22 || now == 36)
       {
         addPoint(tiles, now);
+        /// 찬스카드 계산
         int ret = chanceCard(now);
         if (ret >= 0)
         {
-          addPoint(tiles, ret);
-          if (ret == _JAIL) break;
+          //찬스카드에서 나온 칸이 커뮤니티 카드칸이라 또 뽑는다
+          if (ret == 33)
+          {
+            now = ret;
+            addPoint(tiles, now);
+            
+            int ret2 = communityChestCard(33);
+            if (ret2 >= 0)
+            {
+              now = ret2;
+              addPoint(tiles, now);
+              if (ret2 == _JAIL) break;
+            } 
+          } 
+          else {
+            now = ret;
+            addPoint(tiles, now);
+            if (ret == _JAIL) break;
+          }
         }
       }
-
-      /// 그 외의 경우 평범하게 포인트를 더하고 종료한다.
-      addPoint(tiles, now);
+      else 
+      {
+        /// 그 외의 경우 평범하게 포인트를 더하고 종료한다.
+        addPoint(tiles, now);
+      }
 
       // 4. reroll 여부 계산
-      if (val1 != val2)
-      {
-        break;
-      }
+      if (val1 != val2) break;
+
       nroll++;
-    }
     }
   }
 
@@ -237,6 +254,7 @@ int main(int argc, char** argv)
   {
     cout << "visited=" << rank[i].first << "\tkey=" << rank[i].second << endl;
   }
+  //cout << "example case expect : 102400" << endl;
 
   clock_t end = clock();
   std::cout << "elapsed time=" << double( end-begin) / CLOCKS_PER_SEC << endl;
