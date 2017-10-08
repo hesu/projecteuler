@@ -39,9 +39,10 @@ class Vertex
 {
   private :
   int id;
-  map<int, int> m; // otherId, weight
 
   public :
+  map<int, int> m; // otherId, weight
+ 
   Vertex(int _id)
   {
     id = _id;
@@ -91,10 +92,6 @@ bool sortEdges( const Edge &lhs, const Edge &rhs)
 
 class Network
 {
-  // TODO : 
-  // a. edge 가 cost 순서로 정렬된 자료구조 만들기
-  // b. edge 제거 알고리즘 짜기
-
   public :
   Network()
   {
@@ -158,42 +155,46 @@ class Network
   bool isConnectable(int id, int otherId, vector<int> notSearch)
   {
     cout << "\tisConnectable check : id=" << id << " other=" << otherId << endl;
-    if(id == otherId) 
-    {
-      return true;
-    }
-
     auto va = vertices.find(id);
     if (va == vertices.end()) {
       cout << "\tnot have " << id << endl;
       return false;
     }
 
+    if(id == otherId) 
+    {
+      cout << "\t connected. id=" << id << " otherId=" << otherId << " (cost=" << va->second.getCost(otherId) << ")" << " notSearch.size=" << notSearch.size() << endl;
+      for(int i=0; i<notSearch.size(); i++){ cout << "[" << notSearch[i] << "]-";}
+      cout << "[" << id << "]-[" << otherId << "]" << endl;
+      return true;
+    }
+
     if (va->second.isConnected(otherId))
     {
       cout << "\t connected. id=" << id << " otherId=" << otherId << " (cost=" << va->second.getCost(otherId) << ")" << " notSearch.size=" << notSearch.size() << endl;
-      for(int i=0; i<notSearch.size(); i++)
-      {
-        cout << "[" << notSearch[i] << "]-";
-      }
+      for(int i=0; i<notSearch.size(); i++){ cout << "[" << notSearch[i] << "]-";}
       cout << "[" << id << "]-[" << otherId << "]" << endl;
       return true;
     }
 
     notSearch.push_back(id);
-      
-    for(; va != vertices.end(); va++)
+    
+    //for(; va != vertices.end(); va++)
+    for(auto vam = va->second.m.begin(); vam != va->second.m.end(); vam++)
     {
-      int thisId = va->first;
-      if(find(notSearch.begin(), notSearch.end(), va->first) != notSearch.end())
+      int nextId = vam->first;
+      //if(find(notSearch.begin(), notSearch.end(), thisId) != notSearch.end())
+      if(find(notSearch.begin(), notSearch.end(), nextId) != notSearch.end())
       {
         cout << "\t continue;" << endl;
         continue;
       }
 
-      bool is = isConnectable(va->first, otherId, notSearch);
+      cout << "call sub isConnectable nextId =" << nextId << endl;
+      bool is = isConnectable(nextId, otherId, notSearch);
       if (is) return true;
     }
+
     return false;
   }
 
@@ -206,17 +207,16 @@ class Network
       bool reduced = false;
       for(int i=0; i<edges.size(); i++)
       {
-        cout << "\tedges[" << i << "]" << endl;
         if (reducedNetwork) break;
 
         int a = edges[i].getA();
         int b = edges[i].getB();
-
+        
+        cout << " edges check : [" << a <<"]-/-[" << b << "]" << endl;
         auto va = vertices.find(a);
         if (va != vertices.end())
         {
           vector<int> notSearch;
-
           // remove edge from vertices
           int aCost = va->second.getCost(b);
           va->second.unconnect(b);
@@ -224,7 +224,8 @@ class Network
           auto vb = vertices.find(b);
           int bCost = va->second.getCost(a);
           vb->second.unconnect(a);
-       
+      
+          notSearch.push_back(b);
           if (isConnectable(a, b, notSearch))
           {
             cout << "Remove " << a << ", " << b << " cost(" << edges[i].getCost() << ")" << endl;
@@ -245,11 +246,10 @@ class Network
             // restore edge to vertices
             va->second.connect(b, aCost);
             vb->second.connect(a, bCost);
+            done = true;
           }
         }
       }
-
-    //  done = true;
 
       if (!reduced) { done = true; }
     }
@@ -268,7 +268,8 @@ int main(int argc, char** argv)
 
 	/* starting code */
   Network n;
-  n.init("p107_network.small.txt");
+  //n.init("p107_network.small.txt");
+  n.init("p107_network.txt");
 
   int sum = n.weightSum();
   cout << "sum=" << sum << endl;
