@@ -20,19 +20,6 @@ int getUpperLimit(int n)
   return (sqrt(n) + 1);
 }
 
-vector<int> getDivisors(int n)
-{
-  vector<int> v;
-  for(int i=1; i<=getUpperLimit(n); i++)
-  {
-    if(n%i == 0)
-    {
-      v.push_back(i);
-    }
-  }
-  return v;
-}
-
 int nextNumber(int n)
 {
   auto memo = nextNumberMemo.find(n);
@@ -69,7 +56,7 @@ int main(int argc, char** argv)
   clock_t begin = clock();
 
   // 1) 수 n의 약수들의 합을 구하는(next number 를 구해내는) 알고리즘을 짠다.
-  //  - 계산된 약수는 memoization 해야 겠다.
+  //  - 계산된 약수는 memoization 해야겠다.
   // 2) chaining 코드를 짠다.
   // 3) 백만까지 계산한다.
 
@@ -78,7 +65,6 @@ int main(int argc, char** argv)
   for(int i=1; i<=MAXNUM; i++)
   //for(int i=12496; i<=12496; i++)
   {
-//    cout << "\t" << i << endl;
     int n = i;
     vector<int> chain;
     bool needChaining = true;
@@ -107,7 +93,6 @@ int main(int argc, char** argv)
     if(!needChaining)
     {
       vector<int> subChain;
-      //vector<int> subChain(chain.begin() + cutIndex, chain.end());
       int cutIndex;
       for(int j=0; j<chain.size(); j++)
       {
