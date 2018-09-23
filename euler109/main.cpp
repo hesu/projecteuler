@@ -32,8 +32,10 @@ class Checkout
 int nCheckout(int nowScore)
 {
   //nCheckout 재귀 호출 형태가 될듯 
+  
   int n = 0;
-  if(nowScore >= 25)
+
+  if(nowScore >= 50) // 50 최고점 : bull's eye
   {
   }
 
@@ -56,9 +58,18 @@ int main(int argc, char** argv)
   // * (1싱글-1트리플-1더블아웃 == 1트리플-1싱블-1더블아웃)
   // 
   // 0 점은 고려하지 않음
+  
+  int c = nCheckout(1);
+  cout << "checkout for 1=" << c << endl;
 
+  /*
   int c = nCheckout(6);
   cout << "checkout for 6=" << c << endl;
+  if ( c == 11)
+  {
+    cout << "correct!" << endl;
+  }
+  */
 
   clock_t end = clock();
   std::cout << "elapsed time=" << double( end-begin) / CLOCKS_PER_SEC << endl;
