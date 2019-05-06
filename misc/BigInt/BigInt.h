@@ -43,6 +43,8 @@ class BigInt
 		BigInt operator - (BigInt &rhs);
 		BigInt operator /( BigInt rhs);
 		BigInt operator %( BigInt &rhs);
+		
+   // BigInt operator += (BigInt rhs);
 
 		void shift(int n); 
 		bool operator <( BigInt const &rhs);
